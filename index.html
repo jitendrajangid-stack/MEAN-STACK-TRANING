@@ -70,6 +70,9 @@
   .overlay{position:fixed;inset:0;background:rgba(20,30,25,.45);display:flex;align-items:center;justify-content:center;z-index:1000;padding:16px}
   .overlay.hide{display:none}
   .modal{background:#fff;border-radius:14px;padding:22px 22px 18px;max-width:560px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.25);max-height:88vh;overflow:auto}
+  #admin .modal{max-width:860px}
+  table.roster small{color:var(--muted);font-size:11px}
+  table.roster td.seg{text-align:center;font-variant-numeric:tabular-nums}
   .modal h2{font-size:17px;margin-bottom:6px}
   .modal p{font-size:13px;color:var(--muted);margin-bottom:14px}
   .modal .row{display:flex;gap:8px;flex-wrap:wrap}
@@ -562,16 +565,21 @@ function renderRoster(t){
   var list=document.getElementById('adminList'), total=65;
   if(!t.length){ list.innerHTML='<p style="padding:10px 0;color:#5f6368">No trainees have saved progress yet.</p>'; return; }
   t.sort(function(a,b){ return (b.done||0)-(a.done||0); });
-  var h='<table class="roster"><thead><tr><th>Trainee</th><th>Progress</th><th>Done</th><th>Updated</th></tr></thead><tbody>';
+  function seg(o){ return o ? (o.done+'/'+o.n) : '–'; }
+  var h='<table class="roster"><thead><tr><th>Trainee</th><th>Overall</th><th>Plan</th><th>Project</th><th>Final</th><th>Logged</th><th>Updated</th></tr></thead><tbody>';
   for(var i=0;i<t.length;i++){
     var x=t[i], done=x.done||0, pct=Math.round(done/total*100);
     var link=location.pathname+'?name='+encodeURIComponent(x.name);
     var up=''; try{ if(x.updated) up=new Date(x.updated).toLocaleDateString(); }catch(e){}
     h+='<tr><td><a href="'+esc(link)+'">'+esc(x.name)+'</a></td>'+
-       '<td><div class="bar"><span style="width:'+pct+'%"></span></div></td>'+
-       '<td>'+done+'/'+total+' · '+pct+'%</td><td>'+esc(up)+'</td></tr>';
+       '<td><div class="bar"><span style="width:'+pct+'%"></span></div><small>'+done+'/'+total+' · '+pct+'%</small></td>'+
+       '<td class="seg">'+seg(x.plan)+'</td>'+
+       '<td class="seg">'+seg(x.project)+'</td>'+
+       '<td class="seg">'+seg(x.final)+'</td>'+
+       '<td class="seg">'+(x.logDays||0)+'/30</td>'+
+       '<td><small>'+esc(up)+'</small></td></tr>';
   }
-  list.innerHTML=h+'</tbody></table>';
+  list.innerHTML=h+'</tbody></table><p style="margin-top:10px;color:#5f6368;font-size:12px">Click a name to open that board (opens with your admin access).</p>';
 }
 
 /* ----------------------------- INIT -------------------------------------- */

@@ -49,18 +49,46 @@ function auth_(name, pw) {
   return '';
 }
 
+// Human-readable labels so the Sheet + admin view show topics, not just "Day 3".
+var PLAN_TOPICS = ['JavaScript basics','Functions, arrays & objects (ES6)','Async JavaScript','TypeScript fundamentals','Node & npm intro + modules','Angular setup & components','Templates & directives','Component communication & DI','Routing & navigation','Forms & validation','HttpClient & REST','RxJS in practice','Pipes, custom directives, lifecycle','Guards, interceptors, shared state','Angular Material + review','Node.js deeper','Express basics','REST API design (CRUD)','Validation, errors, config','Auth basics (JWT)','MongoDB basics','Mongoose ODM','Express + MongoDB integration','Testing basics','Git, GitHub & deployment','Capstone: plan & design','Capstone: backend','Capstone: frontend','Capstone: integrate & polish','Capstone: deploy & demo'];
+var PROJECT_TOPICS = ['features.md + user stories','UI sketches + entity list','sample-data.json','Git repo + README','seed / print script','running Angular app','task list UI','add / delete works','multi-route app','task form + validation','tasks load over HTTP','filter / search','custom pipe + directive','guarded board','Frontend MVP (mock data)','server boots','tasks CRUD API','projects API','validated, safe API','auth-protected API','DB + connection','schemas / models','persistent API','passing tests','live API URL','FE talks to live API','tasks work live','projects work live','release-ready app','Live full-stack app'];
+var FINAL_TOPICS = ['Setup & backend foundation','Backend CRUD & validation','Frontend foundation','Frontend features','Ship it'];
+
+function countSection_(statuses, prefix, n) {
+  var done = 0, ip = 0;
+  for (var i = 1; i <= n; i++) {
+    var v = statuses[prefix + i] || statuses[(prefix === '' ? i : (prefix + i))];
+    if (v === 'Done') done++; else if (v === 'In progress') ip++;
+  }
+  return { done: done, ip: ip, n: n };
+}
+
+function blobAt_(sh, row) {
+  try { return JSON.parse(sh.getRange(row, 6).getValue()) || {}; } catch (e) { return {}; }
+}
+function statusesOf_(blob) { return blob.statuses || (blob.logs ? {} : blob) || {}; }
+
 function allTrainees_() {
   var sh = sheet_();
   var last = sh.getLastRow();
   if (last < 2) return [];
-  var vals = sh.getRange(2, 1, last - 1, 5).getValues(); // Name, Done, InProgress, Left, Updated
+  var rows = sh.getRange(2, 1, last - 1, 6).getValues(); // Name, Done, InProgress, Left, Updated, Data
   var out = [];
-  for (var i = 0; i < vals.length; i++) {
-    if (!vals[i][0]) continue;
-    out.push({ name: vals[i][0], done: vals[i][1], ip: vals[i][2], left: vals[i][3], updated: vals[i][4] });
+  for (var i = 0; i < rows.length; i++) {
+    if (!rows[i][0]) continue;
+    var st = statusesOf_(safeParse_(rows[i][5]));
+    var logs = (safeParse_(rows[i][5]).logs) || {};
+    var logDays = 0; for (var k in logs) { var e = logs[k] || {}; if (e.a || e.l || e.b || e.c) logDays++; }
+    out.push({
+      name: rows[i][0], done: rows[i][1], ip: rows[i][2], left: rows[i][3], updated: rows[i][4],
+      plan: countSection_(st, '', 30), project: countSection_(st, 'P', 30), final: countSection_(st, 'F', 5),
+      logDays: logDays
+    });
   }
   return out;
 }
+
+function safeParse_(s) { try { return JSON.parse(s) || {}; } catch (e) { return {}; } }
 
 function sheet_() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -96,6 +124,73 @@ function summarize_(statuses) {
 function json_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+/* ---- Per-trainee formatted tab (rebuilt on every save) ------------------- */
+function sanitizeTab_(name) {
+  var s = String(name).replace(/[\[\]:*?\/\\]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 90);
+  return s || 'Trainee';
+}
+function stColor_(v) { return v === 'Done' ? '#e6f4ea' : v === 'In progress' ? '#fef7e0' : '#f1f3f4'; }
+function stFont_(v)  { return v === 'Done' ? '#137333' : v === 'In progress' ? '#996a00' : '#5f6368'; }
+
+function writeUserTab_(name, statuses, logs) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sh = ss.getSheetByName(sanitizeTab_(name)) || ss.insertSheet(sanitizeTab_(name));
+  sh.clear();
+  var COLS = 7, rows = [], statusCells = [];
+  function pad(a) { while (a.length < COLS) a.push(''); return a; }
+  function stat(key) { return statuses[key] || 'Not started'; }
+
+  var p = countSection_(statuses, '', 30), pr = countSection_(statuses, 'P', 30), f = countSection_(statuses, 'F', 5);
+  var totalDone = p.done + pr.done + f.done, pct = Math.round(totalDone / 65 * 100);
+
+  rows.push(pad([name]));
+  rows.push(pad(['Plan ' + p.done + '/30   ·   Project ' + pr.done + '/30   ·   Final ' + f.done + '/5   ·   Overall ' + pct + '%  (' + totalDone + '/65)']));
+  rows.push(pad(['Last updated: ' + new Date()]));
+  rows.push(pad(['']));
+
+  rows.push(pad(['6-WEEK PLAN']));
+  rows.push(pad(['Day', 'Topic', 'Status']));
+  for (var i = 1; i <= 30; i++) { var v = stat(String(i)); rows.push(pad(['Day ' + i, PLAN_TOPICS[i - 1], v])); statusCells.push([rows.length, 3, v]); }
+  rows.push(pad(['']));
+
+  rows.push(pad(['DAILY LOG']));
+  rows.push(pad(['Day', 'Topic', 'Planned hrs', 'Actual hrs', 'What I learned / built', 'Blockers & questions', 'Confidence 1-5']));
+  for (var i = 1; i <= 30; i++) {
+    var e = logs[String(i)] || logs[i] || {};
+    rows.push(pad(['Day ' + i, PLAN_TOPICS[i - 1], (e.p != null && e.p !== '' ? e.p : '8'), e.a || '', e.l || '', e.b || '', e.c || '']));
+  }
+  rows.push(pad(['']));
+
+  rows.push(pad(['PROJECT BUILD']));
+  rows.push(pad(['Day', 'Deliverable', 'Status']));
+  for (var i = 1; i <= 30; i++) { var v = stat('P' + i); rows.push(pad(['Day ' + i, PROJECT_TOPICS[i - 1], v])); statusCells.push([rows.length, 3, v]); }
+  rows.push(pad(['']));
+
+  rows.push(pad(['FINAL PROJECT · 5-day']));
+  rows.push(pad(['Day', 'Focus', 'Status']));
+  for (var i = 1; i <= 5; i++) { var v = stat('F' + i); rows.push(pad(['Day ' + i, FINAL_TOPICS[i - 1], v])); statusCells.push([rows.length, 3, v]); }
+
+  sh.getRange(1, 1, rows.length, COLS).setValues(rows).setWrap(true).setVerticalAlignment('middle');
+  sh.setFrozenRows(3);
+  sh.getRange(1, 1, 1, COLS).merge().setFontSize(15).setFontWeight('bold').setBackground('#188038').setFontColor('#ffffff');
+  sh.setRowHeight(1, 32);
+  sh.getRange(2, 1, 1, COLS).merge().setFontWeight('bold').setFontColor('#0f5f2b');
+  sh.getRange(3, 1, 1, COLS).merge().setFontColor('#5f6368').setFontStyle('italic');
+  for (var r = 1; r <= rows.length; r++) {
+    var a = rows[r - 1][0];
+    if (a === '6-WEEK PLAN' || a === 'DAILY LOG' || a === 'PROJECT BUILD' || a === 'FINAL PROJECT · 5-day')
+      sh.getRange(r, 1, 1, COLS).merge().setFontWeight('bold').setBackground('#e6f4ea').setFontColor('#0f5f2b').setFontSize(12);
+    else if (a === 'Day')
+      sh.getRange(r, 1, 1, COLS).setFontWeight('bold').setBackground('#f1f3f4').setFontColor('#5f6368');
+  }
+  for (var s = 0; s < statusCells.length; s++) {
+    var sc = statusCells[s];
+    sh.getRange(sc[0], sc[1]).setBackground(stColor_(sc[2])).setFontColor(stFont_(sc[2])).setFontWeight('bold').setHorizontalAlignment('center');
+  }
+  var w = [60, 250, 130, 90, 340, 240, 110];
+  for (var c = 0; c < COLS; c++) sh.setColumnWidth(c + 1, w[c]);
 }
 
 // The Data(JSON) column stores { statuses:{...}, logs:{...} } for each trainee.
@@ -150,6 +245,7 @@ function doPost(e) {
     } else {
       sh.getRange(row, 1, 1, 6).setValues([[name, s.done, s.ip, s.left, now, payload]]);
     }
+    writeUserTab_(name, statuses, logs); // rebuild the trainee's formatted tab
   } finally {
     lock.releaseLock();
   }

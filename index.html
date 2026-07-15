@@ -94,6 +94,11 @@
   .adminhead h2{font-size:17px;margin:0;flex:1}
   .adminhead .x{position:static}
   #adminBody{overflow:auto;padding:16px 18px}
+  #adminBar{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+  #adminWho{font-weight:700}
+  #adminWho small{font-weight:400;color:var(--muted)}
+  .dashwrap{padding:4px 0}
+  .dashwrap h2{font-size:16px;margin-bottom:12px}
   .tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
   .tcard{border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px}
   .tcard-top{display:flex;align-items:center;justify-content:space-between}
@@ -101,8 +106,51 @@
   .tmeta{font-size:12px;color:var(--muted)}
   .badge{font-weight:700;font-size:13px;color:#fff;border-radius:999px;padding:3px 10px}
   .badge.g,.autoscore.g{background:#137333} .badge.a,.autoscore.a{background:#b8860b} .badge.r,.autoscore.r{background:#c5221f}
-  .opencta{margin-top:4px;font:inherit;font-size:12.5px;font-weight:600;border:1px solid var(--line);background:#f8f9fa;color:var(--accent);border-radius:8px;padding:7px;cursor:pointer}
+  .cardbtns{display:flex;gap:6px;margin-top:4px}
+  .opencta{flex:1;font:inherit;font-size:12.5px;font-weight:600;border:1px solid var(--line);background:#f8f9fa;color:var(--accent);border-radius:8px;padding:7px;cursor:pointer}
   .opencta:hover{background:#eef6f0}
+  .rmdev{font:inherit;font-size:12.5px;font-weight:600;border:1px solid #f3c7c4;background:#fff;color:#c5221f;border-radius:8px;padding:7px 10px;cursor:pointer}
+  .rmdev:hover{background:#fce8e6}
+  .manage{border:1px solid var(--line);border-radius:12px;padding:14px;background:#f8f9fa}
+  .manage h3{font-size:14px;margin-bottom:10px;color:var(--accent)}
+  .addrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .addrow input{font:inherit;font-size:13px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;min-width:150px;flex:1}
+  .genbtn{font:inherit;font-size:12.5px;font-weight:600;border:1px solid var(--line);background:#fff;color:var(--accent);border-radius:8px;padding:8px 12px;cursor:pointer}
+  .adddevbtn{font:inherit;font-size:12.5px;font-weight:700;border:none;background:var(--accent);color:#fff;border-radius:8px;padding:9px 16px;cursor:pointer}
+  .addmsg{font-size:12.5px;margin-top:8px;min-height:16px;word-break:break-word}
+  .notice{background:#e6f4ea;border:1px solid #b7dfc2;color:#0f5f2b;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:13px;word-break:break-word}
+  /* Progress overview (donut + segment bars + stat tiles) */
+  .overview{display:flex;gap:22px;align-items:center;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  .donut{width:108px;height:108px;flex:0 0 auto}
+  .dtrack{fill:none;stroke:var(--ns-bg);stroke-width:11}
+  .dfill{fill:none;stroke:var(--accent);stroke-width:11;stroke-linecap:round;transition:stroke-dashoffset .6s ease}
+  .dfill.a{stroke:#d9a520} .dfill.r{stroke:#e06055}
+  .dnum{fill:var(--ink);font-size:23px;font-weight:800;text-anchor:middle}
+  .dlbl{fill:var(--muted);font-size:9.5px;text-anchor:middle;letter-spacing:.6px}
+  .ovsegs{flex:1 1 240px;display:flex;flex-direction:column;gap:10px;min-width:210px}
+  .ovseglbl{font-size:12px;color:var(--muted);margin-bottom:4px}
+  .ovseglbl b{color:var(--ink)}
+  .ovtiles{display:flex;gap:10px;flex-wrap:wrap}
+  .ovtile{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 14px;min-width:88px;text-align:center;flex:1}
+  .ovval{font-size:19px;font-weight:800;color:var(--accent)}
+  .ovlbl{font-size:11px;color:var(--muted);margin-top:2px}
+  .admintiles{margin-bottom:14px}
+  .admintiles .ovtile{min-width:120px}
+  .tcard{transition:box-shadow .15s ease,transform .15s ease;cursor:pointer}
+  .tcard:hover{box-shadow:0 6px 18px rgba(0,0,0,.10);transform:translateY(-2px)}
+  .ovtile,.badge{transition:transform .15s ease}
+  .opencta,.adddevbtn,.genbtn,.rmdev,.primary{transition:filter .15s ease,background .15s ease}
+  .adddevbtn:hover,.primary:hover{filter:brightness(1.07)}
+  #timeline{display:flex;gap:6px;align-items:stretch;margin-bottom:12px;font-size:11.5px;font-weight:700}
+  .tlseg{display:flex;align-items:center;justify-content:center;padding:8px 6px;border-radius:8px;color:#fff;text-align:center;line-height:1.2;white-space:nowrap;overflow:hidden}
+  .tl-train{background:linear-gradient(90deg,#188038,#34a853)}
+  .tl-final{background:linear-gradient(90deg,#b8860b,#d9a520)}
+  .tl-buffer{background:linear-gradient(90deg,#5f6368,#80868b)}
+  .tldead{display:flex;align-items:center;padding:8px 12px;border-radius:8px;background:#fce8e6;color:#c5221f;border:1px solid #f3c7c4;white-space:nowrap}
+  @media (max-width:600px){#timeline{flex-wrap:wrap}.tlseg,.tldead{flex:1 1 100%!important}}
+  .rulesmodal{max-width:600px;border-top:5px solid #b8860b}
+  .ruleslist{margin:6px 0 16px;padding-left:20px}
+  .ruleslist li{font-size:13.5px;color:var(--ink);line-height:1.55;margin-bottom:9px}
   .dtabs{display:flex;gap:2px;border-bottom:2px solid var(--line);margin-bottom:14px}
   .dtabs button{font:inherit;font-size:13px;padding:9px 16px;border:none;background:transparent;color:var(--muted);cursor:pointer;border-radius:8px 8px 0 0}
   .dtabs button.active{color:var(--accent);font-weight:700;box-shadow:inset 0 -3px 0 var(--accent)}
@@ -163,18 +211,51 @@
     </div>
   </div>
 
+  <div id="adminBar" style="display:none">
+    <button class="linkbtn" id="adminBack">← All trainees</button>
+    <span id="adminWho"></span>
+  </div>
+
+  <div id="timeline" style="display:none">
+    <div class="tlseg tl-train" style="flex:30" title="Days 1–30">Training · 30 days</div>
+    <div class="tlseg tl-final" style="flex:5" title="Days 31–35">Final · 5</div>
+    <div class="tlseg tl-buffer" style="flex:5" title="Days 36–40 (catch-up / leave)">Buffer · 5</div>
+    <div class="tldead" title="Hard deadline">⏳ 45-day max</div>
+  </div>
+
+  <div id="overview" style="display:none"></div>
+
   <nav class="tabs" id="tabs">
     <button data-tab="plan" class="active">6-Week Plan</button>
     <button data-tab="project">Project Build</button>
     <button data-tab="final">Final Project &middot; 5-day</button>
     <button data-tab="log">Daily Log</button>
     <button data-tab="resources">Resources</button>
+    <button data-tab="rating" id="ratingTab" style="display:none">⭐ Rating</button>
   </nav>
   <div class="panel"><div id="view"></div></div>
 
   <div class="foot">
     Click a <b>Status</b> chip to cycle Not started &rarr; In progress &rarr; Done. Progress saves automatically.
     <div class="byline">Built by <a href="mailto:jitendra.jangid@ongraph.com">Jitendra Jangid</a> &middot; <span>jitendra.jangid@ongraph.com</span></div>
+  </div>
+</div>
+
+<!-- Training ground rules — shown to every dev on each login / refresh -->
+<div class="overlay hide" id="rules">
+  <div class="modal rulesmodal">
+    <h2>⚠️ Training ground rules — read every day</h2>
+    <p>These are mandatory for the whole training. Please follow them daily.</p>
+    <ul class="ruleslist">
+      <li><b>8 working hours every day.</b> Treat it like a full working day.</li>
+      <li><b>Basecamp check-in / check-out.</b> Post on Basecamp when your day <b>starts</b>, whenever you <b>step out</b> mid-day, and when you <b>leave</b> for the day.</li>
+      <li><b>Daily progress message.</b> Share what you did each day on Basecamp — every day, without skipping.</li>
+      <li><b>Keep this tracker updated.</b> Update your status &amp; daily log here every day. <b>A day with no update is marked as leave.</b></li>
+      <li><b>Questions &amp; blockers → Basecamp before you leave.</b> Post them the same day; your team lead will connect the next day to discuss.</li>
+      <li><b>You are being evaluated.</b> Your daily progress and the final project decide your assessment; next steps are decided once the training ends.</li>
+      <li><b>Timeline — 45 days max.</b> <b>30</b> training days → <b>5</b>-day final project → <b>5</b> buffer days (catch-up / leave). Plan your pace to finish the whole thing within 45 days.</li>
+    </ul>
+    <button class="primary" id="rulesOk">I understand — start</button>
   </div>
 </div>
 
@@ -194,24 +275,6 @@
   </div>
 </div>
 
-<!-- Admin panel -->
-<div class="overlay hide" id="admin">
-  <div class="adminpanel">
-    <div class="adminhead">
-      <button class="linkbtn" id="adminBack" style="display:none">← All trainees</button>
-      <h2 id="adminTitle">Trainees</h2>
-      <button class="x" id="adminX" title="Close">&times;</button>
-    </div>
-    <div id="adminBody">
-      <div class="row" id="adminAuth" style="display:none">
-        <input type="password" id="adminPw" placeholder="Admin password" autocomplete="off">
-        <button class="primary" id="adminGo">Show</button>
-      </div>
-      <div class="err" id="adminErr"></div>
-      <div id="adminContent"></div>
-    </div>
-  </div>
-</div>
 
 <script>
 /* ============================================================================
@@ -375,6 +438,8 @@ var FINAL_DATES = ALL_DATES.slice(30,35);
 var STATUS_ORDER = ['Not started','In progress','Done'];
 var CHIP_CLASS = { 'Not started':'t', 'In progress':'i', 'Done':'d' };
 var state = { name:'', statuses:{}, logs:{}, tab:'plan' };
+var admin = { mode:null, data:[], sel:null, notice:'' }; // mode: null(user) | 'dash' | 'detail'
+var readOnly = false; // admin viewing a trainee → no editing
 var saveTimer = null;
 var LOG_FIELDS = ['p','a','l','b','c']; // planned, actual, learned, blockers, confidence
 
@@ -384,8 +449,14 @@ function pwKey(name){ return 'meanplan:pw:'+String(name).toLowerCase(); }
 function getPw(name){ try{return localStorage.getItem(pwKey(name))||'';}catch(e){return '';} }
 function setPw(name,v){ try{localStorage.setItem(pwKey(name),v);}catch(e){} }
 function clearPw(name){ try{localStorage.removeItem(pwKey(name));}catch(e){} }
-function getAdminPw(){ try{return sessionStorage.getItem('meanplan:adminpw')||'';}catch(e){return '';} }
+function getAdminPw(){ try{return localStorage.getItem('meanplan:adminpw')||'';}catch(e){return '';} }
+function setAdminPw(v){ try{localStorage.setItem('meanplan:adminpw',v);}catch(e){} }
+function clearAdminPw(){ try{localStorage.removeItem('meanplan:adminpw');}catch(e){} }
 function effPw(name){ return getPw(name) || getAdminPw(); } // name pw, or admin pw if signed in as admin
+// Remembered session (survives refresh + next-day reopen until Sign out)
+function saveSession(o){ try{localStorage.setItem('meanplan:session',JSON.stringify(o));}catch(e){} }
+function getSession(){ try{return JSON.parse(localStorage.getItem('meanplan:session')||'null');}catch(e){return null;} }
+function clearSession(){ try{localStorage.removeItem('meanplan:session');}catch(e){} }
 
 /* ----------------------------- RENDER ------------------------------------ */
 function learnCell(t,u){ return u ? '<a href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(t)+'</a>' : esc(t); }
@@ -395,6 +466,7 @@ function isLocked(prevKey){ return !!prevKey && (state.statuses[prevKey]||'Not s
 
 function chip(key,prevKey){
   var st = state.statuses[key] || 'Not started';
+  if(readOnly) return '<span class="chip '+CHIP_CLASS[st]+'" style="cursor:default">'+esc(st)+'</span>';
   if(!state.name) return '<button class="chip '+CHIP_CLASS[st]+'" disabled>'+esc(st)+'</button>';
   if(isLocked(prevKey)) return '<button class="chip lock" disabled title="Finish the previous day first">🔒 Locked</button>';
   return '<button class="chip '+CHIP_CLASS[st]+'" data-key="'+esc(key)+'">'+esc(st)+'</button>';
@@ -406,7 +478,7 @@ function renderPlan(){
     h+='<tr class="week"><td colspan="7">'+esc(WEEKS[w].title)+'<span class="sub">'+esc(WEEKS[w].subtitle)+'</span></td></tr>';
     for(var i=0;i<5;i++){
       var idx=w*5+i, c=CURRICULUM[idx], dn=idx+1, prev=dn>1?String(dn-1):'';
-      var lk=state.name&&isLocked(prev)?' class="locked"':'';
+      var lk=(!readOnly&&state.name&&isLocked(prev))?' class="locked"':'';
       h+='<tr'+lk+'><td class="day">Day '+dn+'</td><td class="topic">'+esc(c.topic)+'</td><td class="sub">'+esc(c.sub)+'</td><td class="learn">'+learnCell(c.gt,c.gu)+'</td><td class="learn">'+learnCell(c.bt,c.bu)+'</td><td>'+esc(c.ex)+'</td><td class="status-cell">'+chip(String(dn),prev)+'</td></tr>';
     }
   }
@@ -419,7 +491,7 @@ function renderProject(){
     h+='<tr class="week"><td colspan="4">'+esc(PROJECT_PHASES[w])+'</td></tr>';
     for(var i=0;i<5;i++){
       var idx=w*5+i, c=PROJECT[idx], prev=idx>0?('P'+idx):'';
-      var lk=state.name&&isLocked(prev)?' class="locked"':'';
+      var lk=(!readOnly&&state.name&&isLocked(prev))?' class="locked"':'';
       h+='<tr'+lk+'><td class="day">Day '+(idx+1)+'</td><td>'+esc(c.task)+'</td><td class="topic">'+esc(c.out)+'</td><td class="status-cell">'+chip('P'+(idx+1),prev)+'</td></tr>';
     }
   }
@@ -429,12 +501,12 @@ function renderProject(){
 var FINAL_UNLOCK = new Date(2026,7,31); // 31 Aug 2026 (month is 0-based)
 function finalDateLocked(){ return new Date() < FINAL_UNLOCK; }
 function renderFinal(){
-  var dateLocked=finalDateLocked();
+  var dateLocked=!readOnly&&finalDateLocked();
   var h='<table><thead><tr><th colspan="5" style="background:#eef6f0;color:#0f5f2b;font-size:13px">Final Project (5-day): RecipeVault — a MEAN recipe manager</th></tr><tr><th>Day</th><th>Focus</th><th>What to build</th><th>Output</th><th>Status</th></tr></thead><tbody>';
   if(dateLocked) h+='<tr><td colspan="5" style="background:#fff8e1;color:#8a6d00;padding:10px 12px">🔒 The Final Project unlocks on <b>31 Aug 2026</b>. Focus on the 6-Week Plan &amp; Project Build until then.</td></tr>';
   for(var i=0;i<FINAL_DAYS.length;i++){
     var d=FINAL_DAYS[i], prev=i>0?('F'+i):'';
-    var locked=dateLocked||(state.name&&isLocked(prev));
+    var locked=!readOnly&&(dateLocked||(state.name&&isLocked(prev)));
     var lk=locked?' class="locked"':'';
     var cell=dateLocked?'<button class="chip lock" disabled title="Unlocks 31 Aug 2026">🔒 Locked</button>':chip('F'+(i+1),prev);
     h+='<tr'+lk+'><td class="day">Day '+(i+1)+'</td><td class="topic">'+esc(d.focus)+'</td><td class="sub">'+esc(d.build)+'</td><td>'+esc(d.out)+'</td><td class="status-cell">'+cell+'</td></tr>';
@@ -453,8 +525,8 @@ function renderLog(){
     h+='<tr class="week"><td colspan="6">'+esc(WEEKS[w].title)+'</td></tr>';
     for(var i=0;i<5;i++){
       var idx=w*5+i, dn=String(idx+1), prev=idx>0?String(idx):'';
-      var dis=(!state.name||isLocked(prev))?'disabled':'';
-      var lk=state.name&&isLocked(prev)?' class="locked"':'';
+      var dis=(readOnly||!state.name||isLocked(prev))?'disabled':'';
+      var lk=(!readOnly&&state.name&&isLocked(prev))?' class="locked"':'';
       h+='<tr'+lk+'><td class="day">Day '+(idx+1)+'</td>'+
         '<td class="logf hrs"><input type="number" min="0" step="0.5" data-day="'+dn+'" data-f="p" value="'+esc(logVal(dn,"p"))+'" '+dis+'></td>'+
         '<td class="logf hrs"><input type="number" min="0" step="0.5" data-day="'+dn+'" data-f="a" value="'+esc(logVal(dn,"a"))+'" '+dis+'></td>'+
@@ -464,6 +536,44 @@ function renderLog(){
     }
   }
   return h+'</tbody></table>';
+}
+
+/* ----------------------------- OVERVIEW (graphs) ------------------------- */
+function tile(v,l){ return '<div class="ovtile"><div class="ovval">'+esc(String(v))+'</div><div class="ovlbl">'+esc(l)+'</div></div>'; }
+function donut(pct){
+  var r=52, c=2*Math.PI*r, off=c*(1-Math.max(0,Math.min(100,pct))/100);
+  var cls=pct>=66?'':pct>=33?' a':' r';
+  return '<svg viewBox="0 0 120 120" class="donut" aria-label="'+pct+'% complete">'+
+    '<circle cx="60" cy="60" r="'+r+'" class="dtrack"/>'+
+    '<circle cx="60" cy="60" r="'+r+'" class="dfill'+cls+'" stroke-dasharray="'+c.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'" transform="rotate(-90 60 60)"/>'+
+    '<text x="60" y="58" class="dnum">'+pct+'%</text><text x="60" y="76" class="dlbl">COMPLETE</text></svg>';
+}
+function computeStats(){
+  var p=0,pr=0,f=0,i;
+  for(i=1;i<=30;i++){ if(state.statuses[String(i)]==='Done')p++; if(state.statuses['P'+i]==='Done')pr++; }
+  for(i=1;i<=5;i++){ if(state.statuses['F'+i]==='Done')f++; }
+  var done=p+pr+f, pct=Math.round(done/65*100);
+  var logDays=0,conf=0,confN=0,act=0,plan=0;
+  for(i=1;i<=30;i++){
+    var e=state.logs[String(i)]||{}; var has=e.a||e.l||e.b||e.c;
+    if(has){ logDays++; var pv=parseFloat(e.p!=null&&e.p!==''?e.p:8); if(!isNaN(pv))plan+=pv; }
+    var av=parseFloat(e.a); if(!isNaN(av))act+=av;
+    var cv=parseFloat(e.c); if(!isNaN(cv)){ conf+=cv; confN++; }
+  }
+  return {p:p,pr:pr,f:f,done:done,pct:pct,logDays:logDays,avgConf:confN?conf/confN:0,act:act,plan:plan};
+}
+function renderOverview(){
+  var s=computeStats();
+  function seg(lbl,d,n){ var w=Math.round(d/n*100); return '<div class="ovseg"><div class="ovseglbl">'+lbl+' <b>'+d+'/'+n+'</b> · '+w+'%</div><div class="bar"><span style="width:'+w+'%"></span></div></div>'; }
+  return '<div class="overview">'+
+    donut(s.pct)+
+    '<div class="ovsegs">'+seg('6-Week Plan',s.p,30)+seg('Project Build',s.pr,30)+seg('Final Project',s.f,5)+'</div>'+
+    '<div class="ovtiles">'+
+      tile(s.done+'/65','Items done')+
+      tile(s.logDays+'/30','Days logged')+
+      tile(s.avgConf?s.avgConf.toFixed(1):'–','Avg confidence')+
+      tile(s.act+'/'+s.plan+'h','Actual vs planned')+
+    '</div></div>';
 }
 
 function renderResources(){
@@ -479,11 +589,14 @@ function renderResources(){
 }
 
 function render(){
-  var v=document.getElementById('view');
+  var v=document.getElementById('view'), ov=document.getElementById('overview');
+  if(admin.mode==='dash'){ v.innerHTML=renderDash(); ov.style.display='none'; ov.innerHTML=''; return; }
+  if(state.name){ ov.style.display=''; ov.innerHTML=renderOverview(); } else { ov.style.display='none'; ov.innerHTML=''; }
   if(state.tab==='plan') v.innerHTML=renderPlan();
   else if(state.tab==='project') v.innerHTML=renderProject();
   else if(state.tab==='final') v.innerHTML=renderFinal();
   else if(state.tab==='log') v.innerHTML=renderLog();
+  else if(state.tab==='rating') v.innerHTML=renderRating();
   else v.innerHTML=renderResources();
   updateMeter();
 }
@@ -513,10 +626,16 @@ function writeCache(name){
 }
 
 function loadTrainee(name){
+  admin.mode=null; admin.sel=null; readOnly=false;
+  document.getElementById('adminBar').style.display='none';
+  document.getElementById('ratingTab').style.display='none';
+  document.getElementById('tabs').style.display='';
+  document.getElementById('meter').style.display='';
+  document.getElementById('timeline').style.display='flex';
   state.name=name;
   var cached=readCache(name);
   state.statuses=cached.statuses; state.logs=cached.logs;
-  if(name) setSignedIn(name);
+  if(name){ setSignedIn(name); if(!API_URL || effPw(name)) showRules(); } // rules on every dev login/refresh
   render();
   if(!API_URL || !name) return;
   var pw=effPw(name);
@@ -549,6 +668,13 @@ function persist(){
 
 /* ----------------------------- EVENTS ------------------------------------ */
 document.getElementById('view').addEventListener('click',function(e){
+  var rm=e.target.closest('[data-remove]'); if(rm){ removeDev(rm.getAttribute('data-remove')); return; }
+  var gen=e.target.closest('.genbtn'); if(gen){ document.getElementById('ndPw').value=genPw(); return; }
+  var add=e.target.closest('.adddevbtn'); if(add){ addDev(); return; }
+  var dis=e.target.closest('[data-dismiss]'); if(dis){ admin.notice=''; render(); return; }
+  var card=e.target.closest('[data-open]'); if(card){ openDetail(card.getAttribute('data-open')); return; }
+  var sv=e.target.closest('.savebtn'); if(sv){ saveRating(sv.closest('.ratebox')); return; }
+  if(readOnly) return; // admin viewing a trainee — statuses are read-only
   var b=e.target.closest('button.chip'); if(!b||b.disabled) return;
   var key=b.getAttribute('data-key'); if(!key) return;
   var cur=state.statuses[key]||'Not started';
@@ -574,10 +700,14 @@ document.getElementById('tabs').addEventListener('click',function(e){
 
 /* ----------------------------- SIGN IN ----------------------------------- */
 function setSignedIn(name){
-  var w=document.getElementById('whoName'); w.textContent=name; w.removeAttribute('data-admin');
+  var w=document.getElementById('whoName'); w.textContent=pretty(name); w.removeAttribute('data-admin');
   document.getElementById('whobar').style.display='';
 }
 function hideWho(){ document.getElementById('whobar').style.display='none'; }
+// Mandatory ground-rules banner — shown to every dev on each login / refresh.
+function showRules(){ document.getElementById('rules').classList.remove('hide'); }
+function hideRules(){ document.getElementById('rules').classList.add('hide'); }
+document.getElementById('rulesOk').addEventListener('click',hideRules);
 function showLogin(prefillId,msg){
   document.getElementById('loginId').value=prefillId||'';
   document.getElementById('loginPw').value='';
@@ -588,6 +718,7 @@ function showLogin(prefillId,msg){
 function hideLogin(){ document.getElementById('login').classList.add('hide'); }
 function afterLogin(id){
   hideLogin();
+  saveSession({role:'user',id:id});
   var url=new URL(location.href); url.searchParams.set('name',id); history.replaceState(null,'',url);
   loadTrainee(id);
 }
@@ -608,17 +739,23 @@ function doLogin(){
     }).catch(function(){ err.textContent='Network error — check your connection.'; });
 }
 function loginAsAdmin(pw){
-  try{ sessionStorage.setItem('meanplan:adminpw',pw); }catch(e){}
+  setAdminPw(pw); saveSession({role:'admin'});
   hideLogin();
   var w=document.getElementById('whoName'); w.textContent='Admin — all trainees'; w.setAttribute('data-admin','1');
   document.getElementById('whobar').style.display='';
-  adminOv.classList.remove('hide');
-  loadAdmin(pw);
+  loadAdminDash(pw);
 }
 function signOut(){
   if(state.name) clearPw(state.name);
-  try{ sessionStorage.removeItem('meanplan:adminpw'); }catch(e){}
-  state.name=''; state.statuses={}; state.logs={};
+  clearAdminPw(); clearSession();
+  admin.mode=null; admin.sel=null; readOnly=false;
+  state.name=''; state.statuses={}; state.logs={}; state.tab='plan';
+  document.getElementById('adminBar').style.display='none';
+  document.getElementById('ratingTab').style.display='none';
+  document.getElementById('tabs').style.display='';
+  document.getElementById('meter').style.display='';
+  document.getElementById('timeline').style.display='none';
+  setActiveTab('plan');
   hideWho(); setSave('','');
   var url=new URL(location.href); url.searchParams.delete('name'); history.replaceState(null,'',url);
   render(); showLogin('','');
@@ -628,96 +765,147 @@ document.getElementById('loginPw').addEventListener('keydown',function(e){ if(e.
 document.getElementById('loginId').addEventListener('keydown',function(e){ if(e.key==='Enter') doLogin(); });
 document.getElementById('signout').addEventListener('click',signOut);
 
-/* ----------------------------- ADMIN PANEL ------------------------------- */
-var adminOv=document.getElementById('admin');
-var adminData=[], adminSel=null, adminTab='progress';
+/* -------------------- ADMIN (inline, full-page) -------------------------- */
+// Friendly display name from a login id (email → "Priyanshu Mishra"); non-emails shown as-is.
+function pretty(id){
+  id=String(id||''); var at=id.indexOf('@');
+  if(at<1) return id;
+  return id.slice(0,at).split(/[._-]+/).filter(Boolean)
+    .map(function(w){ return w.charAt(0).toUpperCase()+w.slice(1); }).join(' ');
+}
 function segStr(o){ return o ? (o.done+'/'+o.n) : '–'; }
 function stars(n){ n=parseInt(n,10)||0; var s=''; for(var i=1;i<=5;i++) s+=(i<=n?'★':'☆'); return s; }
 function scoreClass(s){ return s>=75?'g':s>=45?'a':'r'; }
-
-// Reopen the panel by clicking the "Admin — all trainees" label.
-document.getElementById('whoName').addEventListener('click',function(){
-  var sp=getAdminPw(); if(sp){ adminOv.classList.remove('hide'); loadAdmin(sp); }
-});
-document.getElementById('adminX').addEventListener('click',function(){ adminOv.classList.add('hide'); });
-document.getElementById('adminGo').addEventListener('click',function(){ loadAdmin(document.getElementById('adminPw').value); });
-document.getElementById('adminPw').addEventListener('keydown',function(e){ if(e.key==='Enter') loadAdmin(document.getElementById('adminPw').value); });
-document.getElementById('adminBack').addEventListener('click',showDashboard);
-
-function loadAdmin(pw){
-  var err=document.getElementById('adminErr'), c=document.getElementById('adminContent');
-  err.textContent='';
-  if(!API_URL){ err.textContent='Cloud storage not set up yet (see README Part B).'; return; }
-  c.innerHTML='<p style="padding:16px;color:#5f6368">Loading…</p>';
-  fetch(API_URL+'?action=all&pw='+encodeURIComponent(pw)).then(function(r){return r.json();})
-    .then(function(d){
-      if(!d || d.error){ c.innerHTML=''; document.getElementById('adminAuth').style.display=''; err.textContent='Wrong admin password.'; return; }
-      try{ sessionStorage.setItem('meanplan:adminpw',pw); }catch(e){}
-      document.getElementById('adminAuth').style.display='none';
-      adminData=d.trainees||[]; showDashboard();
-    }).catch(function(){ c.innerHTML=''; err.textContent='Network error.'; });
+function setActiveTab(tab){
+  var tabs=document.getElementById('tabs');
+  [].forEach.call(tabs.querySelectorAll('button'),function(x){ x.classList.toggle('active',x.getAttribute('data-tab')===tab); });
 }
 
-function showDashboard(){
-  adminSel=null;
-  document.getElementById('adminBack').style.display='none';
-  document.getElementById('adminTitle').textContent='Trainees ('+adminData.length+')';
-  var c=document.getElementById('adminContent');
-  if(!adminData.length){ c.innerHTML='<p style="padding:16px;color:#5f6368">No trainees have saved progress yet.</p>'; return; }
-  var t=adminData.slice().sort(function(a,b){ return ((b.auto?b.auto.score:0))-((a.auto?a.auto.score:0)); });
-  var h='<div class="tgrid">';
+// Clicking the "Admin — all trainees" label returns to the dashboard.
+document.getElementById('whoName').addEventListener('click',function(){
+  if(getAdminPw()) backToDash();
+});
+document.getElementById('adminBack').addEventListener('click',backToDash);
+
+// Admin sign-in → load the all-trainees dashboard full-page into #view.
+function loadAdminDash(pw){
+  admin.mode='dash'; admin.sel=null; readOnly=false;
+  document.getElementById('tabs').style.display='none';
+  document.getElementById('adminBar').style.display='none';
+  document.getElementById('ratingTab').style.display='none';
+  document.getElementById('meter').style.display='none';
+  document.getElementById('timeline').style.display='none';
+  document.getElementById('save').textContent='';
+  var v=document.getElementById('view');
+  if(!API_URL){ v.innerHTML='<p style="padding:16px;color:#5f6368">Cloud storage not set up yet (see README Part B).</p>'; return; }
+  v.innerHTML='<p style="padding:16px;color:#5f6368">Loading trainees…</p>';
+  fetch(API_URL+'?action=all&pw='+encodeURIComponent(pw)).then(function(r){return r.json();})
+    .then(function(d){
+      if(!d || d.error){ signOut(); showLogin('','Admin session expired — please sign in again.'); return; }
+      admin.data=d.trainees||[]; render();
+    }).catch(function(){ v.innerHTML='<p style="padding:16px;color:#c5221f">Network error — retry.</p>'; });
+}
+
+function dispName(x){ return x.display ? x.display : pretty(x.name); }
+function renderDash(){
+  var t=(admin.data||[]).slice().sort(function(a,b){ return ((b.auto?b.auto.score:0))-((a.auto?a.auto.score:0)); });
+  var h='';
+  if(admin.notice) h+='<div class="notice">'+esc(admin.notice)+' <button class="linkbtn" data-dismiss>dismiss</button></div>';
+  // Manage devs — add / list / open / revoke
+  h+='<div class="manage"><h3>➕ Add a dev</h3>'+
+    '<div class="addrow">'+
+      '<input id="ndName" placeholder="Name (optional)" autocomplete="off">'+
+      '<input id="ndEmail" placeholder="Email — their login" autocomplete="off">'+
+      '<input id="ndPw" placeholder="Password" autocomplete="off">'+
+      '<button class="genbtn" type="button">Generate</button>'+
+      '<button class="adddevbtn">Add dev</button>'+
+    '</div><div class="addmsg" id="addMsg"></div></div>';
+  // Aggregate stats across all devs
+  var n=t.length, sumPct=0, sumScore=0, rated=0, totDone=0;
+  for(var a=0;a<n;a++){ sumPct+=Math.round((t[a].done||0)/65*100); sumScore+=(t[a].auto?t[a].auto.score:0); if(t[a].rating)rated++; totDone+=(t[a].done||0); }
+  h+='<div style="margin:16px 0 10px"><h2 style="font-size:18px">Devs ('+n+')</h2>'+
+    '<p style="font-size:13px;color:var(--muted)">Ranked by auto score. Open any card for their full board + rating; Remove revokes access (their data is kept).</p></div>';
+  if(!t.length) return h+'<p style="padding:8px 0;color:#5f6368">No devs yet — add one above.</p>';
+  h+='<div class="ovtiles admintiles">'+
+    tile(n,'Devs')+tile((n?Math.round(sumPct/n):0)+'%','Avg completion')+
+    tile(n?Math.round(sumScore/n):0,'Avg score')+tile(rated+'/'+n,'Rated')+tile(totDone,'Items done (all)')+'</div>';
+  h+='<div class="tgrid">';
   for(var i=0;i<t.length;i++){
     var x=t[i], pct=Math.round((x.done||0)/65*100), auto=x.auto?x.auto.score:0;
     h+='<div class="tcard" data-open="'+esc(x.name)+'">'+
-      '<div class="tcard-top"><span class="tname">'+esc(x.name)+'</span><span class="badge '+scoreClass(auto)+'">'+auto+'</span></div>'+
+      '<div class="tcard-top"><span class="tname">'+esc(dispName(x))+'</span><span class="badge '+scoreClass(auto)+'">'+auto+'</span></div>'+
+      '<div class="tmeta" style="font-size:11px">'+esc(x.name)+'</div>'+
       '<div class="bar"><span style="width:'+pct+'%"></span></div>'+
       '<div class="tmeta">'+(x.done||0)+'/65 done · '+pct+'%</div>'+
       '<div class="tmeta">Plan '+segStr(x.plan)+' · Proj '+segStr(x.project)+' · Final '+segStr(x.final)+' · Log '+(x.logDays||0)+'/30</div>'+
       '<div class="tmeta">Rating: <span class="stars">'+(x.rating?stars(x.rating):'<span style="color:#9aa0a6">not rated</span>')+'</span></div>'+
-      '<button class="opencta">Open detailed view ▸</button></div>';
+      '<div class="cardbtns"><button class="opencta">Open detailed view ▸</button>'+
+      '<button class="rmdev" data-remove="'+esc(x.name)+'" title="Revoke access (keeps data)">Remove</button></div></div>';
   }
-  c.innerHTML=h+'</div>';
+  return h+'</div>';
 }
 
+// Open a trainee full-page (read-only) with the same tabs a user sees + a Rating tab.
 function openDetail(name){
-  var x=null; for(var i=0;i<adminData.length;i++){ if(adminData[i].name===name) x=adminData[i]; }
+  var x=null; for(var i=0;i<admin.data.length;i++){ if(admin.data[i].name===name) x=admin.data[i]; }
   if(!x) return;
-  adminSel=x; adminTab='progress';
-  document.getElementById('adminBack').style.display='';
-  document.getElementById('adminTitle').textContent=name;
-  document.getElementById('adminContent').innerHTML='<p style="padding:16px;color:#5f6368">Loading '+esc(name)+'…</p>';
+  admin.mode='detail'; admin.sel=x; readOnly=true;
+  state.name=name; state.tab='plan'; state.statuses={}; state.logs={};
+  document.getElementById('adminBar').style.display='';
+  document.getElementById('adminWho').innerHTML=esc(pretty(name))+' <small>— '+esc(name)+' · read-only admin view</small>';
+  document.getElementById('tabs').style.display='';
+  document.getElementById('ratingTab').style.display='';
+  document.getElementById('meter').style.display='';
+  document.getElementById('timeline').style.display='flex';
+  setActiveTab('plan');
+  var v=document.getElementById('view'); v.innerHTML='<p style="padding:16px;color:#5f6368">Loading '+esc(name)+'…</p>';
   fetch(API_URL+'?name='+encodeURIComponent(name)+'&pw='+encodeURIComponent(getAdminPw())).then(function(r){return r.json();})
-    .then(function(d){ x._statuses=d.statuses||{}; x._logs=d.logs||{}; renderDetail(); })
-    .catch(function(){ document.getElementById('adminContent').innerHTML='<p style="padding:16px;color:#c5221f">Failed to load.</p>'; });
+    .then(function(d){ state.statuses=d.statuses||{}; state.logs=d.logs||{}; render(); })
+    .catch(function(){ v.innerHTML='<p style="padding:16px;color:#c5221f">Failed to load.</p>'; });
+}
+function backToDash(){
+  readOnly=false; state.name=''; state.statuses={}; state.logs={}; state.tab='plan';
+  loadAdminDash(getAdminPw()); // re-fetch so freshly saved ratings/scores show
+}
+function renderRating(){ return admin.sel ? detailRating(admin.sel) : ''; }
+
+/* -------------------- Manage devs (add / revoke) ------------------------- */
+function genPw(){
+  var cs='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789@#$%&';
+  var out=''; var a=new Uint32Array(14);
+  if(window.crypto&&crypto.getRandomValues) crypto.getRandomValues(a); else for(var j=0;j<14;j++) a[j]=Math.floor(Math.random()*4294967296);
+  for(var i=0;i<14;i++) out+=cs[a[i]%cs.length];
+  return out;
+}
+function addDev(){
+  var name=(document.getElementById('ndName').value||'').trim();
+  var email=(document.getElementById('ndEmail').value||'').trim();
+  var pw=document.getElementById('ndPw').value||'';
+  var msg=document.getElementById('addMsg');
+  if(!email||email.indexOf('@')<1){ msg.style.color='#c5221f'; msg.textContent='Enter a valid email.'; return; }
+  if(pw.length<4){ msg.style.color='#c5221f'; msg.textContent='Password must be at least 4 characters (or click Generate).'; return; }
+  msg.style.color='#5f6368'; msg.textContent='Adding…';
+  fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body:JSON.stringify({action:'addUser',email:email,newPw:pw,newName:name,pw:getAdminPw()})})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d&&d.ok){ admin.notice='✓ Added '+email+' — password: '+pw+'   (copy & share this now; it isn’t shown again)';
+        loadAdminDash(getAdminPw()); }
+      else { msg.style.color='#c5221f'; msg.textContent=(d&&d.error)||'Could not add — admin only.'; }
+    }).catch(function(){ msg.style.color='#c5221f'; msg.textContent='Network error.'; });
+}
+function removeDev(email){
+  admin.notice='Revoking '+email+'…';
+  fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body:JSON.stringify({action:'removeUser',email:email,pw:getAdminPw()})})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      admin.notice=(d&&d.ok) ? ('Revoked access for '+email+' — their progress is kept. Re-add them to restore access.')
+                             : ('Could not revoke '+email+' (admin only).');
+      loadAdminDash(getAdminPw());
+    }).catch(function(){ admin.notice='Network error revoking '+email+'.'; loadAdminDash(getAdminPw()); });
 }
 
-function renderDetail(){
-  var x=adminSel; if(!x) return;
-  function tb(id,label){ return '<button data-dt="'+id+'" class="'+(adminTab===id?'active':'')+'">'+label+'</button>'; }
-  var h='<div class="dtabs">'+tb('progress','Progress')+tb('log','Daily Log')+tb('rating','Rating')+'</div><div class="dbody">';
-  h+= adminTab==='rating' ? detailRating(x) : adminTab==='log' ? detailLog(x) : detailProgress(x);
-  document.getElementById('adminContent').innerHTML=h+'</div>';
-}
-function roChip(st){ st=st||'Not started'; return '<span class="chip '+CHIP_CLASS[st]+'" style="cursor:default">'+esc(st)+'</span>'; }
-function detailProgress(x){
-  var s=x._statuses||{};
-  function section(title,keys,labels){
-    var h='<h3 class="dsec">'+title+'</h3><table class="dtable"><tbody>';
-    for(var i=0;i<keys.length;i++){ h+='<tr><td class="dday">Day '+(i+1)+'</td><td>'+esc(labels[i])+'</td><td class="dstat">'+roChip(s[keys[i]])+'</td></tr>'; }
-    return h+'</tbody></table>';
-  }
-  var pk=[],pl=[],jk=[],jl=[],fk=[],fl=[],i;
-  for(i=1;i<=30;i++){ pk.push(String(i)); pl.push(CURRICULUM[i-1].topic); jk.push('P'+i); jl.push(PROJECT[i-1].out); }
-  for(i=1;i<=5;i++){ fk.push('F'+i); fl.push(FINAL_DAYS[i-1].focus); }
-  return section('6-Week Plan',pk,pl)+section('Project Build',jk,jl)+section('Final Project',fk,fl);
-}
-function detailLog(x){
-  var logs=x._logs||{}, rows='';
-  for(var i=1;i<=30;i++){ var e=logs[String(i)]||logs[i]||{}; if(!(e.a||e.l||e.b||e.c)) continue;
-    rows+='<tr><td class="dday">Day '+i+'</td><td>'+esc(e.a||'–')+'</td><td>'+esc(e.l||'')+'</td><td>'+esc(e.b||'')+'</td><td>'+esc(e.c||'')+'</td></tr>'; }
-  if(!rows) return '<p style="padding:12px;color:#5f6368">No daily log entries yet.</p>';
-  return '<table class="dtable"><thead><tr><th>Day</th><th>Actual hrs</th><th>Learned / built</th><th>Blockers</th><th>Conf</th></tr></thead><tbody>'+rows+'</tbody></table>';
-}
 function detailRating(x){
   var a=x.auto||{};
   var brk='<div class="autocard"><div class="autoscore '+scoreClass(a.score||0)+'">'+(a.score||0)+'<small>/100</small></div>'+
@@ -729,11 +917,6 @@ function detailRating(x){
     '<textarea data-f="notes" placeholder="Notes / feedback for this trainee">'+esc(x.notes||'')+'</textarea>'+
     '<div><button class="savebtn">Save rating</button><span class="rmsg"></span></div></div>';
 }
-document.getElementById('adminContent').addEventListener('click',function(e){
-  var card=e.target.closest('[data-open]'); if(card){ openDetail(card.getAttribute('data-open')); return; }
-  var dt=e.target.closest('[data-dt]'); if(dt){ adminTab=dt.getAttribute('data-dt'); renderDetail(); return; }
-  var sv=e.target.closest('.savebtn'); if(sv){ saveRating(sv.closest('.ratebox')); return; }
-});
 function saveRating(box){
   var name=box.getAttribute('data-name');
   var msg=box.querySelector('.rmsg'); msg.textContent='Saving…'; msg.style.color='#5f6368';
@@ -745,7 +928,7 @@ function saveRating(box){
     .then(function(r){return r.json();})
     .then(function(d){
       if(d&&d.ok){ msg.style.color='#137333'; msg.textContent='Saved ✓';
-        if(adminSel){ adminSel.rating=rating; adminSel.finalRating=finalRating; adminSel.notes=notes; }
+        if(admin.sel){ admin.sel.rating=rating; admin.sel.finalRating=finalRating; admin.sel.notes=notes; }
       } else { msg.style.color='#c5221f'; msg.textContent='Not saved (admin only)'; }
     })
     .catch(function(){ msg.style.color='#c5221f'; msg.textContent='Network error'; });
@@ -768,9 +951,18 @@ window.addEventListener('appinstalled',function(){ installBtn.style.display='non
 (function init(){
   var qs=new URLSearchParams(location.search);
   var name=(qs.get('name')||'').trim();
+  var sess=getSession();
   render();
-  if(name && effPw(name)) loadTrainee(name);  // remembered session → auto sign-in
-  else showLogin(name,'');                     // otherwise ask to sign in
+  // Stay signed in across refresh / next-day reopen until Sign out.
+  if(sess && sess.role==='admin' && getAdminPw()){
+    var w=document.getElementById('whoName'); w.textContent='Admin — all trainees'; w.setAttribute('data-admin','1');
+    document.getElementById('whobar').style.display='';
+    loadAdminDash(getAdminPw());
+    return;
+  }
+  var who = name || (sess && sess.role==='user' ? sess.id : '');
+  if(who && effPw(who)) loadTrainee(who);   // remembered session → auto sign-in
+  else showLogin(who,'');                    // otherwise ask to sign in
 })();
 </script>
 </body>

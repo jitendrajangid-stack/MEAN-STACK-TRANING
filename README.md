@@ -101,8 +101,36 @@ per trainee, alongside statuses.
   **Done** (independently for Plan, Project Build, Final Project; the Daily Log row unlocks with
   its plan day). Un-marking an earlier day re-locks the later ones.
 
+## Automated Apps Script deploy (clasp)
+Deploy `Code.gs` from the terminal to the **same `/exec` URL** — no more copy-paste + Manage
+deployments. Uses `clasp` (Apps Script CLI). Scoped to this repo via `.clasp.json` (this
+script's id), like an SSH remote; auth is your Google account (one login).
+
+One-time:
+1. Turn on the Apps Script API: <https://script.google.com/home/usersettings>
+2. `npx --yes @google/clasp@2 login`  (opens Google OAuth in your browser)
+3. Get the **Script ID**: Apps Script editor → ⚙ Project Settings → *IDs*. Create `.clasp.json`
+   (git-excluded) in this folder:
+   ```json
+   { "scriptId": "YOUR_SCRIPT_ID", "rootDir": ".", "fileExtension": "gs" }
+   ```
+4. Get the **web-app deployment id**: `npx @google/clasp@2 deployments` → copy the id of the
+   web-app deployment (the one behind your `/exec` URL). Put it in `deploy-gs.sh` or export it:
+   `export GS_DEPLOYMENT_ID=AKfyc...`
+
+Then every deploy is just:
+```bash
+./deploy-gs.sh          # clasp push + clasp deploy -i <id>  → same /exec URL
+```
+Notes:
+- `.claspignore` makes clasp push **only** `Code.gs` + `appsscript.json` (never the web app).
+- First run: `npx @google/clasp@2 pull` once to fetch the real `appsscript.json` manifest, so
+  the push doesn't change your web-app access settings (keep **Anyone / Execute as me**).
+- `.clasprc.json` (auth) and `.clasp.json` (script id) are git-excluded — never published.
+- `gcloud` is **not** used here — Apps Script deploys go through `clasp`, not the GCP CLI.
+
 ## Notes
 - **Local mode** (`API_URL = ""`): fully usable, but progress is per-browser only.
 - With the Sheet backend, `localStorage` is still used as an offline cache, so a
   dropped connection never loses a click — it syncs on the next save.
-- Change the training start date via `var START_DATE` in `index.html` (weekends are skipped automatically).
+- Scheduling is progress-driven (no calendar dates); the Final Project unlocks on **31 Aug 2026**.

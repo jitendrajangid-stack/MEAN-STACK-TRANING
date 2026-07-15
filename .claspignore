@@ -1,0 +1,18 @@
+# Push ONLY the Apps Script files (Code.gs + appsscript.json).
+# Everything else here is the web app / docs and must NOT go to Apps Script.
+index.html
+sw.js
+manifest.webmanifest
+*.png
+README.md
+AGENTS.md
+LEARNINGS.md
+CLAUDE.md
+CORE.md
+plan.txt
+progress.txt
+deploy-gs.sh
+.claspignore
+.clasp.json
+.git/**
+node_modules/**

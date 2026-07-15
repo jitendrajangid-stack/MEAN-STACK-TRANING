@@ -63,6 +63,33 @@ function countSection_(statuses, prefix, n) {
   return { done: done, ip: ip, n: n };
 }
 
+// Auto performance score (0-100) from the trainee's own work in the app.
+function autoScore_(statuses, logs) {
+  var done = 0, k;
+  for (k in statuses) { if (statuses[k] === 'Done') done++; }
+  var completion = done / 65;
+  var logDays = 0, actual = 0, planned = 0, doneLogged = 0;
+  for (var i = 1; i <= 30; i++) {
+    var e = logs[i] || logs[String(i)] || {};
+    var has = !!(e.a || e.l || e.b || e.c);
+    if (has) {
+      logDays++;
+      var p = parseFloat(e.p != null && e.p !== '' ? e.p : 8); if (!isNaN(p)) planned += p;
+      if (statuses[String(i)] === 'Done') doneLogged++;
+    }
+    var a = parseFloat(e.a); if (!isNaN(a)) actual += a;
+  }
+  var consistency = logDays / 30;
+  var hours = planned > 0 ? Math.min(1, actual / planned) : 0;
+  var follow = logDays > 0 ? doneLogged / logDays : 0;
+  var score = Math.round(100 * (0.4 * completion + 0.25 * consistency + 0.2 * hours + 0.15 * follow));
+  return {
+    score: score, logDays: logDays,
+    completion: Math.round(completion * 100), consistency: Math.round(consistency * 100),
+    hours: Math.round(hours * 100), follow: Math.round(follow * 100)
+  };
+}
+
 function blobAt_(sh, row) {
   try { return JSON.parse(sh.getRange(row, 6).getValue()) || {}; } catch (e) { return {}; }
 }
@@ -72,20 +99,38 @@ function allTrainees_() {
   var sh = sheet_();
   var last = sh.getLastRow();
   if (last < 2) return [];
-  var rows = sh.getRange(2, 1, last - 1, 6).getValues(); // Name, Done, InProgress, Left, Updated, Data
+  var rows = sh.getRange(2, 1, last - 1, 9).getValues(); // A..I incl. rating cols
   var out = [];
   for (var i = 0; i < rows.length; i++) {
     if (!rows[i][0]) continue;
-    var st = statusesOf_(safeParse_(rows[i][5]));
-    var logs = (safeParse_(rows[i][5]).logs) || {};
-    var logDays = 0; for (var k in logs) { var e = logs[k] || {}; if (e.a || e.l || e.b || e.c) logDays++; }
+    var blob = safeParse_(rows[i][5]);
+    var st = statusesOf_(blob);
+    var logs = blob.logs || {};
+    var a = autoScore_(st, logs);
     out.push({
       name: rows[i][0], done: rows[i][1], ip: rows[i][2], left: rows[i][3], updated: rows[i][4],
       plan: countSection_(st, '', 30), project: countSection_(st, 'P', 30), final: countSection_(st, 'F', 5),
-      logDays: logDays
+      logDays: a.logDays, auto: a,
+      rating: rows[i][6] || '', finalRating: rows[i][7] || '', notes: rows[i][8] || ''
     });
   }
   return out;
+}
+
+// Admin-only: save a performance rating for a trainee (cols 7-9, leaving their data intact).
+function saveRating_(name, body) {
+  if (!name) return json_({ ok: false, error: 'name required' });
+  var lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  try {
+    var sh = sheet_();
+    var row = findRow_(sh, name);
+    if (row < 0) { sh.appendRow([name, 0, 0, TOTAL_ITEMS, new Date(), JSON.stringify({ statuses: {}, logs: {} })]); row = sh.getLastRow(); }
+    sh.getRange(row, 7, 1, 3).setValues([[body.rating || '', body.finalRating || '', body.notes || '']]);
+  } finally {
+    lock.releaseLock();
+  }
+  return json_({ ok: true });
 }
 
 function safeParse_(s) { try { return JSON.parse(s) || {}; } catch (e) { return {}; } }
@@ -95,7 +140,7 @@ function sheet_() {
   var sh = ss.getSheetByName('Progress');
   if (!sh) {
     sh = ss.insertSheet('Progress');
-    sh.appendRow(['Name', 'Done', 'InProgress', 'Left', 'Updated', 'Data(JSON)']);
+    sh.appendRow(['Name', 'Done', 'InProgress', 'Left', 'Updated', 'Data(JSON)', 'AdminRating', 'FinalRating', 'AdminNotes']);
     sh.setFrozenRows(1);
   }
   return sh;
@@ -227,6 +272,10 @@ function doPost(e) {
     return json_({ ok: false, error: 'bad json' });
   }
   var name = (body.name || '').trim();
+  if (body.action === 'rate') {                        // admin sets a performance rating
+    if (auth_('', body.pw) !== 'admin') return json_({ error: 'auth' });
+    return saveRating_(name, body);
+  }
   if (!auth_(name, body.pw)) return json_({ error: 'auth' });
   var statuses = body.statuses || {};
   var logs = body.logs || {};

@@ -79,7 +79,8 @@
   .foot{margin-top:18px;font-size:12px;color:var(--muted);text-align:center}
   .byline{margin-top:10px;font-size:11.5px;color:var(--muted)}
   .byline a{color:var(--accent);font-weight:600}
-  #installBtn{margin-left:8px}
+  #installBtn{margin-left:auto}
+  #whoName[data-admin]{cursor:pointer;text-decoration:underline}
   .ghostbtn{margin-left:auto;font:inherit;font-size:13px;padding:8px 14px;border:1px solid var(--line);background:#fff;color:var(--accent);border-radius:8px;cursor:pointer;font-weight:600}
   .ghostbtn:hover{background:#f3f8f4}
   .overlay{position:fixed;inset:0;background:rgba(20,30,25,.45);display:flex;align-items:center;justify-content:center;z-index:1000;padding:16px}
@@ -88,6 +89,41 @@
   #admin .modal{max-width:860px}
   table.roster small{color:var(--muted);font-size:11px}
   table.roster td.seg{text-align:center;font-variant-numeric:tabular-nums}
+  .adminpanel{background:#fff;border-radius:14px;width:100%;max-width:1000px;max-height:92vh;display:flex;flex-direction:column;box-shadow:0 12px 40px rgba(0,0,0,.25)}
+  .adminhead{display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line)}
+  .adminhead h2{font-size:17px;margin:0;flex:1}
+  .adminhead .x{position:static}
+  #adminBody{overflow:auto;padding:16px 18px}
+  .tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+  .tcard{border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px}
+  .tcard-top{display:flex;align-items:center;justify-content:space-between}
+  .tname{font-weight:700}
+  .tmeta{font-size:12px;color:var(--muted)}
+  .badge{font-weight:700;font-size:13px;color:#fff;border-radius:999px;padding:3px 10px}
+  .badge.g,.autoscore.g{background:#137333} .badge.a,.autoscore.a{background:#b8860b} .badge.r,.autoscore.r{background:#c5221f}
+  .opencta{margin-top:4px;font:inherit;font-size:12.5px;font-weight:600;border:1px solid var(--line);background:#f8f9fa;color:var(--accent);border-radius:8px;padding:7px;cursor:pointer}
+  .opencta:hover{background:#eef6f0}
+  .dtabs{display:flex;gap:2px;border-bottom:2px solid var(--line);margin-bottom:14px}
+  .dtabs button{font:inherit;font-size:13px;padding:9px 16px;border:none;background:transparent;color:var(--muted);cursor:pointer;border-radius:8px 8px 0 0}
+  .dtabs button.active{color:var(--accent);font-weight:700;box-shadow:inset 0 -3px 0 var(--accent)}
+  .dsec{font-size:13px;color:#0f5f2b;margin:14px 0 6px;font-weight:700}
+  table.dtable{width:100%;border-collapse:collapse}
+  table.dtable th,table.dtable td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--line);font-size:12.5px;vertical-align:top}
+  table.dtable th{color:var(--muted);font-size:11.5px}
+  td.dday{white-space:nowrap;font-weight:600;width:1%}
+  td.dstat{text-align:right;white-space:nowrap;width:1%}
+  .autocard{display:flex;align-items:center;gap:16px;background:#f8f9fa;border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:14px}
+  .autoscore{font-size:30px;font-weight:800;color:#fff;border-radius:12px;padding:8px 16px}
+  .autoscore small{font-size:13px;font-weight:600;opacity:.85}
+  .autobits{font-size:12.5px;color:var(--muted);line-height:1.6}
+  .ratebox{background:#f8f9fa;border:1px solid var(--line);border-radius:8px;padding:12px}
+  .ratebox .pbreak{font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.6}
+  .ratebox .rrow{display:flex;gap:16px;flex-wrap:wrap;align-items:center;font-size:13px;font-weight:600;margin-bottom:8px}
+  .ratebox select{font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:6px}
+  .ratebox textarea{width:100%;min-height:52px;font:inherit;padding:8px;border:1px solid var(--line);border-radius:6px;resize:vertical;margin-bottom:8px}
+  .ratebox .savebtn{font:inherit;font-weight:600;padding:7px 14px;border:none;border-radius:7px;background:var(--accent);color:#fff;cursor:pointer}
+  .ratebox .rmsg{font-size:12px;color:var(--dn-fg);margin-left:8px}
+  .stars{color:#f5a623;letter-spacing:1px}
   .modal h2{font-size:17px;margin-bottom:6px}
   .modal p{font-size:13px;color:var(--muted);margin-bottom:14px}
   .modal .row{display:flex;gap:8px;flex-wrap:wrap}
@@ -114,7 +150,6 @@
         <p>6 weeks &middot; 30 days &middot; MongoDB &middot; Express &middot; Angular &middot; Node</p>
       </div>
     </div>
-    <button id="adminBtn" class="ghostbtn">Admin view</button>
     <button id="installBtn" class="ghostbtn" style="display:none">⬇ Install app</button>
   </header>
 
@@ -159,18 +194,22 @@
   </div>
 </div>
 
-<!-- Admin overview -->
+<!-- Admin panel -->
 <div class="overlay hide" id="admin">
-  <div class="modal">
-    <button class="x" id="adminX" title="Close">&times;</button>
-    <h2>All trainees</h2>
-    <p id="adminMsg">Enter the admin password to see everyone's progress.</p>
-    <div class="row" id="adminAuth">
-      <input type="password" id="adminPw" placeholder="Admin password" autocomplete="off">
-      <button class="primary" id="adminGo">Show</button>
+  <div class="adminpanel">
+    <div class="adminhead">
+      <button class="linkbtn" id="adminBack" style="display:none">← All trainees</button>
+      <h2 id="adminTitle">Trainees</h2>
+      <button class="x" id="adminX" title="Close">&times;</button>
     </div>
-    <div class="err" id="adminErr"></div>
-    <div id="adminList"></div>
+    <div id="adminBody">
+      <div class="row" id="adminAuth" style="display:none">
+        <input type="password" id="adminPw" placeholder="Admin password" autocomplete="off">
+        <button class="primary" id="adminGo">Show</button>
+      </div>
+      <div class="err" id="adminErr"></div>
+      <div id="adminContent"></div>
+    </div>
   </div>
 </div>
 
@@ -362,37 +401,43 @@ function chip(key,prevKey){
 }
 
 function renderPlan(){
-  var h='<table><thead><tr><th>Day</th><th>Date</th><th>Topic</th><th>Sub-tasks / concepts</th><th>Learn · Good</th><th>Learn · Better</th><th>Hands-on exercise</th><th>Status</th></tr></thead><tbody>';
+  var h='<table><thead><tr><th>Day</th><th>Topic</th><th>Sub-tasks / concepts</th><th>Learn · Good</th><th>Learn · Better</th><th>Hands-on exercise</th><th>Status</th></tr></thead><tbody>';
   for(var w=0;w<6;w++){
-    h+='<tr class="week"><td colspan="8">'+esc(WEEKS[w].title)+'<span class="sub">'+esc(WEEKS[w].subtitle)+'</span></td></tr>';
+    h+='<tr class="week"><td colspan="7">'+esc(WEEKS[w].title)+'<span class="sub">'+esc(WEEKS[w].subtitle)+'</span></td></tr>';
     for(var i=0;i<5;i++){
       var idx=w*5+i, c=CURRICULUM[idx], dn=idx+1, prev=dn>1?String(dn-1):'';
       var lk=state.name&&isLocked(prev)?' class="locked"':'';
-      h+='<tr'+lk+'><td class="day">Day '+dn+'</td><td class="date">'+esc(DATES[idx])+'</td><td class="topic">'+esc(c.topic)+'</td><td class="sub">'+esc(c.sub)+'</td><td class="learn">'+learnCell(c.gt,c.gu)+'</td><td class="learn">'+learnCell(c.bt,c.bu)+'</td><td>'+esc(c.ex)+'</td><td class="status-cell">'+chip(String(dn),prev)+'</td></tr>';
+      h+='<tr'+lk+'><td class="day">Day '+dn+'</td><td class="topic">'+esc(c.topic)+'</td><td class="sub">'+esc(c.sub)+'</td><td class="learn">'+learnCell(c.gt,c.gu)+'</td><td class="learn">'+learnCell(c.bt,c.bu)+'</td><td>'+esc(c.ex)+'</td><td class="status-cell">'+chip(String(dn),prev)+'</td></tr>';
     }
   }
   return h+'</tbody></table>';
 }
 
 function renderProject(){
-  var h='<table><thead><tr><th>Day</th><th>Date</th><th>Project build task</th><th>Deliverable</th><th>Status</th></tr></thead><tbody>';
+  var h='<table><thead><tr><th>Day</th><th>Project build task</th><th>Deliverable</th><th>Status</th></tr></thead><tbody>';
   for(var w=0;w<6;w++){
-    h+='<tr class="week"><td colspan="5">'+esc(PROJECT_PHASES[w])+'</td></tr>';
+    h+='<tr class="week"><td colspan="4">'+esc(PROJECT_PHASES[w])+'</td></tr>';
     for(var i=0;i<5;i++){
       var idx=w*5+i, c=PROJECT[idx], prev=idx>0?('P'+idx):'';
       var lk=state.name&&isLocked(prev)?' class="locked"':'';
-      h+='<tr'+lk+'><td class="day">Day '+(idx+1)+'</td><td class="date">'+esc(DATES[idx])+'</td><td>'+esc(c.task)+'</td><td class="topic">'+esc(c.out)+'</td><td class="status-cell">'+chip('P'+(idx+1),prev)+'</td></tr>';
+      h+='<tr'+lk+'><td class="day">Day '+(idx+1)+'</td><td>'+esc(c.task)+'</td><td class="topic">'+esc(c.out)+'</td><td class="status-cell">'+chip('P'+(idx+1),prev)+'</td></tr>';
     }
   }
   return h+'</tbody></table>';
 }
 
+var FINAL_UNLOCK = new Date(2026,7,31); // 31 Aug 2026 (month is 0-based)
+function finalDateLocked(){ return new Date() < FINAL_UNLOCK; }
 function renderFinal(){
-  var h='<table><thead><tr><th colspan="6" style="background:#eef6f0;color:#0f5f2b;font-size:13px">Final Project (5-day): RecipeVault — a MEAN recipe manager</th></tr><tr><th>Day</th><th>Date</th><th>Focus</th><th>What to build</th><th>Output</th><th>Status</th></tr></thead><tbody>';
+  var dateLocked=finalDateLocked();
+  var h='<table><thead><tr><th colspan="5" style="background:#eef6f0;color:#0f5f2b;font-size:13px">Final Project (5-day): RecipeVault — a MEAN recipe manager</th></tr><tr><th>Day</th><th>Focus</th><th>What to build</th><th>Output</th><th>Status</th></tr></thead><tbody>';
+  if(dateLocked) h+='<tr><td colspan="5" style="background:#fff8e1;color:#8a6d00;padding:10px 12px">🔒 The Final Project unlocks on <b>31 Aug 2026</b>. Focus on the 6-Week Plan &amp; Project Build until then.</td></tr>';
   for(var i=0;i<FINAL_DAYS.length;i++){
     var d=FINAL_DAYS[i], prev=i>0?('F'+i):'';
-    var lk=state.name&&isLocked(prev)?' class="locked"':'';
-    h+='<tr'+lk+'><td class="day">Day '+(i+1)+'</td><td class="date">'+esc(FINAL_DATES[i])+'</td><td class="topic">'+esc(d.focus)+'</td><td class="sub">'+esc(d.build)+'</td><td>'+esc(d.out)+'</td><td class="status-cell">'+chip('F'+(i+1),prev)+'</td></tr>';
+    var locked=dateLocked||(state.name&&isLocked(prev));
+    var lk=locked?' class="locked"':'';
+    var cell=dateLocked?'<button class="chip lock" disabled title="Unlocks 31 Aug 2026">🔒 Locked</button>':chip('F'+(i+1),prev);
+    h+='<tr'+lk+'><td class="day">Day '+(i+1)+'</td><td class="topic">'+esc(d.focus)+'</td><td class="sub">'+esc(d.build)+'</td><td>'+esc(d.out)+'</td><td class="status-cell">'+cell+'</td></tr>';
   }
   return h+'</tbody></table>';
 }
@@ -403,14 +448,14 @@ function logVal(day,f){
   return f==='p' ? '8' : ''; // planned hrs defaults to 8
 }
 function renderLog(){
-  var h='<table><thead><tr><th>Day</th><th>Date</th><th>Planned hrs</th><th>Actual hrs</th><th>What I learned / built</th><th>Blockers & questions</th><th>Confidence 1-5</th></tr></thead><tbody>';
+  var h='<table><thead><tr><th>Day</th><th>Planned hrs</th><th>Actual hrs</th><th>What I learned / built</th><th>Blockers & questions</th><th>Confidence 1-5</th></tr></thead><tbody>';
   for(var w=0;w<6;w++){
-    h+='<tr class="week"><td colspan="7">'+esc(WEEKS[w].title)+'</td></tr>';
+    h+='<tr class="week"><td colspan="6">'+esc(WEEKS[w].title)+'</td></tr>';
     for(var i=0;i<5;i++){
       var idx=w*5+i, dn=String(idx+1), prev=idx>0?String(idx):'';
       var dis=(!state.name||isLocked(prev))?'disabled':'';
       var lk=state.name&&isLocked(prev)?' class="locked"':'';
-      h+='<tr'+lk+'><td class="day">Day '+(idx+1)+'</td><td class="date">'+esc(DATES[idx])+'</td>'+
+      h+='<tr'+lk+'><td class="day">Day '+(idx+1)+'</td>'+
         '<td class="logf hrs"><input type="number" min="0" step="0.5" data-day="'+dn+'" data-f="p" value="'+esc(logVal(dn,"p"))+'" '+dis+'></td>'+
         '<td class="logf hrs"><input type="number" min="0" step="0.5" data-day="'+dn+'" data-f="a" value="'+esc(logVal(dn,"a"))+'" '+dis+'></td>'+
         '<td class="logf"><textarea rows="1" data-day="'+dn+'" data-f="l" '+dis+'>'+esc(logVal(dn,"l"))+'</textarea></td>'+
@@ -529,7 +574,7 @@ document.getElementById('tabs').addEventListener('click',function(e){
 
 /* ----------------------------- SIGN IN ----------------------------------- */
 function setSignedIn(name){
-  document.getElementById('whoName').textContent=name;
+  var w=document.getElementById('whoName'); w.textContent=name; w.removeAttribute('data-admin');
   document.getElementById('whobar').style.display='';
 }
 function hideWho(){ document.getElementById('whobar').style.display='none'; }
@@ -565,7 +610,7 @@ function doLogin(){
 function loginAsAdmin(pw){
   try{ sessionStorage.setItem('meanplan:adminpw',pw); }catch(e){}
   hideLogin();
-  document.getElementById('whoName').textContent='Admin — all trainees';
+  var w=document.getElementById('whoName'); w.textContent='Admin — all trainees'; w.setAttribute('data-admin','1');
   document.getElementById('whobar').style.display='';
   adminOv.classList.remove('hide');
   loadAdmin(pw);
@@ -583,50 +628,127 @@ document.getElementById('loginPw').addEventListener('keydown',function(e){ if(e.
 document.getElementById('loginId').addEventListener('keydown',function(e){ if(e.key==='Enter') doLogin(); });
 document.getElementById('signout').addEventListener('click',signOut);
 
-/* ----------------------------- ADMIN VIEW -------------------------------- */
+/* ----------------------------- ADMIN PANEL ------------------------------- */
 var adminOv=document.getElementById('admin');
-document.getElementById('adminBtn').addEventListener('click',function(){
-  adminOv.classList.remove('hide');
-  var sp=''; try{sp=sessionStorage.getItem('meanplan:adminpw')||'';}catch(e){}
-  if(sp) loadAdmin(sp); else document.getElementById('adminPw').focus();
+var adminData=[], adminSel=null, adminTab='progress';
+function segStr(o){ return o ? (o.done+'/'+o.n) : '–'; }
+function stars(n){ n=parseInt(n,10)||0; var s=''; for(var i=1;i<=5;i++) s+=(i<=n?'★':'☆'); return s; }
+function scoreClass(s){ return s>=75?'g':s>=45?'a':'r'; }
+
+// Reopen the panel by clicking the "Admin — all trainees" label.
+document.getElementById('whoName').addEventListener('click',function(){
+  var sp=getAdminPw(); if(sp){ adminOv.classList.remove('hide'); loadAdmin(sp); }
 });
 document.getElementById('adminX').addEventListener('click',function(){ adminOv.classList.add('hide'); });
 document.getElementById('adminGo').addEventListener('click',function(){ loadAdmin(document.getElementById('adminPw').value); });
 document.getElementById('adminPw').addEventListener('keydown',function(e){ if(e.key==='Enter') loadAdmin(document.getElementById('adminPw').value); });
+document.getElementById('adminBack').addEventListener('click',showDashboard);
 
 function loadAdmin(pw){
-  var err=document.getElementById('adminErr'), list=document.getElementById('adminList');
+  var err=document.getElementById('adminErr'), c=document.getElementById('adminContent');
   err.textContent='';
   if(!API_URL){ err.textContent='Cloud storage not set up yet (see README Part B).'; return; }
-  list.innerHTML='Loading…';
+  c.innerHTML='<p style="padding:16px;color:#5f6368">Loading…</p>';
   fetch(API_URL+'?action=all&pw='+encodeURIComponent(pw)).then(function(r){return r.json();})
     .then(function(d){
-      if(!d || d.error){ list.innerHTML=''; err.textContent='Wrong admin password.'; return; }
+      if(!d || d.error){ c.innerHTML=''; document.getElementById('adminAuth').style.display=''; err.textContent='Wrong admin password.'; return; }
       try{ sessionStorage.setItem('meanplan:adminpw',pw); }catch(e){}
       document.getElementById('adminAuth').style.display='none';
-      document.getElementById('adminMsg').textContent='Click a name to open that board.';
-      renderRoster(d.trainees||[]);
-    }).catch(function(){ list.innerHTML=''; err.textContent='Network error.'; });
+      adminData=d.trainees||[]; showDashboard();
+    }).catch(function(){ c.innerHTML=''; err.textContent='Network error.'; });
 }
-function renderRoster(t){
-  var list=document.getElementById('adminList'), total=65;
-  if(!t.length){ list.innerHTML='<p style="padding:10px 0;color:#5f6368">No trainees have saved progress yet.</p>'; return; }
-  t.sort(function(a,b){ return (b.done||0)-(a.done||0); });
-  function seg(o){ return o ? (o.done+'/'+o.n) : '–'; }
-  var h='<table class="roster"><thead><tr><th>Trainee</th><th>Overall</th><th>Plan</th><th>Project</th><th>Final</th><th>Logged</th><th>Updated</th></tr></thead><tbody>';
+
+function showDashboard(){
+  adminSel=null;
+  document.getElementById('adminBack').style.display='none';
+  document.getElementById('adminTitle').textContent='Trainees ('+adminData.length+')';
+  var c=document.getElementById('adminContent');
+  if(!adminData.length){ c.innerHTML='<p style="padding:16px;color:#5f6368">No trainees have saved progress yet.</p>'; return; }
+  var t=adminData.slice().sort(function(a,b){ return ((b.auto?b.auto.score:0))-((a.auto?a.auto.score:0)); });
+  var h='<div class="tgrid">';
   for(var i=0;i<t.length;i++){
-    var x=t[i], done=x.done||0, pct=Math.round(done/total*100);
-    var link=location.pathname+'?name='+encodeURIComponent(x.name);
-    var up=''; try{ if(x.updated) up=new Date(x.updated).toLocaleDateString(); }catch(e){}
-    h+='<tr><td><a href="'+esc(link)+'">'+esc(x.name)+'</a></td>'+
-       '<td><div class="bar"><span style="width:'+pct+'%"></span></div><small>'+done+'/'+total+' · '+pct+'%</small></td>'+
-       '<td class="seg">'+seg(x.plan)+'</td>'+
-       '<td class="seg">'+seg(x.project)+'</td>'+
-       '<td class="seg">'+seg(x.final)+'</td>'+
-       '<td class="seg">'+(x.logDays||0)+'/30</td>'+
-       '<td><small>'+esc(up)+'</small></td></tr>';
+    var x=t[i], pct=Math.round((x.done||0)/65*100), auto=x.auto?x.auto.score:0;
+    h+='<div class="tcard" data-open="'+esc(x.name)+'">'+
+      '<div class="tcard-top"><span class="tname">'+esc(x.name)+'</span><span class="badge '+scoreClass(auto)+'">'+auto+'</span></div>'+
+      '<div class="bar"><span style="width:'+pct+'%"></span></div>'+
+      '<div class="tmeta">'+(x.done||0)+'/65 done · '+pct+'%</div>'+
+      '<div class="tmeta">Plan '+segStr(x.plan)+' · Proj '+segStr(x.project)+' · Final '+segStr(x.final)+' · Log '+(x.logDays||0)+'/30</div>'+
+      '<div class="tmeta">Rating: <span class="stars">'+(x.rating?stars(x.rating):'<span style="color:#9aa0a6">not rated</span>')+'</span></div>'+
+      '<button class="opencta">Open detailed view ▸</button></div>';
   }
-  list.innerHTML=h+'</tbody></table><p style="margin-top:10px;color:#5f6368;font-size:12px">Click a name to open that board (opens with your admin access).</p>';
+  c.innerHTML=h+'</div>';
+}
+
+function openDetail(name){
+  var x=null; for(var i=0;i<adminData.length;i++){ if(adminData[i].name===name) x=adminData[i]; }
+  if(!x) return;
+  adminSel=x; adminTab='progress';
+  document.getElementById('adminBack').style.display='';
+  document.getElementById('adminTitle').textContent=name;
+  document.getElementById('adminContent').innerHTML='<p style="padding:16px;color:#5f6368">Loading '+esc(name)+'…</p>';
+  fetch(API_URL+'?name='+encodeURIComponent(name)+'&pw='+encodeURIComponent(getAdminPw())).then(function(r){return r.json();})
+    .then(function(d){ x._statuses=d.statuses||{}; x._logs=d.logs||{}; renderDetail(); })
+    .catch(function(){ document.getElementById('adminContent').innerHTML='<p style="padding:16px;color:#c5221f">Failed to load.</p>'; });
+}
+
+function renderDetail(){
+  var x=adminSel; if(!x) return;
+  function tb(id,label){ return '<button data-dt="'+id+'" class="'+(adminTab===id?'active':'')+'">'+label+'</button>'; }
+  var h='<div class="dtabs">'+tb('progress','Progress')+tb('log','Daily Log')+tb('rating','Rating')+'</div><div class="dbody">';
+  h+= adminTab==='rating' ? detailRating(x) : adminTab==='log' ? detailLog(x) : detailProgress(x);
+  document.getElementById('adminContent').innerHTML=h+'</div>';
+}
+function roChip(st){ st=st||'Not started'; return '<span class="chip '+CHIP_CLASS[st]+'" style="cursor:default">'+esc(st)+'</span>'; }
+function detailProgress(x){
+  var s=x._statuses||{};
+  function section(title,keys,labels){
+    var h='<h3 class="dsec">'+title+'</h3><table class="dtable"><tbody>';
+    for(var i=0;i<keys.length;i++){ h+='<tr><td class="dday">Day '+(i+1)+'</td><td>'+esc(labels[i])+'</td><td class="dstat">'+roChip(s[keys[i]])+'</td></tr>'; }
+    return h+'</tbody></table>';
+  }
+  var pk=[],pl=[],jk=[],jl=[],fk=[],fl=[],i;
+  for(i=1;i<=30;i++){ pk.push(String(i)); pl.push(CURRICULUM[i-1].topic); jk.push('P'+i); jl.push(PROJECT[i-1].out); }
+  for(i=1;i<=5;i++){ fk.push('F'+i); fl.push(FINAL_DAYS[i-1].focus); }
+  return section('6-Week Plan',pk,pl)+section('Project Build',jk,jl)+section('Final Project',fk,fl);
+}
+function detailLog(x){
+  var logs=x._logs||{}, rows='';
+  for(var i=1;i<=30;i++){ var e=logs[String(i)]||logs[i]||{}; if(!(e.a||e.l||e.b||e.c)) continue;
+    rows+='<tr><td class="dday">Day '+i+'</td><td>'+esc(e.a||'–')+'</td><td>'+esc(e.l||'')+'</td><td>'+esc(e.b||'')+'</td><td>'+esc(e.c||'')+'</td></tr>'; }
+  if(!rows) return '<p style="padding:12px;color:#5f6368">No daily log entries yet.</p>';
+  return '<table class="dtable"><thead><tr><th>Day</th><th>Actual hrs</th><th>Learned / built</th><th>Blockers</th><th>Conf</th></tr></thead><tbody>'+rows+'</tbody></table>';
+}
+function detailRating(x){
+  var a=x.auto||{};
+  var brk='<div class="autocard"><div class="autoscore '+scoreClass(a.score||0)+'">'+(a.score||0)+'<small>/100</small></div>'+
+    '<div class="autobits"><b>Auto score</b> (from their work in the app)<br>Completion '+(a.completion||0)+'% · Consistency '+(a.consistency||0)+'% · Hours '+(a.hours||0)+'% · Follow-through '+(a.follow||0)+'%</div></div>';
+  function sel(f,v){ var o='<select data-f="'+f+'"><option value="">—</option>'; for(var i=1;i<=5;i++) o+='<option value="'+i+'"'+(String(v)===String(i)?' selected':'')+'>'+i+' ★</option>'; return o+'</select>'; }
+  return '<div class="ratebox" data-name="'+esc(x.name)+'">'+brk+
+    '<div class="rrow">Overall rating: '+sel('rating',x.rating)+'</div>'+
+    '<div class="rrow">Final Project rating (your review): '+sel('finalRating',x.finalRating)+'</div>'+
+    '<textarea data-f="notes" placeholder="Notes / feedback for this trainee">'+esc(x.notes||'')+'</textarea>'+
+    '<div><button class="savebtn">Save rating</button><span class="rmsg"></span></div></div>';
+}
+document.getElementById('adminContent').addEventListener('click',function(e){
+  var card=e.target.closest('[data-open]'); if(card){ openDetail(card.getAttribute('data-open')); return; }
+  var dt=e.target.closest('[data-dt]'); if(dt){ adminTab=dt.getAttribute('data-dt'); renderDetail(); return; }
+  var sv=e.target.closest('.savebtn'); if(sv){ saveRating(sv.closest('.ratebox')); return; }
+});
+function saveRating(box){
+  var name=box.getAttribute('data-name');
+  var msg=box.querySelector('.rmsg'); msg.textContent='Saving…'; msg.style.color='#5f6368';
+  var rating=box.querySelector('select[data-f="rating"]').value;
+  var finalRating=box.querySelector('select[data-f="finalRating"]').value;
+  var notes=box.querySelector('textarea[data-f="notes"]').value;
+  fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body:JSON.stringify({action:'rate',name:name,rating:rating,finalRating:finalRating,notes:notes,pw:getAdminPw()})})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d&&d.ok){ msg.style.color='#137333'; msg.textContent='Saved ✓';
+        if(adminSel){ adminSel.rating=rating; adminSel.finalRating=finalRating; adminSel.notes=notes; }
+      } else { msg.style.color='#c5221f'; msg.textContent='Not saved (admin only)'; }
+    })
+    .catch(function(){ msg.style.color='#c5221f'; msg.textContent='Network error'; });
 }
 
 /* ----------------------------- PWA (installable) ------------------------- */

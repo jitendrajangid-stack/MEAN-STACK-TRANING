@@ -88,5 +88,3 @@ A **Progress** tab appears in the Sheet with one row per trainee:
 - With the Sheet backend, `localStorage` is still used as an offline cache, so a
   dropped connection never loses a click — it syncs on the next save.
 - Change the training start date via `var START_DATE` in `index.html` (weekends are skipped automatically).
-# MEAN-STACK-TRANING
-# MEAN-STACK-TRANING

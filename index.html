@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MEAN Stack Training Plan</title>
+<style>
+  :root{
+    --accent:#188038; --bg:#f6f8f7; --card:#fff; --line:#e4e7e6; --ink:#202124; --muted:#5f6368;
+    --ns-bg:#f1f3f4; --ns-fg:#5f6368; --ip-bg:#fef7e0; --ip-fg:#996a00; --dn-bg:#e6f4ea; --dn-fg:#137333;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:Roboto,Arial,Helvetica,sans-serif;font-size:14px;line-height:1.45}
+  a{color:#1a73e8;text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1280px;margin:0 auto;padding:20px 16px 60px}
+
+  header.top{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-bottom:16px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{width:40px;height:40px;border-radius:9px;background:var(--accent);color:#fff;font-weight:700;font-size:22px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+  .brand h1{font-size:20px;font-weight:600;letter-spacing:-.2px}
+  .brand p{font-size:12px;color:var(--muted)}
+
+  .whobar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:16px}
+  .whobar label{font-weight:600;color:var(--muted);font-size:13px}
+  .whobar input{font:inherit;padding:8px 12px;border:1px solid var(--line);border-radius:8px;min-width:220px;outline:none}
+  .whobar input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(24,128,56,.15)}
+  .progress{margin-left:auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .save{font-size:12px;color:var(--muted);min-width:70px}
+  .save.ok{color:var(--dn-fg)} .save.err{color:#c5221f}
+  .meter{display:flex;gap:6px;font-size:12px}
+  .meter b{font-weight:600}
+  .pill{padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:600}
+  .pill.d{background:var(--dn-bg);color:var(--dn-fg)}
+  .pill.i{background:var(--ip-bg);color:var(--ip-fg)}
+  .pill.t{background:var(--ns-bg);color:var(--ns-fg)}
+
+  .hint{background:#fff8e1;border:1px solid #f6e2a8;color:#8a6d00;padding:8px 12px;border-radius:8px;font-size:12.5px;margin-bottom:14px}
+  .hint.hide{display:none}
+
+  nav.tabs{display:flex;flex-wrap:wrap;gap:2px;border-bottom:2px solid var(--line);margin-bottom:0}
+  nav.tabs button{font:inherit;font-size:13px;padding:10px 16px;border:none;background:transparent;color:var(--muted);cursor:pointer;border-radius:8px 8px 0 0}
+  nav.tabs button.active{color:var(--accent);font-weight:700;box-shadow:inset 0 -3px 0 var(--accent);background:#fff}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-top:none;border-radius:0 0 12px 12px;overflow:auto}
+  table{border-collapse:collapse;width:100%;min-width:820px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  thead th{position:sticky;top:0;background:#f8f9fa;font-size:12px;color:var(--muted);font-weight:600;z-index:1;white-space:nowrap}
+  tr.week td{background:#eef6f0;font-weight:700;color:#0f5f2b;font-size:13px}
+  tr.week td .sub{font-weight:400;color:#4b7a5c;margin-left:8px}
+  td.day{white-space:nowrap;font-weight:600}
+  td.date{white-space:nowrap;color:var(--muted);font-size:12.5px}
+  td.topic{font-weight:600;min-width:150px}
+  td.sub{color:#3c4043;font-size:13px}
+  .learn{white-space:nowrap}
+  .status-cell{white-space:nowrap;width:1%}
+  button.chip{border:none;padding:5px 13px;border-radius:999px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+  button.chip.t{background:var(--ns-bg);color:var(--ns-fg)}
+  button.chip.i{background:var(--ip-bg);color:var(--ip-fg)}
+  button.chip.d{background:var(--dn-bg);color:var(--dn-fg)}
+  button.chip:disabled{opacity:.55;cursor:not-allowed}
+  .foot{margin-top:18px;font-size:12px;color:var(--muted);text-align:center}
+  @media (max-width:600px){.brand h1{font-size:17px}.whobar input{min-width:160px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="logo">M</div>
+      <div>
+        <h1>MEAN Stack Training Plan</h1>
+        <p>6 weeks &middot; 30 days &middot; MongoDB &middot; Express &middot; Angular &middot; Node</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="whobar">
+    <label for="trainee">Trainee</label>
+    <input id="trainee" type="text" placeholder="Type your name…" autocomplete="off">
+    <div class="progress">
+      <span class="save" id="save"></span>
+      <div class="meter" id="meter"></div>
+    </div>
+  </div>
+
+  <div class="hint" id="hint">Enter your name above to save your progress. Share your link like <b>?name=Your Name</b> to reopen it anywhere.</div>
+
+  <nav class="tabs" id="tabs">
+    <button data-tab="plan" class="active">6-Week Plan</button>
+    <button data-tab="project">Project Build</button>
+    <button data-tab="final">Final Project &middot; 5-day</button>
+    <button data-tab="resources">Resources</button>
+  </nav>
+  <div class="panel"><div id="view"></div></div>
+
+  <div class="foot">Click a <b>Status</b> chip to cycle Not started &rarr; In progress &rarr; Done. Progress saves automatically.</div>
+</div>
+
+<script>
+/* ============================================================================
+   CONFIG — paste your Google Apps Script Web App URL between the quotes.
+   Leave it empty ("") to run in local-only mode (progress saved in this
+   browser only). See README.md for the 10-minute setup.
+   ============================================================================ */
+var API_URL = "";
+
+var START_DATE = "2026-07-20"; // first training day (weekends auto-skipped)
+
+/* ---------------------------- PLAN DATA ---------------------------------- */
+var WEEKS = [
+  { title:'Week 1 — JavaScript & TypeScript Foundations', subtitle:'the base everything sits on' },
+  { title:'Week 2 — Angular Fundamentals', subtitle:'components, templates, forms, routing' },
+  { title:'Week 3 — Angular in Depth', subtitle:'HTTP, RxJS, guards, Material' },
+  { title:'Week 4 — Node.js & Express', subtitle:'build REST APIs' },
+  { title:'Week 5 — MongoDB, Testing, Git & Deploy', subtitle:'persistence and shipping' },
+  { title:'Week 6 — Capstone', subtitle:'one full-stack app, built & deployed' },
+];
+
+var CURRICULUM = [
+  { topic:'JavaScript basics', sub:'variables & types · operators · if/else, loops · functions intro', gt:'JavaScript.info', gu:'https://javascript.info/first-steps', bt:'MDN JS Guide', bu:'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide', ex:'FizzBuzz + temperature converter (Node script)' },
+  { topic:'Functions, arrays & objects (ES6)', sub:'arrow fns · destructuring · spread/rest · map/filter/reduce', gt:'JS.info: Objects', gu:'https://javascript.info/object', bt:'MDN: Array methods', bu:'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array', ex:'Solve 10 array-method problems' },
+  { topic:'Async JavaScript', sub:'callbacks · promises · async/await · fetch API', gt:'JS.info: Async', gu:'https://javascript.info/async', bt:'MDN: Using promises', bu:'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises', ex:'Fetch a public API and log results' },
+  { topic:'TypeScript fundamentals', sub:'types · interfaces · enums · generics basics · tsconfig', gt:'TS in 5 minutes', gu:'https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html', bt:'TS Handbook', bu:'https://www.typescriptlang.org/docs/handbook/intro.html', ex:'Convert a JS module to typed TS' },
+  { topic:'Node & npm intro + modules', sub:'node runtime · npm install/scripts · CommonJS vs ES modules · JSON', gt:'Get started with Node', gu:'https://www.freecodecamp.org/news/get-started-with-nodejs/', bt:'Node.js docs', bu:'https://nodejs.org/docs/latest/api/', ex:'Node script that reads & writes JSON' },
+
+  { topic:'Angular setup & components', sub:'CLI · project structure · component/template/styles · standalone components', gt:'Angular: Learn tutorial', gu:'https://angular.dev/tutorials/learn-angular', bt:'Angular: Components', bu:'https://angular.dev/guide/components', ex:'Create & render your first component' },
+  { topic:'Templates & directives', sub:'interpolation · property/event binding · @if / @for · ngClass/ngStyle', gt:'Angular: Templates', gu:'https://angular.dev/guide/templates', bt:'Angular: Control flow', bu:'https://angular.dev/guide/templates/control-flow', ex:'Build a todo list UI (no backend)' },
+  { topic:'Component communication & DI', sub:'@Input / @Output · services · dependency injection · signals intro', gt:'Angular: Inputs', gu:'https://angular.dev/guide/components/inputs', bt:'Angular: DI guide', bu:'https://angular.dev/guide/di', ex:'Pass data parent↔child via a service' },
+  { topic:'Routing & navigation', sub:'routes · routerLink · route params · lazy loading basics', gt:'Angular: Routing', gu:'https://angular.dev/guide/routing', bt:'Common router tasks', bu:'https://angular.dev/guide/routing/common-router-tasks', ex:'Multi-page app with 3 routes' },
+  { topic:'Forms & validation', sub:'template-driven vs reactive forms · validators · form state', gt:'Angular: Forms', gu:'https://angular.dev/guide/forms', bt:'Reactive forms', bu:'https://angular.dev/guide/forms/reactive-forms', ex:'Signup form with validation messages' },
+
+  { topic:'HttpClient & REST', sub:'provideHttpClient · GET/POST · observables intro', gt:'Angular: HttpClient', gu:'https://angular.dev/guide/http', bt:'RxJS overview', bu:'https://rxjs.dev/guide/overview', ex:'Fetch & display data from a public API' },
+  { topic:'RxJS in practice', sub:'operators (map, filter, switchMap) · async pipe · error handling', gt:'RxJS: Operators', gu:'https://rxjs.dev/guide/operators', bt:'Angular + RxJS', bu:'https://angular.dev/ecosystem/rxjs-interop', ex:'Search box with debounce + switchMap' },
+  { topic:'Pipes, custom directives, lifecycle', sub:'built-in pipes · custom pipe · attribute directive · ngOnInit/ngOnDestroy', gt:'Angular: Pipes', gu:'https://angular.dev/guide/pipes', bt:'Angular: Directives', bu:'https://angular.dev/guide/directives', ex:'Custom pipe + highlight directive' },
+  { topic:'Guards, interceptors, shared state', sub:'route guards · HTTP interceptors · shared service state', gt:'Router tasks', gu:'https://angular.dev/guide/routing/common-router-tasks', bt:'HTTP interceptors', bu:'https://angular.dev/guide/http/interceptors', ex:'Auth guard + token interceptor stub' },
+  { topic:'Angular Material + review', sub:'install Material · toolbar/cards/inputs · polish + review week', gt:'Material: Getting started', gu:'https://material.angular.io/guide/getting-started', bt:'Material: Components', bu:'https://material.angular.io/components/categories', ex:'Restyle todo app with Material + review' },
+
+  { topic:'Node.js deeper', sub:'fs · path · events · process/env · npm scripts', gt:'Node: Learn', gu:'https://nodejs.org/en/learn', bt:'Node API docs', bu:'https://nodejs.org/docs/latest/api/', ex:'CLI note-taking tool (read/write files)' },
+  { topic:'Express basics', sub:'app setup · routing · middleware · req/res', gt:'Express: Hello world', gu:'https://expressjs.com/en/starter/hello-world.html', bt:'Express: Routing guide', bu:'https://expressjs.com/en/guide/routing.html', ex:'Hello API: 3 routes + logger middleware' },
+  { topic:'REST API design (CRUD)', sub:'resources · GET/POST/PUT/DELETE · status codes · params/query', gt:'MDN: HTTP methods', gu:'https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods', bt:'Express routing guide', bu:'https://expressjs.com/en/guide/routing.html', ex:'In-memory CRUD API for "tasks"' },
+  { topic:'Validation, errors, config', sub:'input validation · error middleware · dotenv · CORS', gt:'Express: Error handling', gu:'https://expressjs.com/en/guide/error-handling.html', bt:'express-validator', bu:'https://express-validator.github.io/docs/', ex:'Add validation + central error handler' },
+  { topic:'Auth basics (JWT)', sub:'password hashing (bcrypt) · JWT sign/verify · protected routes', gt:'JWT: Introduction', gu:'https://jwt.io/introduction', bt:'bcrypt (npm)', bu:'https://www.npmjs.com/package/bcrypt', ex:'Register + login endpoints with JWT' },
+
+  { topic:'MongoDB basics', sub:'documents/collections · CRUD · Compass · queries', gt:'MongoDB: CRUD', gu:'https://www.mongodb.com/docs/manual/crud/', bt:'MongoDB University', bu:'https://learn.mongodb.com/', ex:'CRUD practice in Compass' },
+  { topic:'Mongoose ODM', sub:'schemas · models · validation · relationships (ref)', gt:'Mongoose: Guide', gu:'https://mongoosejs.com/docs/guide.html', bt:'Mongoose: Queries', bu:'https://mongoosejs.com/docs/queries.html', ex:'Define models + CRUD via Mongoose' },
+  { topic:'Express + MongoDB integration', sub:'connect DB · wire CRUD to Mongoose · env config', gt:'MongoDB + Node driver', gu:'https://www.mongodb.com/docs/drivers/node/current/', bt:'Atlas: Getting started', bu:'https://www.mongodb.com/docs/atlas/getting-started/', ex:'Persist the tasks CRUD API to MongoDB' },
+  { topic:'Testing basics', sub:'Postman/Thunder Client · Jest · unit + API tests', gt:'Jest: Getting started', gu:'https://jestjs.io/docs/getting-started', bt:'Supertest (npm)', bu:'https://www.npmjs.com/package/supertest', ex:'Write tests for your API endpoints' },
+  { topic:'Git, GitHub & deployment', sub:'git basics · branches/PRs · deploy API + Atlas', gt:'About Git (GitHub)', gu:'https://docs.github.com/en/get-started/using-git/about-git', bt:'Deploy on Render', bu:'https://render.com/docs/deploy-node-express-app', ex:'Push repo + deploy API live' },
+
+  { topic:'Capstone: plan & design', sub:'pick app (Task Manager) · features · schema + API design', gt:'MDN: HTTP overview', gu:'https://developer.mozilla.org/en-US/docs/Web/HTTP', bt:'MongoDB data modeling', bu:'https://www.mongodb.com/docs/manual/data-modeling/', ex:'Write app spec + DB schema' },
+  { topic:'Capstone: backend', sub:'Express routes · Mongoose models · JWT auth', gt:'Express: Routing guide', gu:'https://expressjs.com/en/guide/routing.html', bt:'Mongoose docs', bu:'https://mongoosejs.com/docs/', ex:'Working REST API with auth' },
+  { topic:'Capstone: frontend', sub:'Angular UI · services · connect to API · routing', gt:'Angular: HttpClient', gu:'https://angular.dev/guide/http', bt:'Angular: Routing', bu:'https://angular.dev/guide/routing', ex:'Angular app consuming your API' },
+  { topic:'Capstone: integrate & polish', sub:'auth flow end-to-end · error states · UI polish · bug fixes', gt:'Angular: Forms', gu:'https://angular.dev/guide/forms', bt:'RxJS: Error handling', bu:'https://rxjs.dev/guide/operators', ex:'End-to-end working app' },
+  { topic:'Capstone: deploy & demo', sub:'deploy frontend + backend · README · demo & review', gt:'Angular: Deployment', gu:'https://angular.dev/tools/cli/deployment', bt:'Render: Docs', bu:'https://render.com/docs', ex:'Live full-stack app + walkthrough' },
+];
+
+var PROJECT_PHASES = [
+  'Phase 0 — Project setup & planning  ·  building "TaskFlow", a MEAN task manager',
+  'Phase 1 — Frontend skeleton (mock data)',
+  'Phase 2 — Frontend features + polish',
+  'Phase 3 — Backend API (Express)',
+  'Phase 4 — Database + ship the backend',
+  'Phase 5 — Integrate, finish & deploy',
+];
+
+var PROJECT = [
+  { task:'Choose the app: "TaskFlow" (a task manager). Write a feature list & user stories.', out:'features.md + user stories' },
+  { task:'Sketch the screens (login, task board, task form). List entities: User, Project, Task.', out:'UI sketches + entity list' },
+  { task:'Design JSON data shapes for User / Project / Task; create sample data files.', out:'sample-data.json' },
+  { task:'Create GitHub repo; add README (goals); set up client/ and server/ folders; first commit.', out:'Git repo + README' },
+  { task:'Node script: load the sample JSON and print tasks grouped by status (practice + seed the model).', out:'seed / print script' },
+
+  { task:'Scaffold the Angular app in client/; run it; commit.', out:'running Angular app' },
+  { task:'Build TaskList + TaskCard components rendering hardcoded sample tasks with @for.', out:'task list UI' },
+  { task:'Add a TaskService (in-memory); wire the list to it; support add & delete.', out:'add / delete works' },
+  { task:'Add routing: /login, /board, /task/:id and a nav shell.', out:'multi-route app' },
+  { task:'Build the Add/Edit Task reactive form (title, status, due date) with validation.', out:'task form + validation' },
+
+  { task:'Serve tasks from a mock REST (json-server / in-memory) and load them via HttpClient GET.', out:'tasks load over HTTP' },
+  { task:'Add search + status filter using RxJS (debounce, switchMap).', out:'filter / search' },
+  { task:'Add a "dueSoon" pipe and a status-color directive on the task cards.', out:'custom pipe + directive' },
+  { task:'Add an auth service stub + route guard on /board; login stores a fake token.', out:'guarded board' },
+  { task:'Apply Angular Material (toolbar, cards, form fields); polish the board layout.', out:'Frontend MVP (mock data)' },
+
+  { task:'Scaffold an Express server in server/; add a health route; nodemon + npm scripts.', out:'server boots' },
+  { task:'Build task routes on an in-memory array: GET / POST / PUT / DELETE /api/tasks.', out:'tasks CRUD API' },
+  { task:'Add project routes; organise into routes / controllers; use correct status codes.', out:'projects API' },
+  { task:'Add input validation, error-handling middleware, CORS and dotenv config.', out:'validated, safe API' },
+  { task:'Add auth routes: register / login (bcrypt + JWT); protect the task routes.', out:'auth-protected API' },
+
+  { task:'Set up MongoDB (Atlas or local) + Compass; create the DB; add the connection string to .env.', out:'DB + connection' },
+  { task:'Define Mongoose models: User, Project, Task (with refs).', out:'schemas / models' },
+  { task:'Replace the in-memory store with MongoDB across all routes; full CRUD now persists.', out:'persistent API' },
+  { task:'Write API tests (Jest + Supertest) for tasks & auth; fix the bugs you find.', out:'passing tests' },
+  { task:'Clean the repo and deploy the API to Render with the DB on Atlas; verify live endpoints.', out:'live API URL' },
+
+  { task:'Point the Angular services at the deployed API; wire real auth (JWT storage + interceptor).', out:'FE talks to live API' },
+  { task:'Implement real task CRUD end-to-end against the live API; handle loading & error states.', out:'tasks work live' },
+  { task:'Implement projects + task filtering on real data; add empty states.', out:'projects work live' },
+  { task:'End-to-end test the whole flow; fix bugs; polish the UI; write README + screenshots.', out:'release-ready app' },
+  { task:'Deploy the Angular frontend; final demo walkthrough — project COMPLETE.', out:'✅ Live full-stack app' },
+];
+
+var FINAL_DAYS = [
+  { focus:'Setup & backend foundation', build:'Init repo + client/ & server/ · Express + MongoDB connection · Mongoose models (User, Recipe) · auth: register / login (bcrypt + JWT).', out:'Auth API + DB connected' },
+  { focus:'Backend CRUD & validation', build:'Recipe CRUD routes (GET / POST / PUT / DELETE) · JWT-protected, owner-scoped · input validation + error middleware · test in Postman.', out:'Complete, tested API' },
+  { focus:'Frontend foundation', build:'Angular scaffold · login / register + route guard + token interceptor · recipe list loaded from the API · routing shell.', out:'FE auth + recipe list' },
+  { focus:'Frontend features', build:'Create / edit recipe form (reactive + validation) · detail view · search + category filter (RxJS) · loading & error states.', out:'Full recipe UX' },
+  { focus:'Ship it', build:'Polish UI · README + a few tests · deploy backend (Render + Atlas) & frontend · run a short demo walkthrough.', out:'✅ Deployed app + demo' },
+];
+
+var RES = [
+  { cat:'JavaScript & TypeScript', items:[
+    { topic:'JavaScript core', gt:'JavaScript.info', gu:'https://javascript.info/', bt:'MDN: JavaScript', bu:'https://developer.mozilla.org/en-US/docs/Web/JavaScript' },
+    { topic:'TypeScript', gt:'TS Handbook', gu:'https://www.typescriptlang.org/docs/handbook/intro.html', bt:'Total TypeScript (free)', bu:'https://www.totaltypescript.com/tutorials' },
+  ]},
+  { cat:'Angular', items:[
+    { topic:'Angular (official)', gt:'Angular.dev tutorials', gu:'https://angular.dev/tutorials', bt:'Angular docs', bu:'https://angular.dev/overview' },
+    { topic:'RxJS', gt:'RxJS guide', gu:'https://rxjs.dev/guide/overview', bt:'Learn RxJS', bu:'https://www.learnrxjs.io/' },
+  ]},
+  { cat:'Node.js & Express', items:[
+    { topic:'Node.js', gt:'Node: Learn', gu:'https://nodejs.org/en/learn', bt:'Node API docs', bu:'https://nodejs.org/docs/latest/api/' },
+    { topic:'Express', gt:'Express: Guide', gu:'https://expressjs.com/en/guide/routing.html', bt:'Express: API reference', bu:'https://expressjs.com/en/4x/api.html' },
+  ]},
+  { cat:'MongoDB', items:[
+    { topic:'MongoDB', gt:'MongoDB University', gu:'https://learn.mongodb.com/', bt:'MongoDB manual', bu:'https://www.mongodb.com/docs/manual/' },
+    { topic:'Mongoose', gt:'Mongoose docs', gu:'https://mongoosejs.com/docs/', bt:'Data modeling', bu:'https://www.mongodb.com/docs/manual/data-modeling/' },
+  ]},
+  { cat:'Testing, Git & Deployment', items:[
+    { topic:'Testing', gt:'Jest', gu:'https://jestjs.io/docs/getting-started', bt:'Supertest', bu:'https://www.npmjs.com/package/supertest' },
+    { topic:'Git & GitHub', gt:'About Git', gu:'https://docs.github.com/en/get-started/using-git/about-git', bt:'Pro Git (book)', bu:'https://git-scm.com/book/en/v2' },
+    { topic:'Deployment', gt:'Render (Node)', gu:'https://render.com/docs/deploy-node-express-app', bt:'MongoDB Atlas', bu:'https://www.mongodb.com/docs/atlas/getting-started/' },
+  ]},
+  { cat:'Full MEAN stack', items:[
+    { topic:'MEAN overview', gt:'freeCodeCamp (MongoDB)', gu:'https://www.freecodecamp.org/news/tag/mongodb/', bt:'MongoDB: MEAN tutorial', bu:'https://www.mongodb.com/resources/languages/mean-stack-tutorial' },
+  ]},
+];
+
+/* --------------------------- DATE HELPER --------------------------------- */
+function buildDates(startStr, count){
+  count = count || 35;
+  var p = (startStr||'2026-07-20').split('-').map(Number);
+  var cur = new Date(p[0], (p[1]||1)-1, p[2]||1);
+  var wd=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var out=[], guard=0;
+  while(out.length<count && guard<400){
+    var d=cur.getDay();
+    if(d!==0 && d!==6) out.push(wd[d]+' · '+mo[cur.getMonth()]+' '+cur.getDate());
+    cur.setDate(cur.getDate()+1); guard++;
+  }
+  return out;
+}
+var ALL_DATES = buildDates(START_DATE,35);
+var DATES = ALL_DATES.slice(0,30);
+var FINAL_DATES = ALL_DATES.slice(30,35);
+
+/* ----------------------------- STATE ------------------------------------- */
+var STATUS_ORDER = ['Not started','In progress','Done'];
+var CHIP_CLASS = { 'Not started':'t', 'In progress':'i', 'Done':'d' };
+var state = { name:'', statuses:{}, tab:'plan' };
+var saveTimer = null;
+
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+function lsKey(name){ return 'meanplan:'+name.toLowerCase(); }
+
+/* ----------------------------- RENDER ------------------------------------ */
+function learnCell(t,u){ return u ? '<a href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(t)+'</a>' : esc(t); }
+
+function chip(key){
+  var st = state.statuses[key] || 'Not started';
+  var dis = state.name ? '' : 'disabled';
+  return '<button class="chip '+CHIP_CLASS[st]+'" data-key="'+esc(key)+'" '+dis+'>'+esc(st)+'</button>';
+}
+
+function renderPlan(){
+  var h='<table><thead><tr><th>Day</th><th>Date</th><th>Topic</th><th>Sub-tasks / concepts</th><th>Learn · Good</th><th>Learn · Better</th><th>Hands-on exercise</th><th>Status</th></tr></thead><tbody>';
+  for(var w=0;w<6;w++){
+    h+='<tr class="week"><td colspan="8">'+esc(WEEKS[w].title)+'<span class="sub">'+esc(WEEKS[w].subtitle)+'</span></td></tr>';
+    for(var i=0;i<5;i++){
+      var idx=w*5+i, c=CURRICULUM[idx], dn=idx+1;
+      h+='<tr><td class="day">Day '+dn+'</td><td class="date">'+esc(DATES[idx])+'</td><td class="topic">'+esc(c.topic)+'</td><td class="sub">'+esc(c.sub)+'</td><td class="learn">'+learnCell(c.gt,c.gu)+'</td><td class="learn">'+learnCell(c.bt,c.bu)+'</td><td>'+esc(c.ex)+'</td><td class="status-cell">'+chip(String(dn))+'</td></tr>';
+    }
+  }
+  return h+'</tbody></table>';
+}
+
+function renderProject(){
+  var h='<table><thead><tr><th>Day</th><th>Date</th><th>Project build task</th><th>Deliverable</th><th>Status</th></tr></thead><tbody>';
+  for(var w=0;w<6;w++){
+    h+='<tr class="week"><td colspan="5">'+esc(PROJECT_PHASES[w])+'</td></tr>';
+    for(var i=0;i<5;i++){
+      var idx=w*5+i, c=PROJECT[idx];
+      h+='<tr><td class="day">Day '+(idx+1)+'</td><td class="date">'+esc(DATES[idx])+'</td><td>'+esc(c.task)+'</td><td class="topic">'+esc(c.out)+'</td><td class="status-cell">'+chip('P'+(idx+1))+'</td></tr>';
+    }
+  }
+  return h+'</tbody></table>';
+}
+
+function renderFinal(){
+  var h='<table><thead><tr><th colspan="6" style="background:#eef6f0;color:#0f5f2b;font-size:13px">Final Project (5-day): RecipeVault — a MEAN recipe manager</th></tr><tr><th>Day</th><th>Date</th><th>Focus</th><th>What to build</th><th>Output</th><th>Status</th></tr></thead><tbody>';
+  for(var i=0;i<FINAL_DAYS.length;i++){
+    var d=FINAL_DAYS[i];
+    h+='<tr><td class="day">Day '+(i+1)+'</td><td class="date">'+esc(FINAL_DATES[i])+'</td><td class="topic">'+esc(d.focus)+'</td><td class="sub">'+esc(d.build)+'</td><td>'+esc(d.out)+'</td><td class="status-cell">'+chip('F'+(i+1))+'</td></tr>';
+  }
+  return h+'</tbody></table>';
+}
+
+function renderResources(){
+  var h='<table><thead><tr><th>Topic</th><th>Good (start here)</th><th>Better / deeper</th></tr></thead><tbody>';
+  for(var g=0;g<RES.length;g++){
+    h+='<tr class="week"><td colspan="3">'+esc(RES[g].cat)+'</td></tr>';
+    for(var i=0;i<RES[g].items.length;i++){
+      var it=RES[g].items[i];
+      h+='<tr><td class="topic">'+esc(it.topic)+'</td><td class="learn">'+learnCell(it.gt,it.gu)+'</td><td class="learn">'+learnCell(it.bt,it.bu)+'</td></tr>';
+    }
+  }
+  return h+'</tbody></table>';
+}
+
+function render(){
+  var v=document.getElementById('view');
+  if(state.tab==='plan') v.innerHTML=renderPlan();
+  else if(state.tab==='project') v.innerHTML=renderProject();
+  else if(state.tab==='final') v.innerHTML=renderFinal();
+  else v.innerHTML=renderResources();
+  updateMeter();
+}
+
+function updateMeter(){
+  var total=30+30+5, done=0, ip=0;
+  for(var k in state.statuses){ if(state.statuses[k]==='Done') done++; else if(state.statuses[k]==='In progress') ip++; }
+  document.getElementById('meter').innerHTML =
+    '<span class="pill d">'+done+' done</span>'+
+    '<span class="pill i">'+ip+' in progress</span>'+
+    '<span class="pill t">'+(total-done-ip)+' left</span>';
+  document.getElementById('hint').className = state.name ? 'hint hide' : 'hint';
+}
+
+/* ----------------------------- SAVE / LOAD ------------------------------- */
+function setSave(txt,cls){ var el=document.getElementById('save'); el.textContent=txt||''; el.className='save '+(cls||''); }
+
+function loadTrainee(name){
+  state.name=name; state.statuses={};
+  // local cache first (instant)
+  try{ var c=localStorage.getItem(lsKey(name)); if(c) state.statuses=JSON.parse(c)||{}; }catch(e){}
+  render();
+  if(!API_URL || !name) return;
+  setSave('Loading…');
+  fetch(API_URL+'?name='+encodeURIComponent(name),{method:'GET'})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d && d.statuses){ state.statuses=d.statuses; try{localStorage.setItem(lsKey(name),JSON.stringify(d.statuses));}catch(e){} render(); }
+      setSave('Saved','ok');
+    })
+    .catch(function(){ setSave('Offline — saved locally','err'); });
+}
+
+function persist(){
+  if(!state.name) return;
+  try{ localStorage.setItem(lsKey(state.name),JSON.stringify(state.statuses)); }catch(e){}
+  if(!API_URL) return;
+  setSave('Saving…');
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(function(){
+    fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify({name:state.name,statuses:state.statuses})})
+      .then(function(r){return r.json();})
+      .then(function(){ setSave('Saved','ok'); })
+      .catch(function(){ setSave('Offline — saved locally','err'); });
+  },600);
+}
+
+/* ----------------------------- EVENTS ------------------------------------ */
+document.getElementById('view').addEventListener('click',function(e){
+  var b=e.target.closest('button.chip'); if(!b||b.disabled) return;
+  var key=b.getAttribute('data-key');
+  var cur=state.statuses[key]||'Not started';
+  var next=STATUS_ORDER[(STATUS_ORDER.indexOf(cur)+1)%3];
+  state.statuses[key]=next;
+  b.className='chip '+CHIP_CLASS[next]; b.textContent=next;
+  updateMeter(); persist();
+});
+
+document.getElementById('tabs').addEventListener('click',function(e){
+  var b=e.target.closest('button[data-tab]'); if(!b) return;
+  state.tab=b.getAttribute('data-tab');
+  [].forEach.call(this.querySelectorAll('button'),function(x){x.classList.toggle('active',x===b);});
+  render();
+});
+
+var input=document.getElementById('trainee');
+function applyName(name){
+  name=(name||'').trim();
+  input.value=name;
+  var url=new URL(location.href);
+  if(name) url.searchParams.set('name',name); else url.searchParams.delete('name');
+  history.replaceState(null,'',url);
+  loadTrainee(name);
+}
+input.addEventListener('change',function(){ applyName(input.value); });
+input.addEventListener('keydown',function(e){ if(e.key==='Enter') applyName(input.value); });
+
+/* ----------------------------- INIT -------------------------------------- */
+(function init(){
+  var qs=new URLSearchParams(location.search);
+  var name=(qs.get('name')||'').trim();
+  input.value=name;
+  render();
+  if(name) loadTrainee(name); else updateMeter();
+})();
+</script>
+</body>
+</html>

@@ -78,6 +78,19 @@ A **Progress** tab appears in the Sheet with one row per trainee:
 
 ---
 
+## Passwords (set in `Code.gs`, top of file — never in index.html)
+- `ADMIN_PW` — yours (Jitendra). Opens the **Admin view** (all trainees) and can open any board.
+- `USERS` — one line per trainee: `'Exact Name': 'their password'`. A dev can only open/update
+  their own board. Add a dev by adding a line, then **redeploy** (new version).
+- Current: admin `Jitendra@admin`; `Priyanshu Mishra` → `HSOE&5634N`. Change these anytime.
+- Reality check: this protects the saved progress data (checked server-side). The training
+  content itself is public (it's a static page) — that's expected.
+
+## Tabs
+6-Week Plan · Project Build · Final Project (5-day) · **Daily Log** · Resources.
+The Daily Log (planned/actual hrs, what you learned, blockers, confidence 1–5) also saves
+per trainee, alongside statuses.
+
 ## How the `?name=` link works
 - `index.html?name=Ram Jangid` loads Ram's saved statuses and locks the name.
 - Typing a name in the **Trainee** box updates the URL so you can bookmark/share it.

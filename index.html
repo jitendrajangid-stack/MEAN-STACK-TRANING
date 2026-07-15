@@ -59,7 +59,30 @@
   button.chip.i{background:var(--ip-bg);color:var(--ip-fg)}
   button.chip.d{background:var(--dn-bg);color:var(--dn-fg)}
   button.chip:disabled{opacity:.55;cursor:not-allowed}
+  td.logf input, td.logf textarea{font:inherit;width:100%;border:1px solid var(--line);border-radius:6px;padding:6px 8px;outline:none;background:#fff;resize:vertical}
+  td.logf input:focus, td.logf textarea:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(24,128,56,.12)}
+  td.logf input:disabled, td.logf textarea:disabled{background:#f4f5f5;cursor:not-allowed}
+  td.hrs{width:88px} td.conf{width:96px}
+  td.logf textarea{min-height:38px}
   .foot{margin-top:18px;font-size:12px;color:var(--muted);text-align:center}
+  .ghostbtn{margin-left:auto;font:inherit;font-size:13px;padding:8px 14px;border:1px solid var(--line);background:#fff;color:var(--accent);border-radius:8px;cursor:pointer;font-weight:600}
+  .ghostbtn:hover{background:#f3f8f4}
+  .overlay{position:fixed;inset:0;background:rgba(20,30,25,.45);display:flex;align-items:center;justify-content:center;z-index:1000;padding:16px}
+  .overlay.hide{display:none}
+  .modal{background:#fff;border-radius:14px;padding:22px 22px 18px;max-width:560px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.25);max-height:88vh;overflow:auto}
+  .modal h2{font-size:17px;margin-bottom:6px}
+  .modal p{font-size:13px;color:var(--muted);margin-bottom:14px}
+  .modal .row{display:flex;gap:8px;flex-wrap:wrap}
+  .modal input[type=password]{flex:1;min-width:180px;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:8px;outline:none}
+  .modal input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(24,128,56,.15)}
+  .modal button.primary{font:inherit;font-weight:600;padding:10px 18px;border:none;border-radius:8px;background:var(--accent);color:#fff;cursor:pointer}
+  .modal .err{color:#c5221f;font-size:12.5px;margin-top:8px;min-height:16px}
+  .modal .x{float:right;border:none;background:transparent;font-size:20px;cursor:pointer;color:var(--muted);line-height:1}
+  table.roster{width:100%;border-collapse:collapse;margin-top:6px}
+  table.roster th,table.roster td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);font-size:13px}
+  table.roster th{color:var(--muted);font-size:12px}
+  .bar{height:8px;border-radius:999px;background:var(--ns-bg);overflow:hidden;min-width:90px}
+  .bar>span{display:block;height:100%;background:var(--dn-fg)}
   @media (max-width:600px){.brand h1{font-size:17px}.whobar input{min-width:160px}}
 </style>
 </head>
@@ -73,6 +96,7 @@
         <p>6 weeks &middot; 30 days &middot; MongoDB &middot; Express &middot; Angular &middot; Node</p>
       </div>
     </div>
+    <button id="adminBtn" class="ghostbtn">Admin view</button>
   </header>
 
   <div class="whobar">
@@ -90,11 +114,40 @@
     <button data-tab="plan" class="active">6-Week Plan</button>
     <button data-tab="project">Project Build</button>
     <button data-tab="final">Final Project &middot; 5-day</button>
+    <button data-tab="log">Daily Log</button>
     <button data-tab="resources">Resources</button>
   </nav>
   <div class="panel"><div id="view"></div></div>
 
   <div class="foot">Click a <b>Status</b> chip to cycle Not started &rarr; In progress &rarr; Done. Progress saves automatically.</div>
+</div>
+
+<!-- Team-password gate -->
+<div class="overlay hide" id="gate">
+  <div class="modal">
+    <h2 id="gateTitle">Enter your password</h2>
+    <p>Ask the training owner (Jitendra) for your password to view and update your board.</p>
+    <div class="row">
+      <input type="password" id="gatePw" placeholder="Your password" autocomplete="off">
+      <button class="primary" id="gateGo">Enter</button>
+    </div>
+    <div class="err" id="gateErr"></div>
+  </div>
+</div>
+
+<!-- Admin overview -->
+<div class="overlay hide" id="admin">
+  <div class="modal">
+    <button class="x" id="adminX" title="Close">&times;</button>
+    <h2>All trainees</h2>
+    <p id="adminMsg">Enter the admin password to see everyone's progress.</p>
+    <div class="row" id="adminAuth">
+      <input type="password" id="adminPw" placeholder="Admin password" autocomplete="off">
+      <button class="primary" id="adminGo">Show</button>
+    </div>
+    <div class="err" id="adminErr"></div>
+    <div id="adminList"></div>
+  </div>
 </div>
 
 <script>
@@ -103,7 +156,7 @@
    Leave it empty ("") to run in local-only mode (progress saved in this
    browser only). See README.md for the 10-minute setup.
    ============================================================================ */
-var API_URL = "";
+var API_URL = "https://script.google.com/macros/s/AKfycbw1kCg1OfgEFAquj89PBl05NPReFTXhePWgNavQZTOvlBPRsn0rSDCFOinYx30vOYHj/exec";
 
 var START_DATE = "2026-07-20"; // first training day (weekends auto-skipped)
 
@@ -258,11 +311,18 @@ var FINAL_DATES = ALL_DATES.slice(30,35);
 /* ----------------------------- STATE ------------------------------------- */
 var STATUS_ORDER = ['Not started','In progress','Done'];
 var CHIP_CLASS = { 'Not started':'t', 'In progress':'i', 'Done':'d' };
-var state = { name:'', statuses:{}, tab:'plan' };
+var state = { name:'', statuses:{}, logs:{}, tab:'plan' };
 var saveTimer = null;
+var LOG_FIELDS = ['p','a','l','b','c']; // planned, actual, learned, blockers, confidence
 
 function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
 function lsKey(name){ return 'meanplan:'+name.toLowerCase(); }
+function pwKey(name){ return 'meanplan:pw:'+String(name).toLowerCase(); }
+function getPw(name){ try{return localStorage.getItem(pwKey(name))||'';}catch(e){return '';} }
+function setPw(name,v){ try{localStorage.setItem(pwKey(name),v);}catch(e){} }
+function clearPw(name){ try{localStorage.removeItem(pwKey(name));}catch(e){} }
+function getAdminPw(){ try{return sessionStorage.getItem('meanplan:adminpw')||'';}catch(e){return '';} }
+function effPw(name){ return getPw(name) || getAdminPw(); } // name pw, or admin pw if signed in as admin
 
 /* ----------------------------- RENDER ------------------------------------ */
 function learnCell(t,u){ return u ? '<a href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(t)+'</a>' : esc(t); }
@@ -306,6 +366,29 @@ function renderFinal(){
   return h+'</tbody></table>';
 }
 
+function logVal(day,f){
+  var e=state.logs[day];
+  if(e && e[f]!=null && e[f]!=='') return e[f];
+  return f==='p' ? '8' : ''; // planned hrs defaults to 8
+}
+function renderLog(){
+  var dis=state.name?'':'disabled';
+  var h='<table><thead><tr><th>Day</th><th>Date</th><th>Planned hrs</th><th>Actual hrs</th><th>What I learned / built</th><th>Blockers & questions</th><th>Confidence 1-5</th></tr></thead><tbody>';
+  for(var w=0;w<6;w++){
+    h+='<tr class="week"><td colspan="7">'+esc(WEEKS[w].title)+'</td></tr>';
+    for(var i=0;i<5;i++){
+      var idx=w*5+i, dn=String(idx+1);
+      h+='<tr><td class="day">Day '+(idx+1)+'</td><td class="date">'+esc(DATES[idx])+'</td>'+
+        '<td class="logf hrs"><input type="number" min="0" step="0.5" data-day="'+dn+'" data-f="p" value="'+esc(logVal(dn,"p"))+'" '+dis+'></td>'+
+        '<td class="logf hrs"><input type="number" min="0" step="0.5" data-day="'+dn+'" data-f="a" value="'+esc(logVal(dn,"a"))+'" '+dis+'></td>'+
+        '<td class="logf"><textarea rows="1" data-day="'+dn+'" data-f="l" '+dis+'>'+esc(logVal(dn,"l"))+'</textarea></td>'+
+        '<td class="logf"><textarea rows="1" data-day="'+dn+'" data-f="b" '+dis+'>'+esc(logVal(dn,"b"))+'</textarea></td>'+
+        '<td class="logf conf"><input type="number" min="1" max="5" step="1" data-day="'+dn+'" data-f="c" value="'+esc(logVal(dn,"c"))+'" '+dis+'></td></tr>';
+    }
+  }
+  return h+'</tbody></table>';
+}
+
 function renderResources(){
   var h='<table><thead><tr><th>Topic</th><th>Good (start here)</th><th>Better / deeper</th></tr></thead><tbody>';
   for(var g=0;g<RES.length;g++){
@@ -323,6 +406,7 @@ function render(){
   if(state.tab==='plan') v.innerHTML=renderPlan();
   else if(state.tab==='project') v.innerHTML=renderProject();
   else if(state.tab==='final') v.innerHTML=renderFinal();
+  else if(state.tab==='log') v.innerHTML=renderLog();
   else v.innerHTML=renderResources();
   updateMeter();
 }
@@ -340,17 +424,32 @@ function updateMeter(){
 /* ----------------------------- SAVE / LOAD ------------------------------- */
 function setSave(txt,cls){ var el=document.getElementById('save'); el.textContent=txt||''; el.className='save '+(cls||''); }
 
+function readCache(name){
+  try{
+    var c=JSON.parse(localStorage.getItem(lsKey(name))||'{}');
+    // back-compat: old cache was a bare statuses object
+    if(c && (c.statuses||c.logs)) return { statuses:c.statuses||{}, logs:c.logs||{} };
+    return { statuses:c||{}, logs:{} };
+  }catch(e){ return { statuses:{}, logs:{} }; }
+}
+function writeCache(name){
+  try{ localStorage.setItem(lsKey(name),JSON.stringify({statuses:state.statuses,logs:state.logs})); }catch(e){}
+}
+
 function loadTrainee(name){
-  state.name=name; state.statuses={};
-  // local cache first (instant)
-  try{ var c=localStorage.getItem(lsKey(name)); if(c) state.statuses=JSON.parse(c)||{}; }catch(e){}
+  state.name=name;
+  var cached=readCache(name);
+  state.statuses=cached.statuses; state.logs=cached.logs;
   render();
   if(!API_URL || !name) return;
+  var pw=effPw(name);
+  if(!pw){ showGate(name); return; }
   setSave('Loading…');
-  fetch(API_URL+'?name='+encodeURIComponent(name),{method:'GET'})
+  fetch(API_URL+'?name='+encodeURIComponent(name)+'&pw='+encodeURIComponent(pw),{method:'GET'})
     .then(function(r){return r.json();})
     .then(function(d){
-      if(d && d.statuses){ state.statuses=d.statuses; try{localStorage.setItem(lsKey(name),JSON.stringify(d.statuses));}catch(e){} render(); }
+      if(d && d.error==='auth'){ clearPw(name); showGate(name); setSave('Locked','err'); return; }
+      if(d){ state.statuses=d.statuses||{}; state.logs=d.logs||{}; writeCache(name); render(); }
       setSave('Saved','ok');
     })
     .catch(function(){ setSave('Offline — saved locally','err'); });
@@ -358,15 +457,15 @@ function loadTrainee(name){
 
 function persist(){
   if(!state.name) return;
-  try{ localStorage.setItem(lsKey(state.name),JSON.stringify(state.statuses)); }catch(e){}
+  writeCache(state.name);
   if(!API_URL) return;
   setSave('Saving…');
   clearTimeout(saveTimer);
   saveTimer=setTimeout(function(){
     fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body:JSON.stringify({name:state.name,statuses:state.statuses})})
+      body:JSON.stringify({name:state.name,statuses:state.statuses,logs:state.logs,pw:effPw(state.name)})})
       .then(function(r){return r.json();})
-      .then(function(){ setSave('Saved','ok'); })
+      .then(function(d){ if(d && d.error==='auth'){ clearPw(state.name); showGate(state.name); setSave('Locked','err'); return; } setSave('Saved','ok'); })
       .catch(function(){ setSave('Offline — saved locally','err'); });
   },600);
 }
@@ -380,6 +479,15 @@ document.getElementById('view').addEventListener('click',function(e){
   state.statuses[key]=next;
   b.className='chip '+CHIP_CLASS[next]; b.textContent=next;
   updateMeter(); persist();
+});
+
+document.getElementById('view').addEventListener('input',function(e){
+  var el=e.target; if(el.disabled) return;
+  var day=el.getAttribute('data-day'), f=el.getAttribute('data-f');
+  if(!day||!f) return;
+  if(!state.logs[day]) state.logs[day]={};
+  state.logs[day][f]=el.value;
+  persist();
 });
 
 document.getElementById('tabs').addEventListener('click',function(e){
@@ -401,13 +509,78 @@ function applyName(name){
 input.addEventListener('change',function(){ applyName(input.value); });
 input.addEventListener('keydown',function(e){ if(e.key==='Enter') applyName(input.value); });
 
+/* ----------------------------- TEAM GATE --------------------------------- */
+var gate=document.getElementById('gate'), gateName='';
+function showGate(name){
+  if(!API_URL) return;
+  gateName=(name||input.value||'').trim();
+  document.getElementById('gateTitle').textContent = gateName ? ('Enter password for '+gateName) : 'Enter your password';
+  document.getElementById('gateErr').textContent='';
+  gate.classList.remove('hide');
+  var i=document.getElementById('gatePw'); i.value=''; i.focus();
+}
+function hideGate(){ gate.classList.add('hide'); }
+function submitGate(){
+  var pw=document.getElementById('gatePw').value, err=document.getElementById('gateErr');
+  if(!gateName){ err.textContent='Type your name first.'; return; }
+  err.textContent='Checking…';
+  fetch(API_URL+'?action=ping&name='+encodeURIComponent(gateName)+'&pw='+encodeURIComponent(pw)).then(function(r){return r.json();})
+    .then(function(d){
+      if(d && d.ok){ setPw(gateName,pw); hideGate(); err.textContent=''; loadTrainee(gateName); }
+      else { err.textContent='Wrong password for '+gateName+'.'; }
+    }).catch(function(){ err.textContent='Network error — check your connection.'; });
+}
+document.getElementById('gateGo').addEventListener('click',submitGate);
+document.getElementById('gatePw').addEventListener('keydown',function(e){ if(e.key==='Enter') submitGate(); });
+
+/* ----------------------------- ADMIN VIEW -------------------------------- */
+var adminOv=document.getElementById('admin');
+document.getElementById('adminBtn').addEventListener('click',function(){
+  adminOv.classList.remove('hide');
+  var sp=''; try{sp=sessionStorage.getItem('meanplan:adminpw')||'';}catch(e){}
+  if(sp) loadAdmin(sp); else document.getElementById('adminPw').focus();
+});
+document.getElementById('adminX').addEventListener('click',function(){ adminOv.classList.add('hide'); });
+document.getElementById('adminGo').addEventListener('click',function(){ loadAdmin(document.getElementById('adminPw').value); });
+document.getElementById('adminPw').addEventListener('keydown',function(e){ if(e.key==='Enter') loadAdmin(document.getElementById('adminPw').value); });
+
+function loadAdmin(pw){
+  var err=document.getElementById('adminErr'), list=document.getElementById('adminList');
+  err.textContent='';
+  if(!API_URL){ err.textContent='Cloud storage not set up yet (see README Part B).'; return; }
+  list.innerHTML='Loading…';
+  fetch(API_URL+'?action=all&pw='+encodeURIComponent(pw)).then(function(r){return r.json();})
+    .then(function(d){
+      if(!d || d.error){ list.innerHTML=''; err.textContent='Wrong admin password.'; return; }
+      try{ sessionStorage.setItem('meanplan:adminpw',pw); }catch(e){}
+      document.getElementById('adminAuth').style.display='none';
+      document.getElementById('adminMsg').textContent='Click a name to open that board.';
+      renderRoster(d.trainees||[]);
+    }).catch(function(){ list.innerHTML=''; err.textContent='Network error.'; });
+}
+function renderRoster(t){
+  var list=document.getElementById('adminList'), total=65;
+  if(!t.length){ list.innerHTML='<p style="padding:10px 0;color:#5f6368">No trainees have saved progress yet.</p>'; return; }
+  t.sort(function(a,b){ return (b.done||0)-(a.done||0); });
+  var h='<table class="roster"><thead><tr><th>Trainee</th><th>Progress</th><th>Done</th><th>Updated</th></tr></thead><tbody>';
+  for(var i=0;i<t.length;i++){
+    var x=t[i], done=x.done||0, pct=Math.round(done/total*100);
+    var link=location.pathname+'?name='+encodeURIComponent(x.name);
+    var up=''; try{ if(x.updated) up=new Date(x.updated).toLocaleDateString(); }catch(e){}
+    h+='<tr><td><a href="'+esc(link)+'">'+esc(x.name)+'</a></td>'+
+       '<td><div class="bar"><span style="width:'+pct+'%"></span></div></td>'+
+       '<td>'+done+'/'+total+' · '+pct+'%</td><td>'+esc(up)+'</td></tr>';
+  }
+  list.innerHTML=h+'</tbody></table>';
+}
+
 /* ----------------------------- INIT -------------------------------------- */
 (function init(){
   var qs=new URLSearchParams(location.search);
   var name=(qs.get('name')||'').trim();
   input.value=name;
-  render();
-  if(name) loadTrainee(name); else updateMeter();
+  render(); updateMeter();
+  if(name) loadTrainee(name);   // loadTrainee shows the password gate when needed
 })();
 </script>
 </body>

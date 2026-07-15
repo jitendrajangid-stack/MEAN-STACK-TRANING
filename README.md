@@ -91,10 +91,15 @@ A **Progress** tab appears in the Sheet with one row per trainee:
 The Daily Log (planned/actual hrs, what you learned, blockers, confidence 1–5) also saves
 per trainee, alongside statuses.
 
-## How the `?name=` link works
-- `index.html?name=Ram Jangid` loads Ram's saved statuses and locks the name.
-- Typing a name in the **Trainee** box updates the URL so you can bookmark/share it.
-- Give each trainee their own link; each has an independent board in the same Sheet.
+## Sign-in & progression
+- On load the page shows a **Sign in** box (name/email + password). Valid → their board opens;
+  invalid → a clear "couldn't find that / contact the owner" message. A remembered session
+  auto-opens via `?name=` (password cached in the browser); **Sign out** clears it.
+- The identity field works with either a **name** (current `USERS`) or an **email** — no page
+  change needed when you switch `USERS` keys to emails in `Code.gs`.
+- **Sequential unlock:** each day's Status stays **🔒 Locked** until the previous day is marked
+  **Done** (independently for Plan, Project Build, Final Project; the Daily Log row unlocks with
+  its plan day). Un-marking an earlier day re-locks the later ones.
 
 ## Notes
 - **Local mode** (`API_URL = ""`): fully usable, but progress is per-browser only.

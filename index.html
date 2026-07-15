@@ -20,18 +20,18 @@
   a:hover{text-decoration:underline}
   .wrap{max-width:1280px;margin:0 auto;padding:20px 16px 60px}
 
-  header.top{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-bottom:16px}
+  header.top{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:16px}
   .brand{display:flex;align-items:center;gap:12px}
   .logo{width:40px;height:40px;border-radius:9px;background:var(--accent);color:#fff;font-weight:700;font-size:22px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
   .brand h1{font-size:20px;font-weight:600;letter-spacing:-.2px}
   .brand p{font-size:12px;color:var(--muted)}
+  .topright{display:flex;align-items:flex-start;justify-content:flex-end;gap:12px;flex-wrap:wrap}
+  .userwrap{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+  .userline{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+  .ulabel{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+  .statusline{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
 
-  .whobar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:16px}
-  .whobar label{font-weight:600;color:var(--muted);font-size:13px}
-  .whobar input{font:inherit;padding:8px 12px;border:1px solid var(--line);border-radius:8px;min-width:220px;outline:none}
-  .whobar input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(24,128,56,.15)}
-  .progress{margin-left:auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-  .save{font-size:12px;color:var(--muted);min-width:70px}
+  .save{font-size:12px;color:var(--muted)}
   .save.ok{color:var(--dn-fg)} .save.err{color:#c5221f}
   .meter{display:flex;gap:6px;font-size:12px}
   .meter b{font-weight:600}
@@ -81,8 +81,9 @@
   .byline a{color:var(--accent);font-weight:600}
   #installBtn{margin-left:auto}
   #whoName[data-admin]{cursor:pointer;text-decoration:underline}
-  .ghostbtn{margin-left:auto;font:inherit;font-size:13px;padding:8px 14px;border:1px solid var(--line);background:#fff;color:var(--accent);border-radius:8px;cursor:pointer;font-weight:600}
-  .ghostbtn:hover{background:#f3f8f4}
+  .ghostbtn{font:inherit;font-size:13px;padding:8px 14px;border:1px solid var(--line);background:#fff;color:var(--accent);border-radius:8px;cursor:pointer;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;white-space:nowrap}
+  .ghostbtn:hover{background:#f3f8f4;text-decoration:none}
+  .headbtns{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
   .overlay{position:fixed;inset:0;background:rgba(20,30,25,.45);display:flex;align-items:center;justify-content:center;z-index:1000;padding:16px}
   .overlay.hide{display:none}
   .modal{background:#fff;border-radius:14px;padding:22px 22px 18px;max-width:560px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.25);max-height:88vh;overflow:auto}
@@ -141,6 +142,33 @@
   .ovtile,.badge{transition:transform .15s ease}
   .opencta,.adddevbtn,.genbtn,.rmdev,.primary{transition:filter .15s ease,background .15s ease}
   .adddevbtn:hover,.primary:hover{filter:brightness(1.07)}
+  /* Queries */
+  .qbadge{display:inline-block;background:#c5221f;color:#fff;font-size:10.5px;font-weight:800;border-radius:999px;padding:1px 6px;margin-left:3px;vertical-align:middle}
+  .qadd{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:16px}
+  .qadd h3{font-size:14px;color:var(--accent);margin-bottom:4px}
+  .qhint{font-size:12px;color:var(--muted);margin-bottom:10px}
+  .qlbl{display:block;font-size:11.5px;color:var(--muted);font-weight:600;margin-bottom:4px}
+  .qadd select,.qadd textarea{width:100%;font:inherit;font-size:13px;padding:9px 11px;border:1px solid var(--line);border-radius:8px;margin-bottom:10px}
+  .qadd textarea{min-height:70px;resize:vertical}
+  .qpost{font:inherit;font-size:13px;font-weight:700;border:none;background:var(--accent);color:#fff;border-radius:8px;padding:9px 18px;cursor:pointer}
+  .qadd .qmsg{font-size:12px;margin-left:10px}
+  .qlist{display:flex;flex-direction:column;gap:10px}
+  .qitem{border:1px solid var(--line);border-left:4px solid #d9a520;border-radius:10px;padding:12px 14px;background:var(--card)}
+  .qitem.done{border-left-color:#34a853;opacity:.9}
+  .qtop{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap}
+  .qref{font-size:12px;font-weight:700;color:var(--accent)}
+  .qstat{font-size:11.5px;font-weight:700;border-radius:999px;padding:2px 9px}
+  .qstat.o{background:#fef7e0;color:#996a00} .qstat.r{background:#e6f4ea;color:#137333}
+  .qtext{font-size:13.5px;color:var(--ink);line-height:1.5;white-space:pre-wrap}
+  .qmeta{font-size:11px;color:var(--muted);margin-top:5px}
+  .qreply{margin-top:9px;padding:9px 11px;background:#e8f0fe;border-radius:8px;font-size:13px;color:#174ea6;line-height:1.5}
+  .qreply b{color:#0b3d91}
+  .qadmin{margin-top:10px;border-top:1px dashed var(--line);padding-top:10px}
+  .qadmin textarea{width:100%;font:inherit;font-size:13px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;min-height:52px;resize:vertical;margin-bottom:8px}
+  .qbtns{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .qresolve{font:inherit;font-size:12.5px;font-weight:700;border:none;background:#137333;color:#fff;border-radius:8px;padding:8px 14px;cursor:pointer}
+  .qsavereply,.qreopen{font:inherit;font-size:12.5px;font-weight:600;border:1px solid var(--line);background:#fff;color:var(--accent);border-radius:8px;padding:8px 14px;cursor:pointer}
+  .qbtns .qmsg{font-size:12px}
   #timeline{display:flex;gap:6px;align-items:stretch;margin-bottom:12px;font-size:11.5px;font-weight:700}
   .tlseg{display:flex;align-items:center;justify-content:center;padding:8px 6px;border-radius:8px;color:#fff;text-align:center;line-height:1.2;white-space:nowrap;overflow:hidden}
   .tl-train{background:linear-gradient(90deg,#188038,#34a853)}
@@ -151,6 +179,11 @@
   .rulesmodal{max-width:600px;border-top:5px solid #b8860b}
   .ruleslist{margin:6px 0 16px;padding-left:20px}
   .ruleslist li{font-size:13.5px;color:var(--ink);line-height:1.55;margin-bottom:9px}
+  #guide{z-index:1100}
+  .guidemodal{max-width:640px;border-top:5px solid var(--accent)}
+  .guidelist{margin:8px 0 14px;padding-left:22px}
+  .guidelist li{font-size:13.5px;color:var(--ink);line-height:1.6;margin-bottom:10px}
+  .guidenote{background:#fff8e1;border:1px solid #f6e2a8;border-radius:8px;padding:10px 12px;font-size:12.5px;color:#8a6d00!important;margin-bottom:14px}
   .dtabs{display:flex;gap:2px;border-bottom:2px solid var(--line);margin-bottom:14px}
   .dtabs button{font:inherit;font-size:13px;padding:9px 16px;border:none;background:transparent;color:var(--muted);cursor:pointer;border-radius:8px 8px 0 0}
   .dtabs button.active{color:var(--accent);font-weight:700;box-shadow:inset 0 -3px 0 var(--accent)}
@@ -172,6 +205,10 @@
   .ratebox .savebtn{font:inherit;font-weight:600;padding:7px 14px;border:none;border-radius:7px;background:var(--accent);color:#fff;cursor:pointer}
   .ratebox .rmsg{font-size:12px;color:var(--dn-fg);margin-left:8px}
   .stars{color:#f5a623;letter-spacing:1px}
+  .fsecs{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:12px 0}
+  .fsec-h{font-size:13px;color:var(--accent);margin-bottom:10px}
+  .fsecrow{justify-content:space-between;gap:12px}
+  .fsecrow span{font-size:13px;color:var(--ink);flex:1}
   .modal h2{font-size:17px;margin-bottom:6px}
   .modal p{font-size:13px;color:var(--muted);margin-bottom:14px}
   .modal .row{display:flex;gap:8px;flex-wrap:wrap}
@@ -185,7 +222,37 @@
   table.roster th{color:var(--muted);font-size:12px}
   .bar{height:8px;border-radius:999px;background:var(--ns-bg);overflow:hidden;min-width:90px}
   .bar>span{display:block;height:100%;background:var(--dn-fg)}
-  @media (max-width:600px){.brand h1{font-size:17px}.whobar input{min-width:160px}}
+  /* ---- Responsive: laptop / tablet / mobile ---- */
+  @media (max-width:900px){
+    .wrap{padding:16px 12px 50px}
+    .overview{gap:16px}
+    .admintiles .ovtile{min-width:104px}
+    .addrow input{min-width:130px}
+  }
+  @media (max-width:600px){
+    .wrap{padding:12px 10px 44px}
+    .brand h1{font-size:17px} .brand p{font-size:11px}
+    .logo{width:34px;height:34px;font-size:18px}
+    header.top{gap:10px}
+    .topright{width:100%;justify-content:space-between;align-items:center}
+    .userwrap{align-items:flex-start}
+    .userline,.statusline{justify-content:flex-start}
+    nav.tabs button{padding:9px 11px;font-size:12.5px}
+    .overview{padding:14px;gap:14px;justify-content:center}
+    .donut{width:92px;height:92px}
+    .ovsegs{flex-basis:100%}
+    .ovtiles{width:100%}
+    .ovtile,.admintiles .ovtile{min-width:calc(50% - 5px)}
+    .tgrid{grid-template-columns:1fr}
+    .addrow input{min-width:0;flex-basis:100%}
+    .addrow .genbtn,.addrow .adddevbtn{flex:1}
+    .cardbtns{flex-wrap:wrap}
+    .modal{padding:18px 16px 16px}
+    .guidelist,.ruleslist{padding-left:18px}
+    th,td{padding:8px 9px}
+    .qbtns{width:100%}
+  }
+  @media (max-width:400px){ .ovtile,.admintiles .ovtile{min-width:100%} }
 </style>
 </head>
 <body>
@@ -198,18 +265,18 @@
         <p>6 weeks &middot; 30 days &middot; MongoDB &middot; Express &middot; Angular &middot; Node</p>
       </div>
     </div>
-    <button id="installBtn" class="ghostbtn" style="display:none">⬇ Install app</button>
-  </header>
-
-  <div class="whobar" id="whobar" style="display:none">
-    <label>Signed in:</label>
-    <span class="who" id="whoName"></span>
-    <button class="linkbtn" id="signout">Sign out</button>
-    <div class="progress">
-      <span class="save" id="save"></span>
-      <div class="meter" id="meter"></div>
+    <div class="topright">
+      <div class="userwrap" id="whobar" style="display:none">
+        <div class="userline"><span class="ulabel">Signed in</span><span class="who" id="whoName"></span><button class="linkbtn" id="signout">Sign out</button></div>
+        <div class="statusline"><span class="save" id="save"></span><div class="meter" id="meter"></div></div>
+      </div>
+      <div class="headbtns">
+        <a id="sheetLink" class="ghostbtn" href="#" target="_blank" rel="noopener" style="display:none">📊 Sheet</a>
+        <button id="guideBtn" class="ghostbtn">❔ Guide</button>
+        <button id="installBtn" class="ghostbtn" style="display:none">⬇ Install app</button>
+      </div>
     </div>
-  </div>
+  </header>
 
   <div id="adminBar" style="display:none">
     <button class="linkbtn" id="adminBack">← All trainees</button>
@@ -230,6 +297,7 @@
     <button data-tab="project">Project Build</button>
     <button data-tab="final">Final Project &middot; 5-day</button>
     <button data-tab="log">Daily Log</button>
+    <button data-tab="queries">❓ Queries <span id="qTabBadge" class="qbadge" style="display:none">0</span></button>
     <button data-tab="resources">Resources</button>
     <button data-tab="rating" id="ratingTab" style="display:none">⭐ Rating</button>
   </nav>
@@ -256,6 +324,26 @@
       <li><b>Timeline — 45 days max.</b> <b>30</b> training days → <b>5</b>-day final project → <b>5</b> buffer days (catch-up / leave). Plan your pace to finish the whole thing within 45 days.</li>
     </ul>
     <button class="primary" id="rulesOk">I understand — start</button>
+  </div>
+</div>
+
+<!-- How-to guide — auto-shown once for new devs; reopen anytime via the Guide button -->
+<div class="overlay hide" id="guide">
+  <div class="modal guidemodal">
+    <h2>👋 Welcome — how this tracker works</h2>
+    <p>A 2-minute read so you can start on your own. Reopen this anytime with the <b>❔ Guide</b> button.</p>
+    <ol class="guidelist">
+      <li><b>Your board, in tabs.</b> <b>6-Week Plan</b> = what to learn each day · <b>Project Build</b> = a project you build in parallel · <b>Final Project</b> = the 5-day capstone · <b>Daily Log</b> · <b>Queries</b> · <b>Resources</b>.</li>
+      <li><b>Mark your progress.</b> In the Plan / Project / Final tabs, click the <b>Status</b> chip to cycle <i>Not started → In progress → Done</i>. It saves automatically.</li>
+      <li><b>Work in order.</b> Each day stays 🔒 <b>Locked</b> until you finish the previous day — so just go top to bottom.</li>
+      <li><b>Fill the Daily Log every day.</b> Planned vs actual hours, what you learned/built, blockers, and a 1–5 confidence. This feeds your score.</li>
+      <li><b>See your progress at a glance.</b> The ring + bars at the top show your overall %, and per-section completion.</li>
+      <li><b>Stuck? Ask in Queries.</b> Open the <b>❓ Queries</b> tab, pick the related day, and post your question. Your team lead replies (usually next day) and marks it resolved — no need to chase anyone.</li>
+      <li><b>Timeline.</b> 30 training days → 5-day final project → 5 buffer days, and everything must finish within <b>45 days</b>.</li>
+      <li><b>You stay signed in</b> across refresh and the next day until you hit <b>Sign out</b>. Progress is saved to the cloud, not just this device.</li>
+    </ol>
+    <p class="guidenote">Each time you sign in you’ll also see the short <b>daily ground rules</b> (8h/day, Basecamp check-ins, keep this updated). Please follow them.</p>
+    <button class="primary" id="guideOk">Got it — let’s go</button>
   </div>
 </div>
 
@@ -389,6 +477,21 @@ var FINAL_DAYS = [
   { focus:'Ship it', build:'Polish UI · README + a few tests · deploy backend (Render + Atlas) & frontend · run a short demo walkthrough.', out:'✅ Deployed app + demo' },
 ];
 
+// Final Project evaluation areas — the team lead ranks each 1–5. The Rating tab
+// auto-generates a selector per section from this list, so adding a section here
+// adds it to the admin UI with no other change.
+var FINAL_SECTIONS = [
+  'Backend / API (Express)',
+  'Database & Mongoose modeling',
+  'Authentication & security (JWT)',
+  'Frontend / Angular UI',
+  'RxJS & data flow',
+  'Code quality & structure',
+  'Testing',
+  'Deployment & delivery',
+  'Documentation & demo',
+];
+
 var RES = [
   { cat:'JavaScript & TypeScript', items:[
     { topic:'JavaScript core', gt:'JavaScript.info', gu:'https://javascript.info/', bt:'MDN: JavaScript', bu:'https://developer.mozilla.org/en-US/docs/Web/JavaScript' },
@@ -437,7 +540,7 @@ var FINAL_DATES = ALL_DATES.slice(30,35);
 /* ----------------------------- STATE ------------------------------------- */
 var STATUS_ORDER = ['Not started','In progress','Done'];
 var CHIP_CLASS = { 'Not started':'t', 'In progress':'i', 'Done':'d' };
-var state = { name:'', statuses:{}, logs:{}, tab:'plan' };
+var state = { name:'', statuses:{}, logs:{}, queries:[], tab:'plan' };
 var admin = { mode:null, data:[], sel:null, notice:'' }; // mode: null(user) | 'dash' | 'detail'
 var readOnly = false; // admin viewing a trainee → no editing
 var saveTimer = null;
@@ -498,17 +601,22 @@ function renderProject(){
   return h+'</tbody></table>';
 }
 
-var FINAL_UNLOCK = new Date(2026,7,31); // 31 Aug 2026 (month is 0-based)
-function finalDateLocked(){ return new Date() < FINAL_UNLOCK; }
+// Final Project unlocks dynamically once the 6-Week Plan AND Project Build are fully Done.
+function planProjectDone(){
+  for(var i=1;i<=30;i++){ if((state.statuses[String(i)]||'')!=='Done') return false; if((state.statuses['P'+i]||'')!=='Done') return false; }
+  return true;
+}
+function finalGateLocked(){ return !planProjectDone(); }
 function renderFinal(){
-  var dateLocked=!readOnly&&finalDateLocked();
+  var gateLocked=!readOnly&&finalGateLocked();
+  var planD=0,projD=0,gi; for(gi=1;gi<=30;gi++){ if(state.statuses[String(gi)]==='Done')planD++; if(state.statuses['P'+gi]==='Done')projD++; }
   var h='<table><thead><tr><th colspan="5" style="background:#eef6f0;color:#0f5f2b;font-size:13px">Final Project (5-day): RecipeVault — a MEAN recipe manager</th></tr><tr><th>Day</th><th>Focus</th><th>What to build</th><th>Output</th><th>Status</th></tr></thead><tbody>';
-  if(dateLocked) h+='<tr><td colspan="5" style="background:#fff8e1;color:#8a6d00;padding:10px 12px">🔒 The Final Project unlocks on <b>31 Aug 2026</b>. Focus on the 6-Week Plan &amp; Project Build until then.</td></tr>';
+  if(gateLocked) h+='<tr><td colspan="5" style="background:#fff8e1;color:#8a6d00;padding:10px 12px">🔒 The Final Project unlocks once you finish the <b>6-Week Plan</b> and <b>Project Build</b>. Progress: Plan <b>'+planD+'/30</b> · Project <b>'+projD+'/30</b> done.</td></tr>';
   for(var i=0;i<FINAL_DAYS.length;i++){
     var d=FINAL_DAYS[i], prev=i>0?('F'+i):'';
-    var locked=!readOnly&&(dateLocked||(state.name&&isLocked(prev)));
+    var locked=!readOnly&&(gateLocked||(state.name&&isLocked(prev)));
     var lk=locked?' class="locked"':'';
-    var cell=dateLocked?'<button class="chip lock" disabled title="Unlocks 31 Aug 2026">🔒 Locked</button>':chip('F'+(i+1),prev);
+    var cell=gateLocked?'<button class="chip lock" disabled title="Finish the 6-Week Plan &amp; Project Build first">🔒 Locked</button>':chip('F'+(i+1),prev);
     h+='<tr'+lk+'><td class="day">Day '+(i+1)+'</td><td class="topic">'+esc(d.focus)+'</td><td class="sub">'+esc(d.build)+'</td><td>'+esc(d.out)+'</td><td class="status-cell">'+cell+'</td></tr>';
   }
   return h+'</tbody></table>';
@@ -576,6 +684,90 @@ function renderOverview(){
     '</div></div>';
 }
 
+/* ----------------------------- QUERIES ----------------------------------- */
+function refLabel(ref){
+  if(!ref) return 'General';
+  if(ref.charAt(0)==='P'){ var pn=+ref.slice(1); return 'Project · Day '+pn+' — '+(PROJECT[pn-1]?PROJECT[pn-1].out:''); }
+  if(ref.charAt(0)==='F'){ var fn=+ref.slice(1); return 'Final · Day '+fn+' — '+(FINAL_DAYS[fn-1]?FINAL_DAYS[fn-1].focus:''); }
+  var d=+ref; return 'Plan · Day '+d+' — '+(CURRICULUM[d-1]?CURRICULUM[d-1].topic:'');
+}
+function fmtTs(ts){ if(!ts) return ''; try{ var d=new Date(ts); return d.toLocaleString([], {day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}); }catch(e){ return ''; } }
+function openQCount(){ var n=0; for(var i=0;i<state.queries.length;i++){ if((state.queries[i].status||'open')!=='resolved') n++; } return n; }
+function updateQBadge(){
+  var b=document.getElementById('qTabBadge'); if(!b) return;
+  var n=state.name?openQCount():0;
+  if(n>0){ b.textContent=n; b.style.display=''; } else { b.style.display='none'; }
+}
+function qOptions(){
+  var o='<option value="">General question (not tied to a day)</option>';
+  o+='<optgroup label="6-Week Plan">';
+  for(var i=0;i<30;i++) o+='<option value="'+(i+1)+'">Plan · Day '+(i+1)+' — '+esc(CURRICULUM[i].topic)+'</option>';
+  o+='</optgroup><optgroup label="Project Build">';
+  for(i=0;i<30;i++) o+='<option value="P'+(i+1)+'">Project · Day '+(i+1)+' — '+esc(PROJECT[i].out)+'</option>';
+  o+='</optgroup><optgroup label="Final Project">';
+  for(i=0;i<5;i++) o+='<option value="F'+(i+1)+'">Final · Day '+(i+1)+' — '+esc(FINAL_DAYS[i].focus)+'</option>';
+  o+='</optgroup>';
+  return o;
+}
+function renderQueries(){
+  var h='';
+  if(!readOnly){
+    h+='<div class="qadd"><h3>Ask the team lead</h3>'+
+      '<p class="qhint">Post a question, blocker or discussion point. Your team lead answers and marks it resolved — usually the next day.</p>'+
+      '<label class="qlbl">Related to</label><select id="qRef">'+qOptions()+'</select>'+
+      '<textarea id="qText" placeholder="Describe your question / blocker / what you want to discuss…"></textarea>'+
+      '<div><button class="qpost">Post question</button><span class="qmsg"></span></div></div>';
+  } else {
+    h+='<div class="qadd" style="background:#fff8e1;border-color:#f6e2a8"><h3>Team-lead replies</h3>'+
+      '<p class="qhint">Answer each open question and mark it resolved. The dev sees your reply on their next visit.</p></div>';
+  }
+  var qs=state.queries||[];
+  h+='<div class="qlist">';
+  if(!qs.length){ h+='<p style="padding:10px 2px;color:#5f6368">'+(readOnly?'No questions from this trainee yet.':'No questions yet — post your first above.')+'</p>'; }
+  for(var i=0;i<qs.length;i++){
+    var q=qs[i], resolved=(q.status||'open')==='resolved';
+    h+='<div class="qitem'+(resolved?' done':'')+'">'+
+      '<div class="qtop"><span class="qref">'+esc(q.label||refLabel(q.ref))+'</span>'+
+        '<span class="qstat '+(resolved?'r':'o')+'">'+(resolved?'✓ Resolved':'● Open')+'</span></div>'+
+      '<div class="qtext">'+esc(q.text)+'</div>'+
+      '<div class="qmeta">Asked '+esc(fmtTs(q.ts))+'</div>';
+    if(q.reply){ h+='<div class="qreply"><b>Team lead:</b> '+esc(q.reply)+(q.replyTs?' <span class="qmeta">· '+esc(fmtTs(q.replyTs))+'</span>':'')+'</div>'; }
+    if(readOnly){
+      h+='<div class="qadmin"><textarea class="qreplybox" data-id="'+esc(q.id)+'" placeholder="Type your answer / explanation…">'+esc(q.reply||'')+'</textarea>'+
+        '<div class="qbtns"><button class="qresolve" data-id="'+esc(q.id)+'">Save reply &amp; mark resolved</button>'+
+        (resolved?'<button class="qreopen" data-id="'+esc(q.id)+'">Reopen</button>':'<button class="qsavereply" data-id="'+esc(q.id)+'">Save reply (keep open)</button>')+
+        '<span class="qmsg" data-id="'+esc(q.id)+'"></span></div></div>';
+    }
+    h+='</div>';
+  }
+  return h+'</div>';
+}
+function addQuery(){
+  var ref=document.getElementById('qRef').value;
+  var text=(document.getElementById('qText').value||'').trim();
+  var msg=document.querySelector('.qadd .qmsg');
+  if(!text){ if(msg){ msg.style.color='#c5221f'; msg.textContent='Type your question first.'; } return; }
+  state.queries.unshift({ id:'q'+Date.now()+'_'+Math.floor(Math.random()*1e4), ref:ref, label:refLabel(ref),
+    text:text, ts:new Date().toISOString(), status:'open', reply:'', replyTs:'' });
+  render(); persist();
+}
+// Admin (team lead) reply — server-side merge into the dev's data.
+function replyQuery(id, status){
+  var box=document.querySelector('.qreplybox[data-id="'+id+'"]');
+  var reply=box?box.value.trim():'';
+  var msg=document.querySelector('.qmsg[data-id="'+id+'"]');
+  if(msg){ msg.style.color='#5f6368'; msg.textContent='Saving…'; }
+  fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body:JSON.stringify({action:'queryReply',name:state.name,id:id,reply:reply,status:status,pw:getAdminPw()})})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d&&d.ok){
+        for(var i=0;i<state.queries.length;i++){ if(state.queries[i].id===id){ state.queries[i].reply=reply; state.queries[i].status=status; state.queries[i].replyTs=new Date().toISOString(); } }
+        render();
+      } else if(msg){ msg.style.color='#c5221f'; msg.textContent='Not saved (admin only).'; }
+    }).catch(function(){ if(msg){ msg.style.color='#c5221f'; msg.textContent='Network error.'; } });
+}
+
 function renderResources(){
   var h='<table><thead><tr><th>Topic</th><th>Good (start here)</th><th>Better / deeper</th></tr></thead><tbody>';
   for(var g=0;g<RES.length;g++){
@@ -596,9 +788,11 @@ function render(){
   else if(state.tab==='project') v.innerHTML=renderProject();
   else if(state.tab==='final') v.innerHTML=renderFinal();
   else if(state.tab==='log') v.innerHTML=renderLog();
+  else if(state.tab==='queries') v.innerHTML=renderQueries();
   else if(state.tab==='rating') v.innerHTML=renderRating();
   else v.innerHTML=renderResources();
   updateMeter();
+  updateQBadge();
 }
 
 function updateMeter(){
@@ -617,12 +811,12 @@ function readCache(name){
   try{
     var c=JSON.parse(localStorage.getItem(lsKey(name))||'{}');
     // back-compat: old cache was a bare statuses object
-    if(c && (c.statuses||c.logs)) return { statuses:c.statuses||{}, logs:c.logs||{} };
-    return { statuses:c||{}, logs:{} };
-  }catch(e){ return { statuses:{}, logs:{} }; }
+    if(c && (c.statuses||c.logs||c.queries)) return { statuses:c.statuses||{}, logs:c.logs||{}, queries:c.queries||[] };
+    return { statuses:c||{}, logs:{}, queries:[] };
+  }catch(e){ return { statuses:{}, logs:{}, queries:[] }; }
 }
 function writeCache(name){
-  try{ localStorage.setItem(lsKey(name),JSON.stringify({statuses:state.statuses,logs:state.logs})); }catch(e){}
+  try{ localStorage.setItem(lsKey(name),JSON.stringify({statuses:state.statuses,logs:state.logs,queries:state.queries})); }catch(e){}
 }
 
 function loadTrainee(name){
@@ -632,10 +826,11 @@ function loadTrainee(name){
   document.getElementById('tabs').style.display='';
   document.getElementById('meter').style.display='';
   document.getElementById('timeline').style.display='flex';
+  document.getElementById('sheetLink').style.display='none';
   state.name=name;
   var cached=readCache(name);
-  state.statuses=cached.statuses; state.logs=cached.logs;
-  if(name){ setSignedIn(name); if(!API_URL || effPw(name)) showRules(); } // rules on every dev login/refresh
+  state.statuses=cached.statuses; state.logs=cached.logs; state.queries=cached.queries||[];
+  if(name){ setSignedIn(name); if(!API_URL || effPw(name)){ showRules(); if(!guideSeen()){ showGuide(); setGuideSeen(); } } } // rules every login; guide once for new devs
   render();
   if(!API_URL || !name) return;
   var pw=effPw(name);
@@ -645,7 +840,7 @@ function loadTrainee(name){
     .then(function(r){return r.json();})
     .then(function(d){
       if(d && d.error==='auth'){ clearPw(name); state.name=''; hideWho(); showLogin(name,'Please sign in again.'); setSave('',''); return; }
-      if(d){ state.statuses=d.statuses||{}; state.logs=d.logs||{}; writeCache(name); render(); }
+      if(d){ state.statuses=d.statuses||{}; state.logs=d.logs||{}; state.queries=d.queries||[]; writeCache(name); render(); }
       setSave('Saved','ok');
     })
     .catch(function(){ setSave('Offline — saved locally','err'); });
@@ -659,7 +854,7 @@ function persist(){
   clearTimeout(saveTimer);
   saveTimer=setTimeout(function(){
     fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body:JSON.stringify({name:state.name,statuses:state.statuses,logs:state.logs,pw:effPw(state.name)})})
+      body:JSON.stringify({name:state.name,statuses:state.statuses,logs:state.logs,queries:state.queries,pw:effPw(state.name)})})
       .then(function(r){return r.json();})
       .then(function(d){ if(d && d.error==='auth'){ var nm=state.name; clearPw(nm); state.name=''; hideWho(); showLogin(nm,'Please sign in again.'); setSave('',''); return; } setSave('Saved','ok'); })
       .catch(function(){ setSave('Offline — saved locally','err'); });
@@ -674,7 +869,12 @@ document.getElementById('view').addEventListener('click',function(e){
   var dis=e.target.closest('[data-dismiss]'); if(dis){ admin.notice=''; render(); return; }
   var card=e.target.closest('[data-open]'); if(card){ openDetail(card.getAttribute('data-open')); return; }
   var sv=e.target.closest('.savebtn'); if(sv){ saveRating(sv.closest('.ratebox')); return; }
+  // Queries — team-lead (admin) reply controls work in read-only mode
+  var qr=e.target.closest('.qresolve'); if(qr){ replyQuery(qr.getAttribute('data-id'),'resolved'); return; }
+  var qk=e.target.closest('.qsavereply'); if(qk){ replyQuery(qk.getAttribute('data-id'),'open'); return; }
+  var qo=e.target.closest('.qreopen'); if(qo){ replyQuery(qo.getAttribute('data-id'),'open'); return; }
   if(readOnly) return; // admin viewing a trainee — statuses are read-only
+  var qp=e.target.closest('.qpost'); if(qp){ addQuery(); return; }
   var b=e.target.closest('button.chip'); if(!b||b.disabled) return;
   var key=b.getAttribute('data-key'); if(!key) return;
   var cur=state.statuses[key]||'Not started';
@@ -708,6 +908,13 @@ function hideWho(){ document.getElementById('whobar').style.display='none'; }
 function showRules(){ document.getElementById('rules').classList.remove('hide'); }
 function hideRules(){ document.getElementById('rules').classList.add('hide'); }
 document.getElementById('rulesOk').addEventListener('click',hideRules);
+// How-to guide — auto-shown once per browser for new devs; reopen via the Guide button.
+function showGuide(){ document.getElementById('guide').classList.remove('hide'); }
+function hideGuide(){ document.getElementById('guide').classList.add('hide'); }
+function guideSeen(){ try{ return localStorage.getItem('meanplan:guideseen')==='1'; }catch(e){ return false; } }
+function setGuideSeen(){ try{ localStorage.setItem('meanplan:guideseen','1'); }catch(e){} }
+document.getElementById('guideOk').addEventListener('click',hideGuide);
+document.getElementById('guideBtn').addEventListener('click',showGuide);
 function showLogin(prefillId,msg){
   document.getElementById('loginId').value=prefillId||'';
   document.getElementById('loginPw').value='';
@@ -755,6 +962,7 @@ function signOut(){
   document.getElementById('tabs').style.display='';
   document.getElementById('meter').style.display='';
   document.getElementById('timeline').style.display='none';
+  document.getElementById('sheetLink').style.display='none';
   setActiveTab('plan');
   hideWho(); setSave('','');
   var url=new URL(location.href); url.searchParams.delete('name'); history.replaceState(null,'',url);
@@ -802,6 +1010,7 @@ function loadAdminDash(pw){
   fetch(API_URL+'?action=all&pw='+encodeURIComponent(pw)).then(function(r){return r.json();})
     .then(function(d){
       if(!d || d.error){ signOut(); showLogin('','Admin session expired — please sign in again.'); return; }
+      if(d.sheetUrl){ var sl=document.getElementById('sheetLink'); sl.href=d.sheetUrl; sl.style.display=''; }
       admin.data=d.trainees||[]; render();
     }).catch(function(){ v.innerHTML='<p style="padding:16px;color:#c5221f">Network error — retry.</p>'; });
 }
@@ -811,24 +1020,24 @@ function renderDash(){
   var t=(admin.data||[]).slice().sort(function(a,b){ return ((b.auto?b.auto.score:0))-((a.auto?a.auto.score:0)); });
   var h='';
   if(admin.notice) h+='<div class="notice">'+esc(admin.notice)+' <button class="linkbtn" data-dismiss>dismiss</button></div>';
-  // Manage devs — add / list / open / revoke
-  h+='<div class="manage"><h3>➕ Add a dev</h3>'+
+  // Manage trainees — add / list / open / revoke
+  h+='<div class="manage"><h3>➕ Add a trainee</h3>'+
     '<div class="addrow">'+
       '<input id="ndName" placeholder="Name (optional)" autocomplete="off">'+
       '<input id="ndEmail" placeholder="Email — their login" autocomplete="off">'+
       '<input id="ndPw" placeholder="Password" autocomplete="off">'+
       '<button class="genbtn" type="button">Generate</button>'+
-      '<button class="adddevbtn">Add dev</button>'+
+      '<button class="adddevbtn">Add trainee</button>'+
     '</div><div class="addmsg" id="addMsg"></div></div>';
-  // Aggregate stats across all devs
-  var n=t.length, sumPct=0, sumScore=0, rated=0, totDone=0;
-  for(var a=0;a<n;a++){ sumPct+=Math.round((t[a].done||0)/65*100); sumScore+=(t[a].auto?t[a].auto.score:0); if(t[a].rating)rated++; totDone+=(t[a].done||0); }
-  h+='<div style="margin:16px 0 10px"><h2 style="font-size:18px">Devs ('+n+')</h2>'+
-    '<p style="font-size:13px;color:var(--muted)">Ranked by auto score. Open any card for their full board + rating; Remove revokes access (their data is kept).</p></div>';
-  if(!t.length) return h+'<p style="padding:8px 0;color:#5f6368">No devs yet — add one above.</p>';
+  // Aggregate stats across all trainees
+  var n=t.length, sumPct=0, sumScore=0, rated=0, totDone=0, totOpenQ=0;
+  for(var a=0;a<n;a++){ sumPct+=Math.round((t[a].done||0)/65*100); sumScore+=(t[a].auto?t[a].auto.score:0); if(t[a].rating)rated++; totDone+=(t[a].done||0); totOpenQ+=(t[a].openQueries||0); }
+  h+='<div style="margin:16px 0 10px"><h2 style="font-size:18px">Trainees ('+n+')</h2>'+
+    '<p style="font-size:13px;color:var(--muted)">Ranked by auto score. Open any card for their full board, rating &amp; questions; Remove revokes access (their data is kept).</p></div>';
+  if(!t.length) return h+'<p style="padding:8px 0;color:#5f6368">No trainees yet — add one above.</p>';
   h+='<div class="ovtiles admintiles">'+
-    tile(n,'Devs')+tile((n?Math.round(sumPct/n):0)+'%','Avg completion')+
-    tile(n?Math.round(sumScore/n):0,'Avg score')+tile(rated+'/'+n,'Rated')+tile(totDone,'Items done (all)')+'</div>';
+    tile(n,'Trainees')+tile((n?Math.round(sumPct/n):0)+'%','Avg completion')+
+    tile(n?Math.round(sumScore/n):0,'Avg score')+tile(rated+'/'+n,'Rated')+tile(totOpenQ,'Open questions')+'</div>';
   h+='<div class="tgrid">';
   for(var i=0;i<t.length;i++){
     var x=t[i], pct=Math.round((x.done||0)/65*100), auto=x.auto?x.auto.score:0;
@@ -838,7 +1047,8 @@ function renderDash(){
       '<div class="bar"><span style="width:'+pct+'%"></span></div>'+
       '<div class="tmeta">'+(x.done||0)+'/65 done · '+pct+'%</div>'+
       '<div class="tmeta">Plan '+segStr(x.plan)+' · Proj '+segStr(x.project)+' · Final '+segStr(x.final)+' · Log '+(x.logDays||0)+'/30</div>'+
-      '<div class="tmeta">Rating: <span class="stars">'+(x.rating?stars(x.rating):'<span style="color:#9aa0a6">not rated</span>')+'</span></div>'+
+      '<div class="tmeta">Rating: <span class="stars">'+(x.rating?stars(x.rating):'<span style="color:#9aa0a6">not rated</span>')+'</span>'+
+        (x.openQueries?' · <span style="color:#c5221f;font-weight:700">'+x.openQueries+' open Q</span>':'')+'</div>'+
       '<div class="cardbtns"><button class="opencta">Open detailed view ▸</button>'+
       '<button class="rmdev" data-remove="'+esc(x.name)+'" title="Revoke access (keeps data)">Remove</button></div></div>';
   }
@@ -906,29 +1116,43 @@ function removeDev(email){
     }).catch(function(){ admin.notice='Network error revoking '+email+'.'; loadAdminDash(getAdminPw()); });
 }
 
+function starSel(attr,v){
+  var o='<select '+attr+'><option value="">—</option>';
+  for(var i=1;i<=5;i++) o+='<option value="'+i+'"'+(String(v)===String(i)?' selected':'')+'>'+i+' ★</option>';
+  return o+'</select>';
+}
 function detailRating(x){
   var a=x.auto||{};
   var brk='<div class="autocard"><div class="autoscore '+scoreClass(a.score||0)+'">'+(a.score||0)+'<small>/100</small></div>'+
-    '<div class="autobits"><b>Auto score</b> (from their work in the app)<br>Completion '+(a.completion||0)+'% · Consistency '+(a.consistency||0)+'% · Hours '+(a.hours||0)+'% · Follow-through '+(a.follow||0)+'%</div></div>';
-  function sel(f,v){ var o='<select data-f="'+f+'"><option value="">—</option>'; for(var i=1;i<=5;i++) o+='<option value="'+i+'"'+(String(v)===String(i)?' selected':'')+'>'+i+' ★</option>'; return o+'</select>'; }
+    '<div class="autobits"><b>Auto score</b> — objective, from their own work in the app<br>'+
+      'Completion '+(a.completion||0)+'% · Consistency '+(a.consistency||0)+'% · Effort/hours '+(a.effort!=null?a.effort:(a.hours||0))+'% · Follow-through '+(a.follow||0)+'% · Confidence '+(a.confidence||0)+'%</div></div>';
+  // Final Project — auto-generated ranking sections for the team lead
+  var fs=x.finalSections||{};
+  var secs='<div class="fsecs"><h4 class="fsec-h">Final Project — rank each area (team lead)</h4>';
+  for(var i=0;i<FINAL_SECTIONS.length;i++){
+    secs+='<div class="rrow fsecrow"><span>'+esc(FINAL_SECTIONS[i])+'</span>'+starSel('data-fs="'+i+'"', fs['s'+i])+'</div>';
+  }
+  secs+='</div>';
   return '<div class="ratebox" data-name="'+esc(x.name)+'">'+brk+
-    '<div class="rrow">Overall rating: '+sel('rating',x.rating)+'</div>'+
-    '<div class="rrow">Final Project rating (your review): '+sel('finalRating',x.finalRating)+'</div>'+
-    '<textarea data-f="notes" placeholder="Notes / feedback for this trainee">'+esc(x.notes||'')+'</textarea>'+
+    '<div class="rrow"><b>Overall rating:</b> '+starSel('data-f="rating"',x.rating)+'</div>'+
+    secs+
+    '<label class="qlbl" style="margin-top:6px">Notes / feedback for this trainee</label>'+
+    '<textarea data-f="notes" placeholder="Strengths, gaps, and what to focus on next…">'+esc(x.notes||'')+'</textarea>'+
     '<div><button class="savebtn">Save rating</button><span class="rmsg"></span></div></div>';
 }
 function saveRating(box){
   var name=box.getAttribute('data-name');
   var msg=box.querySelector('.rmsg'); msg.textContent='Saving…'; msg.style.color='#5f6368';
   var rating=box.querySelector('select[data-f="rating"]').value;
-  var finalRating=box.querySelector('select[data-f="finalRating"]').value;
   var notes=box.querySelector('textarea[data-f="notes"]').value;
+  var finalSections={};
+  [].forEach.call(box.querySelectorAll('select[data-fs]'),function(s){ if(s.value) finalSections['s'+s.getAttribute('data-fs')]=s.value; });
   fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
-    body:JSON.stringify({action:'rate',name:name,rating:rating,finalRating:finalRating,notes:notes,pw:getAdminPw()})})
+    body:JSON.stringify({action:'rate',name:name,rating:rating,finalSections:finalSections,notes:notes,pw:getAdminPw()})})
     .then(function(r){return r.json();})
     .then(function(d){
       if(d&&d.ok){ msg.style.color='#137333'; msg.textContent='Saved ✓';
-        if(admin.sel){ admin.sel.rating=rating; admin.sel.finalRating=finalRating; admin.sel.notes=notes; }
+        if(admin.sel){ admin.sel.rating=rating; admin.sel.finalSections=finalSections; admin.sel.notes=notes; if(d.finalRating!=null) admin.sel.finalRating=d.finalRating; }
       } else { msg.style.color='#c5221f'; msg.textContent='Not saved (admin only)'; }
     })
     .catch(function(){ msg.style.color='#c5221f'; msg.textContent='Network error'; });

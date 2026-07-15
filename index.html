@@ -37,6 +37,13 @@
 
   .hint{background:#fff8e1;border:1px solid #f6e2a8;color:#8a6d00;padding:8px 12px;border-radius:8px;font-size:12.5px;margin-bottom:14px}
   .hint.hide{display:none}
+  .who{font-weight:600;color:var(--ink)}
+  .linkbtn{font:inherit;font-size:12.5px;border:none;background:transparent;color:#1a73e8;cursor:pointer;padding:2px 4px}
+  .linkbtn:hover{text-decoration:underline}
+  tr.locked{opacity:.5}
+  tr.locked td.topic,tr.locked td.day{opacity:1}
+  button.chip.lock{background:#f1f3f4;color:#9aa0a6;cursor:not-allowed}
+  .locknote{font-size:11px;color:#9aa0a6;white-space:nowrap}
 
   nav.tabs{display:flex;flex-wrap:wrap;gap:2px;border-bottom:2px solid var(--line);margin-bottom:0}
   nav.tabs button{font:inherit;font-size:13px;padding:10px 16px;border:none;background:transparent;color:var(--muted);cursor:pointer;border-radius:8px 8px 0 0}
@@ -102,16 +109,15 @@
     <button id="adminBtn" class="ghostbtn">Admin view</button>
   </header>
 
-  <div class="whobar">
-    <label for="trainee">Trainee</label>
-    <input id="trainee" type="text" placeholder="Type your name…" autocomplete="off">
+  <div class="whobar" id="whobar" style="display:none">
+    <label>Signed in:</label>
+    <span class="who" id="whoName"></span>
+    <button class="linkbtn" id="signout">Sign out</button>
     <div class="progress">
       <span class="save" id="save"></span>
       <div class="meter" id="meter"></div>
     </div>
   </div>
-
-  <div class="hint" id="hint">Enter your name above to save your progress. Share your link like <b>?name=Your Name</b> to reopen it anywhere.</div>
 
   <nav class="tabs" id="tabs">
     <button data-tab="plan" class="active">6-Week Plan</button>
@@ -125,16 +131,19 @@
   <div class="foot">Click a <b>Status</b> chip to cycle Not started &rarr; In progress &rarr; Done. Progress saves automatically.</div>
 </div>
 
-<!-- Team-password gate -->
-<div class="overlay hide" id="gate">
+<!-- Sign-in (shown on load) -->
+<div class="overlay hide" id="login">
   <div class="modal">
-    <h2 id="gateTitle">Enter your password</h2>
-    <p>Ask the training owner (Jitendra) for your password to view and update your board.</p>
-    <div class="row">
-      <input type="password" id="gatePw" placeholder="Your password" autocomplete="off">
-      <button class="primary" id="gateGo">Enter</button>
+    <h2>Sign in to your training board</h2>
+    <p>Enter your name / email and password. Ask the training owner (Jitendra) if you don't have one.</p>
+    <div class="row" style="margin-bottom:8px">
+      <input type="text" id="loginId" placeholder="Name or email" autocomplete="username">
     </div>
-    <div class="err" id="gateErr"></div>
+    <div class="row">
+      <input type="password" id="loginPw" placeholder="Password" autocomplete="current-password">
+      <button class="primary" id="loginGo">Sign in</button>
+    </div>
+    <div class="err" id="loginErr"></div>
   </div>
 </div>
 
@@ -330,10 +339,14 @@ function effPw(name){ return getPw(name) || getAdminPw(); } // name pw, or admin
 /* ----------------------------- RENDER ------------------------------------ */
 function learnCell(t,u){ return u ? '<a href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(t)+'</a>' : esc(t); }
 
-function chip(key){
+// Sequential unlock: an item is locked until the previous item in its sequence is Done.
+function isLocked(prevKey){ return !!prevKey && (state.statuses[prevKey]||'Not started')!=='Done'; }
+
+function chip(key,prevKey){
   var st = state.statuses[key] || 'Not started';
-  var dis = state.name ? '' : 'disabled';
-  return '<button class="chip '+CHIP_CLASS[st]+'" data-key="'+esc(key)+'" '+dis+'>'+esc(st)+'</button>';
+  if(!state.name) return '<button class="chip '+CHIP_CLASS[st]+'" disabled>'+esc(st)+'</button>';
+  if(isLocked(prevKey)) return '<button class="chip lock" disabled title="Finish the previous day first">🔒 Locked</button>';
+  return '<button class="chip '+CHIP_CLASS[st]+'" data-key="'+esc(key)+'">'+esc(st)+'</button>';
 }
 
 function renderPlan(){
@@ -341,8 +354,9 @@ function renderPlan(){
   for(var w=0;w<6;w++){
     h+='<tr class="week"><td colspan="8">'+esc(WEEKS[w].title)+'<span class="sub">'+esc(WEEKS[w].subtitle)+'</span></td></tr>';
     for(var i=0;i<5;i++){
-      var idx=w*5+i, c=CURRICULUM[idx], dn=idx+1;
-      h+='<tr><td class="day">Day '+dn+'</td><td class="date">'+esc(DATES[idx])+'</td><td class="topic">'+esc(c.topic)+'</td><td class="sub">'+esc(c.sub)+'</td><td class="learn">'+learnCell(c.gt,c.gu)+'</td><td class="learn">'+learnCell(c.bt,c.bu)+'</td><td>'+esc(c.ex)+'</td><td class="status-cell">'+chip(String(dn))+'</td></tr>';
+      var idx=w*5+i, c=CURRICULUM[idx], dn=idx+1, prev=dn>1?String(dn-1):'';
+      var lk=state.name&&isLocked(prev)?' class="locked"':'';
+      h+='<tr'+lk+'><td class="day">Day '+dn+'</td><td class="date">'+esc(DATES[idx])+'</td><td class="topic">'+esc(c.topic)+'</td><td class="sub">'+esc(c.sub)+'</td><td class="learn">'+learnCell(c.gt,c.gu)+'</td><td class="learn">'+learnCell(c.bt,c.bu)+'</td><td>'+esc(c.ex)+'</td><td class="status-cell">'+chip(String(dn),prev)+'</td></tr>';
     }
   }
   return h+'</tbody></table>';
@@ -353,8 +367,9 @@ function renderProject(){
   for(var w=0;w<6;w++){
     h+='<tr class="week"><td colspan="5">'+esc(PROJECT_PHASES[w])+'</td></tr>';
     for(var i=0;i<5;i++){
-      var idx=w*5+i, c=PROJECT[idx];
-      h+='<tr><td class="day">Day '+(idx+1)+'</td><td class="date">'+esc(DATES[idx])+'</td><td>'+esc(c.task)+'</td><td class="topic">'+esc(c.out)+'</td><td class="status-cell">'+chip('P'+(idx+1))+'</td></tr>';
+      var idx=w*5+i, c=PROJECT[idx], prev=idx>0?('P'+idx):'';
+      var lk=state.name&&isLocked(prev)?' class="locked"':'';
+      h+='<tr'+lk+'><td class="day">Day '+(idx+1)+'</td><td class="date">'+esc(DATES[idx])+'</td><td>'+esc(c.task)+'</td><td class="topic">'+esc(c.out)+'</td><td class="status-cell">'+chip('P'+(idx+1),prev)+'</td></tr>';
     }
   }
   return h+'</tbody></table>';
@@ -363,8 +378,9 @@ function renderProject(){
 function renderFinal(){
   var h='<table><thead><tr><th colspan="6" style="background:#eef6f0;color:#0f5f2b;font-size:13px">Final Project (5-day): RecipeVault — a MEAN recipe manager</th></tr><tr><th>Day</th><th>Date</th><th>Focus</th><th>What to build</th><th>Output</th><th>Status</th></tr></thead><tbody>';
   for(var i=0;i<FINAL_DAYS.length;i++){
-    var d=FINAL_DAYS[i];
-    h+='<tr><td class="day">Day '+(i+1)+'</td><td class="date">'+esc(FINAL_DATES[i])+'</td><td class="topic">'+esc(d.focus)+'</td><td class="sub">'+esc(d.build)+'</td><td>'+esc(d.out)+'</td><td class="status-cell">'+chip('F'+(i+1))+'</td></tr>';
+    var d=FINAL_DAYS[i], prev=i>0?('F'+i):'';
+    var lk=state.name&&isLocked(prev)?' class="locked"':'';
+    h+='<tr'+lk+'><td class="day">Day '+(i+1)+'</td><td class="date">'+esc(FINAL_DATES[i])+'</td><td class="topic">'+esc(d.focus)+'</td><td class="sub">'+esc(d.build)+'</td><td>'+esc(d.out)+'</td><td class="status-cell">'+chip('F'+(i+1),prev)+'</td></tr>';
   }
   return h+'</tbody></table>';
 }
@@ -375,13 +391,14 @@ function logVal(day,f){
   return f==='p' ? '8' : ''; // planned hrs defaults to 8
 }
 function renderLog(){
-  var dis=state.name?'':'disabled';
   var h='<table><thead><tr><th>Day</th><th>Date</th><th>Planned hrs</th><th>Actual hrs</th><th>What I learned / built</th><th>Blockers & questions</th><th>Confidence 1-5</th></tr></thead><tbody>';
   for(var w=0;w<6;w++){
     h+='<tr class="week"><td colspan="7">'+esc(WEEKS[w].title)+'</td></tr>';
     for(var i=0;i<5;i++){
-      var idx=w*5+i, dn=String(idx+1);
-      h+='<tr><td class="day">Day '+(idx+1)+'</td><td class="date">'+esc(DATES[idx])+'</td>'+
+      var idx=w*5+i, dn=String(idx+1), prev=idx>0?String(idx):'';
+      var dis=(!state.name||isLocked(prev))?'disabled':'';
+      var lk=state.name&&isLocked(prev)?' class="locked"':'';
+      h+='<tr'+lk+'><td class="day">Day '+(idx+1)+'</td><td class="date">'+esc(DATES[idx])+'</td>'+
         '<td class="logf hrs"><input type="number" min="0" step="0.5" data-day="'+dn+'" data-f="p" value="'+esc(logVal(dn,"p"))+'" '+dis+'></td>'+
         '<td class="logf hrs"><input type="number" min="0" step="0.5" data-day="'+dn+'" data-f="a" value="'+esc(logVal(dn,"a"))+'" '+dis+'></td>'+
         '<td class="logf"><textarea rows="1" data-day="'+dn+'" data-f="l" '+dis+'>'+esc(logVal(dn,"l"))+'</textarea></td>'+
@@ -421,7 +438,6 @@ function updateMeter(){
     '<span class="pill d">'+done+' done</span>'+
     '<span class="pill i">'+ip+' in progress</span>'+
     '<span class="pill t">'+(total-done-ip)+' left</span>';
-  document.getElementById('hint').className = state.name ? 'hint hide' : 'hint';
 }
 
 /* ----------------------------- SAVE / LOAD ------------------------------- */
@@ -443,15 +459,16 @@ function loadTrainee(name){
   state.name=name;
   var cached=readCache(name);
   state.statuses=cached.statuses; state.logs=cached.logs;
+  if(name) setSignedIn(name);
   render();
   if(!API_URL || !name) return;
   var pw=effPw(name);
-  if(!pw){ showGate(name); return; }
+  if(!pw){ showLogin(name); return; }
   setSave('Loading…');
   fetch(API_URL+'?name='+encodeURIComponent(name)+'&pw='+encodeURIComponent(pw),{method:'GET'})
     .then(function(r){return r.json();})
     .then(function(d){
-      if(d && d.error==='auth'){ clearPw(name); showGate(name); setSave('Locked','err'); return; }
+      if(d && d.error==='auth'){ clearPw(name); state.name=''; hideWho(); showLogin(name,'Please sign in again.'); setSave('',''); return; }
       if(d){ state.statuses=d.statuses||{}; state.logs=d.logs||{}; writeCache(name); render(); }
       setSave('Saved','ok');
     })
@@ -468,7 +485,7 @@ function persist(){
     fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
       body:JSON.stringify({name:state.name,statuses:state.statuses,logs:state.logs,pw:effPw(state.name)})})
       .then(function(r){return r.json();})
-      .then(function(d){ if(d && d.error==='auth'){ clearPw(state.name); showGate(state.name); setSave('Locked','err'); return; } setSave('Saved','ok'); })
+      .then(function(d){ if(d && d.error==='auth'){ var nm=state.name; clearPw(nm); state.name=''; hideWho(); showLogin(nm,'Please sign in again.'); setSave('',''); return; } setSave('Saved','ok'); })
       .catch(function(){ setSave('Offline — saved locally','err'); });
   },600);
 }
@@ -476,12 +493,10 @@ function persist(){
 /* ----------------------------- EVENTS ------------------------------------ */
 document.getElementById('view').addEventListener('click',function(e){
   var b=e.target.closest('button.chip'); if(!b||b.disabled) return;
-  var key=b.getAttribute('data-key');
+  var key=b.getAttribute('data-key'); if(!key) return;
   var cur=state.statuses[key]||'Not started';
-  var next=STATUS_ORDER[(STATUS_ORDER.indexOf(cur)+1)%3];
-  state.statuses[key]=next;
-  b.className='chip '+CHIP_CLASS[next]; b.textContent=next;
-  updateMeter(); persist();
+  state.statuses[key]=STATUS_ORDER[(STATUS_ORDER.indexOf(cur)+1)%3];
+  render(); persist(); // re-render so the next day locks/unlocks
 });
 
 document.getElementById('view').addEventListener('input',function(e){
@@ -500,41 +515,50 @@ document.getElementById('tabs').addEventListener('click',function(e){
   render();
 });
 
-var input=document.getElementById('trainee');
-function applyName(name){
-  name=(name||'').trim();
-  input.value=name;
-  var url=new URL(location.href);
-  if(name) url.searchParams.set('name',name); else url.searchParams.delete('name');
-  history.replaceState(null,'',url);
-  loadTrainee(name);
+/* ----------------------------- SIGN IN ----------------------------------- */
+function setSignedIn(name){
+  document.getElementById('whoName').textContent=name;
+  document.getElementById('whobar').style.display='';
 }
-input.addEventListener('change',function(){ applyName(input.value); });
-input.addEventListener('keydown',function(e){ if(e.key==='Enter') applyName(input.value); });
-
-/* ----------------------------- TEAM GATE --------------------------------- */
-var gate=document.getElementById('gate'), gateName='';
-function showGate(name){
-  if(!API_URL) return;
-  gateName=(name||input.value||'').trim();
-  document.getElementById('gateTitle').textContent = gateName ? ('Enter password for '+gateName) : 'Enter your password';
-  document.getElementById('gateErr').textContent='';
-  gate.classList.remove('hide');
-  var i=document.getElementById('gatePw'); i.value=''; i.focus();
+function hideWho(){ document.getElementById('whobar').style.display='none'; }
+function showLogin(prefillId,msg){
+  document.getElementById('loginId').value=prefillId||'';
+  document.getElementById('loginPw').value='';
+  document.getElementById('loginErr').textContent=msg||'';
+  document.getElementById('login').classList.remove('hide');
+  document.getElementById(prefillId?'loginPw':'loginId').focus();
 }
-function hideGate(){ gate.classList.add('hide'); }
-function submitGate(){
-  var pw=document.getElementById('gatePw').value, err=document.getElementById('gateErr');
-  if(!gateName){ err.textContent='Type your name first.'; return; }
-  err.textContent='Checking…';
-  fetch(API_URL+'?action=ping&name='+encodeURIComponent(gateName)+'&pw='+encodeURIComponent(pw)).then(function(r){return r.json();})
+function hideLogin(){ document.getElementById('login').classList.add('hide'); }
+function afterLogin(id){
+  hideLogin();
+  var url=new URL(location.href); url.searchParams.set('name',id); history.replaceState(null,'',url);
+  loadTrainee(id);
+}
+function doLogin(){
+  var id=(document.getElementById('loginId').value||'').trim();
+  var pw=document.getElementById('loginPw').value;
+  var err=document.getElementById('loginErr');
+  if(!id){ err.textContent='Enter your name or email.'; return; }
+  if(!API_URL){ setPw(id,pw); afterLogin(id); return; } // local mode
+  err.textContent='Signing in…';
+  fetch(API_URL+'?action=ping&name='+encodeURIComponent(id)+'&pw='+encodeURIComponent(pw)).then(function(r){return r.json();})
     .then(function(d){
-      if(d && d.ok){ setPw(gateName,pw); hideGate(); err.textContent=''; loadTrainee(gateName); }
-      else { err.textContent='Wrong password for '+gateName+'.'; }
+      if(d && d.ok){ setPw(id,pw); err.textContent=''; afterLogin(id); }
+      else { err.textContent='We couldn’t find that name/email and password. Please check with the training owner (Jitendra).'; }
     }).catch(function(){ err.textContent='Network error — check your connection.'; });
 }
-document.getElementById('gateGo').addEventListener('click',submitGate);
-document.getElementById('gatePw').addEventListener('keydown',function(e){ if(e.key==='Enter') submitGate(); });
+function signOut(){
+  if(state.name) clearPw(state.name);
+  try{ sessionStorage.removeItem('meanplan:adminpw'); }catch(e){}
+  state.name=''; state.statuses={}; state.logs={};
+  hideWho(); setSave('','');
+  var url=new URL(location.href); url.searchParams.delete('name'); history.replaceState(null,'',url);
+  render(); showLogin('','');
+}
+document.getElementById('loginGo').addEventListener('click',doLogin);
+document.getElementById('loginPw').addEventListener('keydown',function(e){ if(e.key==='Enter') doLogin(); });
+document.getElementById('loginId').addEventListener('keydown',function(e){ if(e.key==='Enter') doLogin(); });
+document.getElementById('signout').addEventListener('click',signOut);
 
 /* ----------------------------- ADMIN VIEW -------------------------------- */
 var adminOv=document.getElementById('admin');
@@ -586,9 +610,9 @@ function renderRoster(t){
 (function init(){
   var qs=new URLSearchParams(location.search);
   var name=(qs.get('name')||'').trim();
-  input.value=name;
-  render(); updateMeter();
-  if(name) loadTrainee(name);   // loadTrainee shows the password gate when needed
+  render();
+  if(name && effPw(name)) loadTrainee(name);  // remembered session → auto sign-in
+  else showLogin(name,'');                     // otherwise ask to sign in
 })();
 </script>
 </body>

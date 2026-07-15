@@ -82,7 +82,8 @@ A **Progress** tab appears in the Sheet with one row per trainee:
 - `ADMIN_PW` — yours (Jitendra). Opens the **Admin view** (all trainees) and can open any board.
 - `USERS` — one line per trainee: `'Exact Name': 'their password'`. A dev can only open/update
   their own board. Add a dev by adding a line, then **redeploy** (new version).
-- Current: admin `Jitendra@admin`; `Priyanshu Mishra` → `HSOE&5634N`. Change these anytime.
+- Set the actual values in `Code.gs` (`ADMIN_PW` and the `USERS` map). `Code.gs` is
+  git-excluded (never committed) because it holds these secrets and the repo is public.
 - Reality check: this protects the saved progress data (checked server-side). The training
   content itself is public (it's a static page) — that's expected.
 

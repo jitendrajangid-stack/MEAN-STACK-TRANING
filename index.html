@@ -310,8 +310,8 @@
 
   <div id="timeline" style="display:none">
     <div class="tlseg tl-train" style="flex:30" title="Days 1–30">Training · 30 days</div>
-    <div class="tlseg tl-final" style="flex:5" title="Days 31–35">Final · 5</div>
-    <div class="tlseg tl-buffer" style="flex:5" title="Days 36–40 (catch-up / leave)">Buffer · 5</div>
+    <div class="tlseg tl-final" style="flex:7" title="Days 31–37">Final · 7</div>
+    <div class="tlseg tl-buffer" style="flex:2" title="Days 38–39 (catch-up / leave)">Buffer · 2</div>
     <div class="tldead" title="Hard deadline">⏳ 45-day max</div>
   </div>
 
@@ -320,7 +320,7 @@
   <nav class="tabs" id="tabs">
     <button data-tab="plan" class="active">6-Week Plan</button>
     <button data-tab="project">Project Build</button>
-    <button data-tab="final">Final Project &middot; 5-day</button>
+    <button data-tab="final">Final Project &middot; 7-day</button>
     <button data-tab="log">Daily Log</button>
     <button data-tab="queries">❓ Queries <span id="qTabBadge" class="qbadge" style="display:none">0</span></button>
     <button data-tab="resources">Resources</button>
@@ -346,7 +346,7 @@
       <li><b>Keep this tracker updated.</b> Update your status &amp; daily log here every day. <b>A day with no update is marked as leave.</b></li>
       <li><b>Questions &amp; blockers → Basecamp before you leave.</b> Post them the same day; your team lead will connect the next day to discuss.</li>
       <li><b>You are being evaluated.</b> Your daily progress and the final project decide your assessment; next steps are decided once the training ends.</li>
-      <li><b>Timeline — 45 days max.</b> <b>30</b> training days → <b>5</b>-day final project → <b>5</b> buffer days (catch-up / leave). Plan your pace to finish the whole thing within 45 days.</li>
+      <li><b>Timeline — 45 days max.</b> <b>30</b> training days → <b>7</b>-day final project → <b>2</b> buffer days (catch-up / leave). Plan your pace to finish the whole thing within 45 days.</li>
     </ul>
     <button class="primary" id="rulesOk">I understand — start</button>
   </div>
@@ -358,13 +358,13 @@
     <h2>👋 Welcome — how this tracker works</h2>
     <p>A 2-minute read so you can start on your own. Reopen this anytime with the <b>❔ Guide</b> button.</p>
     <ol class="guidelist">
-      <li><b>Your board, in tabs.</b> <b>6-Week Plan</b> = what to learn each day · <b>Project Build</b> = a project you build in parallel · <b>Final Project</b> = the 5-day capstone · <b>Daily Log</b> · <b>Queries</b> · <b>Resources</b>.</li>
+      <li><b>Your board, in tabs.</b> <b>6-Week Plan</b> = what to learn each day · <b>Project Build</b> = a project you build in parallel · <b>Final Project</b> = the 7-day capstone · <b>Daily Log</b> · <b>Queries</b> · <b>Resources</b>.</li>
       <li><b>Mark your progress.</b> In the Plan / Project / Final tabs, click the <b>Status</b> chip to cycle <i>Not started → In progress → Done</i>. It saves automatically.</li>
       <li><b>Work in order.</b> Each day stays 🔒 <b>Locked</b> until you finish the previous day — so just go top to bottom.</li>
       <li><b>Fill the Daily Log every day.</b> Planned vs actual hours, what you learned/built, blockers, and a 1–5 confidence. This feeds your score.</li>
       <li><b>See your progress at a glance.</b> The ring + bars at the top show your overall %, and per-section completion.</li>
       <li><b>Stuck? Ask in Queries.</b> Open the <b>❓ Queries</b> tab, pick the related day, and post your question. Your team lead replies (usually next day) and marks it resolved — no need to chase anyone.</li>
-      <li><b>Timeline.</b> 30 training days → 5-day final project → 5 buffer days, and everything must finish within <b>45 days</b>.</li>
+      <li><b>Timeline.</b> 30 training days → 7-day final project → 2 buffer days, and everything must finish within <b>45 days</b>.</li>
       <li><b>You stay signed in</b> across refresh and the next day until you hit <b>Sign out</b>. Progress is saved to the cloud, not just this device.</li>
     </ol>
     <p class="guidenote">Each time you sign in you’ll also see the short <b>daily ground rules</b> (8h/day, Basecamp check-ins, keep this updated). Please follow them.</p>
@@ -496,10 +496,12 @@ var PROJECT = [
 
 var FINAL_DAYS = [
   { focus:'Setup & backend foundation', build:'Init repo + client/ & server/ (+ .gitignore) · Express + MongoDB Atlas connection · Mongoose models (User, Recipe) with validation · auth: register / login (bcrypt + JWT) + auth middleware.', out:'Auth API + DB connected' },
-  { focus:'Backend CRUD & validation', build:'Recipe CRUD routes (GET / POST / PUT / DELETE) · JWT-protected, owner-scoped · express-validator + central error middleware · consistent status codes · test in Postman.', out:'Complete, tested API' },
+  { focus:'Backend CRUD & validation', build:'Recipe CRUD routes (GET / POST / PUT / DELETE) · JWT-protected, owner-scoped · express-validator + central error middleware · consistent status codes · test in Postman.', out:'Complete, validated API' },
+  { focus:'Backend testing, search & hardening', build:'Jest + Supertest for auth + CRUD (happy + error paths) · search + category query params + pagination · a seed script · basic hardening (helmet, rate-limit, CORS).', out:'Tested, hardened API' },
   { focus:'Frontend foundation', build:'Angular scaffold (standalone) · login / register + functional guard + token interceptor · recipe list from the API (typed + async pipe) · routing shell + 404.', out:'FE auth + recipe list' },
   { focus:'Frontend features', build:'Create / edit recipe form (reactive + validation) · detail view · search + category filter (RxJS debounce/switchMap) · loading, error & empty states.', out:'Full recipe UX' },
-  { focus:'Ship it', build:'Polish UI + responsiveness · README + a few Jest/Supertest tests · deploy backend (Render + Atlas) & frontend · run a short demo walkthrough.', out:'✅ Deployed app + demo' },
+  { focus:'UI polish & UX depth', build:'Angular Material + responsive layout · image URL/upload on recipes · favourites or star ratings · accessibility pass · empty / skeleton states.', out:'Polished, responsive UI' },
+  { focus:'Ship it', build:'README + screenshots · a few frontend tests · deploy backend (Render + Atlas) & frontend · run a short demo walkthrough.', out:'✅ Deployed app + demo' },
 ];
 
 // Final Project evaluation areas — the team lead ranks each 1–5. The Rating tab
@@ -635,7 +637,7 @@ function finalGateLocked(){ return !planProjectDone(); }
 function renderFinal(){
   var gateLocked=!readOnly&&finalGateLocked();
   var planD=0,projD=0,gi; for(gi=1;gi<=30;gi++){ if(state.statuses[String(gi)]==='Done')planD++; if(state.statuses['P'+gi]==='Done')projD++; }
-  var h='<table><thead><tr><th colspan="5" style="background:#eef6f0;color:#0f5f2b;font-size:13px">Final Project (5-day): RecipeVault — a MEAN recipe manager</th></tr><tr><th>Day</th><th>Focus</th><th>What to build</th><th>Output</th><th>Status</th></tr></thead><tbody>';
+  var h='<table><thead><tr><th colspan="5" style="background:#eef6f0;color:#0f5f2b;font-size:13px">Final Project (7-day): RecipeVault — a MEAN recipe manager</th></tr><tr><th>Day</th><th>Focus</th><th>What to build</th><th>Output</th><th>Status</th></tr></thead><tbody>';
   if(gateLocked) h+='<tr><td colspan="5" style="background:#fff8e1;color:#8a6d00;padding:10px 12px">🔒 The Final Project unlocks once you finish the <b>6-Week Plan</b> and <b>Project Build</b>. Progress: Plan <b>'+planD+'/30</b> · Project <b>'+projD+'/30</b> done.</td></tr>';
   for(var i=0;i<FINAL_DAYS.length;i++){
     var d=FINAL_DAYS[i], prev=i>0?('F'+i):'';
@@ -684,8 +686,8 @@ function donut(pct){
 function computeStats(){
   var p=0,pr=0,f=0,i;
   for(i=1;i<=30;i++){ if(state.statuses[String(i)]==='Done')p++; if(state.statuses['P'+i]==='Done')pr++; }
-  for(i=1;i<=5;i++){ if(state.statuses['F'+i]==='Done')f++; }
-  var done=p+pr+f, pct=Math.round(done/65*100);
+  for(i=1;i<=7;i++){ if(state.statuses['F'+i]==='Done')f++; }
+  var done=p+pr+f, pct=Math.round(done/67*100);
   var logDays=0,conf=0,confN=0,act=0,plan=0;
   for(i=1;i<=30;i++){
     var e=state.logs[String(i)]||{}; var has=e.a||e.l||e.b||e.c;
@@ -700,9 +702,9 @@ function renderOverview(){
   function seg(lbl,d,n){ var w=Math.round(d/n*100); return '<div class="ovseg"><div class="ovseglbl">'+lbl+' <b>'+d+'/'+n+'</b> · '+w+'%</div><div class="bar"><span style="width:'+w+'%"></span></div></div>'; }
   return '<div class="overview">'+
     donut(s.pct)+
-    '<div class="ovsegs">'+seg('6-Week Plan',s.p,30)+seg('Project Build',s.pr,30)+seg('Final Project',s.f,5)+'</div>'+
+    '<div class="ovsegs">'+seg('6-Week Plan',s.p,30)+seg('Project Build',s.pr,30)+seg('Final Project',s.f,7)+'</div>'+
     '<div class="ovtiles">'+
-      tile(s.done+'/65','Items done')+
+      tile(s.done+'/67','Items done')+
       tile(s.logDays+'/30','Days logged')+
       tile(s.avgConf?s.avgConf.toFixed(1):'–','Avg confidence')+
       tile(s.act+'/'+s.plan+'h','Actual vs planned')+
@@ -730,7 +732,7 @@ function qOptions(){
   o+='</optgroup><optgroup label="Project Build">';
   for(i=0;i<30;i++) o+='<option value="P'+(i+1)+'">Project · Day '+(i+1)+' — '+esc(PROJECT[i].out)+'</option>';
   o+='</optgroup><optgroup label="Final Project">';
-  for(i=0;i<5;i++) o+='<option value="F'+(i+1)+'">Final · Day '+(i+1)+' — '+esc(FINAL_DAYS[i].focus)+'</option>';
+  for(i=0;i<FINAL_DAYS.length;i++) o+='<option value="F'+(i+1)+'">Final · Day '+(i+1)+' — '+esc(FINAL_DAYS[i].focus)+'</option>';
   o+='</optgroup>';
   return o;
 }
@@ -1041,21 +1043,21 @@ function loadAdminDash(pw){
 }
 
 function dispName(x){ return x.display ? x.display : pretty(x.name); }
-// Ranked performance comparison — one stacked bar per trainee on a shared 0–65 items
-// scale (Plan 30 + Project 30 + Final 5). Bar length = overall completion; segments
+// Ranked performance comparison — one stacked bar per trainee on a shared 0–67 items
+// scale (Plan 30 + Project 30 + Final 7). Bar length = overall completion; segments
 // show where each trainee's progress sits. Pure HTML/CSS, no libs (CSP-safe).
 function renderPerfChart(list){
   var t=(list||[]).map(function(x){
     var pl=(x.plan&&x.plan.done)||0, pr=(x.project&&x.project.done)||0, fn=(x.final&&x.final.done)||0;
-    return { x:x, pl:pl, pr:pr, fn:fn, done:(x.done||0), pct:Math.round((x.done||0)/65*100) };
+    return { x:x, pl:pl, pr:pr, fn:fn, done:(x.done||0), pct:Math.round((x.done||0)/67*100) };
   }).sort(function(a,b){ return b.done-a.done; });
   if(!t.length) return '';
   var grid='<div class="perf-grid"><span style="left:25%"></span><span style="left:50%"></span><span style="left:75%"></span></div>';
   var rows='';
   for(var i=0;i<t.length;i++){
     var r=t[i];
-    function seg(cls,lbl,v){ return v>0 ? '<div class="perf-seg '+cls+'" style="width:'+(v/65*100)+'%" title="'+lbl+' '+v+'"></div>' : ''; }
-    var tip=esc(dispName(r.x))+' — Plan '+r.pl+'/30 · Project '+r.pr+'/30 · Final '+r.fn+'/5 · '+r.done+'/65';
+    function seg(cls,lbl,v){ return v>0 ? '<div class="perf-seg '+cls+'" style="width:'+(v/67*100)+'%" title="'+lbl+' '+v+'"></div>' : ''; }
+    var tip=esc(dispName(r.x))+' — Plan '+r.pl+'/30 · Project '+r.pr+'/30 · Final '+r.fn+'/7 · '+r.done+'/67';
     rows+='<div class="perf-row'+(i<3&&r.done>0?' top':'')+'">'+
       '<div class="perf-rank">'+(i+1)+'</div>'+
       '<div class="perf-name" title="'+tip+'">'+esc(dispName(r.x))+'</div>'+
@@ -1066,11 +1068,11 @@ function renderPerfChart(list){
     '</div>';
   }
   return '<div class="perf"><h3>📊 Trainee performance</h3>'+
-    '<p class="perf-sub">Overall completion, ranked. Each bar spans the 65 tracked items; segments show the split.</p>'+
+    '<p class="perf-sub">Overall completion, ranked. Each bar spans the 67 tracked items; segments show the split.</p>'+
     '<div class="perf-legend">'+
       '<span><i class="plan"></i><b>6-Week Plan</b> · 30</span>'+
       '<span><i class="proj"></i><b>Project Build</b> · 30</span>'+
-      '<span><i class="final"></i><b>Final Project</b> · 5</span>'+
+      '<span><i class="final"></i><b>Final Project</b> · 7</span>'+
     '</div>'+rows+'</div>';
 }
 function renderDash(){
@@ -1088,7 +1090,7 @@ function renderDash(){
     '</div><div class="addmsg" id="addMsg"></div></div>';
   // Aggregate stats across all trainees
   var n=t.length, sumPct=0, sumScore=0, rated=0, totDone=0, totOpenQ=0;
-  for(var a=0;a<n;a++){ sumPct+=Math.round((t[a].done||0)/65*100); sumScore+=(t[a].auto?t[a].auto.score:0); if(t[a].rating)rated++; totDone+=(t[a].done||0); totOpenQ+=(t[a].openQueries||0); }
+  for(var a=0;a<n;a++){ sumPct+=Math.round((t[a].done||0)/67*100); sumScore+=(t[a].auto?t[a].auto.score:0); if(t[a].rating)rated++; totDone+=(t[a].done||0); totOpenQ+=(t[a].openQueries||0); }
   h+='<div style="margin:16px 0 10px"><h2 style="font-size:18px">Trainees ('+n+')</h2>'+
     '<p style="font-size:13px;color:var(--muted)">Ranked by auto score. Open any card for their full board, rating &amp; questions; Remove revokes access (their data is kept).</p></div>';
   if(!t.length) return h+'<p style="padding:8px 0;color:#5f6368">No trainees yet — add one above.</p>';
@@ -1098,12 +1100,12 @@ function renderDash(){
   h+=renderPerfChart(t);
   h+='<div class="tgrid">';
   for(var i=0;i<t.length;i++){
-    var x=t[i], pct=Math.round((x.done||0)/65*100), auto=x.auto?x.auto.score:0;
+    var x=t[i], pct=Math.round((x.done||0)/67*100), auto=x.auto?x.auto.score:0;
     h+='<div class="tcard" data-open="'+esc(x.name)+'">'+
       '<div class="tcard-top"><span class="tname">'+esc(dispName(x))+'</span><span class="badge '+scoreClass(auto)+'">'+auto+'</span></div>'+
       '<div class="tmeta" style="font-size:11px">'+esc(x.name)+'</div>'+
       '<div class="bar"><span style="width:'+pct+'%"></span></div>'+
-      '<div class="tmeta">'+(x.done||0)+'/65 done · '+pct+'%</div>'+
+      '<div class="tmeta">'+(x.done||0)+'/67 done · '+pct+'%</div>'+
       '<div class="tmeta">Plan '+segStr(x.plan)+' · Proj '+segStr(x.project)+' · Final '+segStr(x.final)+' · Log '+(x.logDays||0)+'/30</div>'+
       '<div class="tmeta">Rating: <span class="stars">'+(x.rating?stars(x.rating):'<span style="color:#9aa0a6">not rated</span>')+'</span>'+
         (x.openQueries?' · <span style="color:#c5221f;font-weight:700">'+x.openQueries+' open Q</span>':'')+'</div>'+

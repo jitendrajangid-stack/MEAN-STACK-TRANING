@@ -232,6 +232,8 @@
   .stars{color:#f5a623;letter-spacing:1px}
   .fsecs{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:12px 0}
   .fsec-h{font-size:13px;color:var(--accent);margin-bottom:10px}
+  .fsec-group{font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin:12px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--line)}
+  .fsec-group:first-of-type{margin-top:2px}
   .fsecrow{justify-content:space-between;gap:12px}
   .fsecrow span{font-size:13px;color:var(--ink);flex:1}
   .modal h2{font-size:17px;margin-bottom:6px}
@@ -514,29 +516,48 @@ var PROJECT = [
   { task:'Deploy the Angular frontend; final demo walkthrough — project COMPLETE.', out:'✅ Live full-stack app' },
 ];
 
+// RecipeVault — a full MEAN capstone. The final is deliberately weighted toward the
+// backend: server-side validation, authentication (JWT) AND authorization (owner + roles)
+// are what separate trainees who truly learned from those who copied tutorials.
 var FINAL_DAYS = [
-  { focus:'Setup & backend foundation', build:'Init repo + client/ & server/ (+ .gitignore) · Express + MongoDB Atlas connection · Mongoose models (User, Recipe) with validation · auth: register / login (bcrypt + JWT) + auth middleware.', out:'Auth API + DB connected' },
-  { focus:'Backend CRUD & validation', build:'Recipe CRUD routes (GET / POST / PUT / DELETE) · JWT-protected, owner-scoped · express-validator + central error middleware · consistent status codes · test in Postman.', out:'Complete, validated API' },
-  { focus:'Backend testing, search & hardening', build:'Jest + Supertest for auth + CRUD (happy + error paths) · search + category query params + pagination · a seed script · basic hardening (helmet, rate-limit, CORS).', out:'Tested, hardened API' },
-  { focus:'Frontend foundation', build:'Angular scaffold (standalone) · login / register + functional guard + token interceptor · recipe list from the API (typed + async pipe) · routing shell + 404.', out:'FE auth + recipe list' },
-  { focus:'Frontend features', build:'Create / edit recipe form (reactive + validation) · detail view · search + category filter (RxJS debounce/switchMap) · loading, error & empty states.', out:'Full recipe UX' },
-  { focus:'UI polish & UX depth', build:'Angular Material + responsive layout · image URL/upload on recipes · favourites or star ratings · accessibility pass · empty / skeleton states.', out:'Polished, responsive UI' },
-  { focus:'Ship it', build:'README + screenshots · a few frontend tests · deploy backend (Render + Atlas) & frontend · run a short demo walkthrough.', out:'✅ Deployed app + demo' },
+  { focus:'Setup & data layer', build:'Repo with client/ + server/ (+ .gitignore, .env) · Express app + MongoDB Atlas connection · Mongoose models: User (email, hashed password, role: user | admin) and Recipe (owner ref, title, ingredients[], steps, category, timestamps) with schema-level validation.', out:'Models + DB connected' },
+  { focus:'Authentication (backend)', build:'Register / login endpoints · bcrypt password hashing (never store plain) · JWT sign on login + verify middleware · GET /me from the token · sensible token expiry · reject bad/expired tokens with 401.', out:'Working auth API' },
+  { focus:'CRUD, validation & authorization', build:'Recipe CRUD (GET / POST / PUT / DELETE) · server-side validation on EVERY input (express-validator) · authorization: only the owner may edit/delete, admin role may override · correct 401 (not logged in) vs 403 (forbidden) vs 404 · central error middleware.', out:'Secured, validated API' },
+  { focus:'API hardening & tests', build:'Search + category filter + pagination via query params · helmet + rate-limit + CORS · Jest + Supertest covering auth, validation failures, and authorization (owner vs non-owner vs admin) · a seed script.', out:'Tested, hardened API' },
+  { focus:'Angular foundation & auth', build:'Angular scaffold (standalone) · register / login · functional route guard · HTTP interceptor attaching the JWT + handling 401 · role-aware nav · recipe list from the API (typed + async pipe) · routing shell + 404.', out:'FE auth + recipe list' },
+  { focus:'Angular features & UX', build:'Create / edit reactive form mirroring backend validation · recipe detail · RxJS search + category filter (debounce / switchMap) · edit & delete shown only to the owner/admin (authorization on the UI) · loading / error / empty states · Material + responsive.', out:'Full recipe UX' },
+  { focus:'Ship & demo', build:'README + screenshots · a few frontend tests · deploy backend (Render + Atlas) and frontend · seed demo data · walkthrough proving auth + authorization work (owner can edit, a different user gets 403).', out:'✅ Deployed app + demo' },
 ];
 
-// Final Project evaluation areas — the team lead ranks each 1–5. The Rating tab
-// auto-generates a selector per section from this list, so adding a section here
-// adds it to the admin UI with no other change.
+// Final Project evaluation areas — the team lead ranks each 1–5. Grouped by area so
+// you can see exactly where a trainee is strong or weak. The Rating tab auto-generates
+// a selector per item (flattened in order → saved as s0..sN), so adding an item here
+// adds it to the admin UI with no other change. Keep append-only to preserve saved ranks.
 var FINAL_SECTIONS = [
-  'Backend / API (Express)',
-  'Database & Mongoose modeling',
-  'Authentication & security (JWT)',
-  'Frontend / Angular UI',
-  'RxJS & data flow',
-  'Code quality & structure',
-  'Testing',
-  'Deployment & delivery',
-  'Documentation & demo',
+  { group:'Backend / API (Node + Express)', items:[
+    'REST design & correct status codes',
+    'Server-side validation (all inputs)',
+    'Authentication (JWT + bcrypt)',
+    'Authorization (owner-only + admin role)',
+    'Error handling & security (helmet/CORS/rate-limit)',
+  ]},
+  { group:'Database (MongoDB + Mongoose)', items:[
+    'Schema & data modeling (refs, validation)',
+    'Query correctness (search / filter / pagination)',
+  ]},
+  { group:'Frontend (Angular)', items:[
+    'App structure & components',
+    'Forms & client-side validation',
+    'RxJS & data flow',
+    'Auth flow (guard, interceptor, role-aware UI)',
+    'UX: loading / error / empty states',
+  ]},
+  { group:'Quality & delivery', items:[
+    'Code quality & structure',
+    'Testing (unit + API)',
+    'Deployment (live, working app)',
+    'Documentation & demo',
+  ]},
 ];
 
 var RES = [
@@ -627,6 +648,10 @@ function skelDetail(name){
     '<div style="height:12px"></div>'+skelBox('90%',12)+
     '<div style="height:8px"></div>'+skelBox('75%',12)+'</div>';
 }
+// Auto-grow textareas to fit their content — no manual drag-resize needed.
+function autoGrow(ta){ if(!ta) return; ta.style.overflowY='hidden'; ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px'; }
+function sizeTextareas(root){ var l=(root||document).querySelectorAll('textarea'); for(var i=0;i<l.length;i++) autoGrow(l[i]); }
+document.addEventListener('input',function(e){ if(e.target&&e.target.tagName==='TEXTAREA') autoGrow(e.target); });
 function lsKey(name){ return 'meanplan:'+name.toLowerCase(); }
 function pwKey(name){ return 'meanplan:pw:'+String(name).toLowerCase(); }
 function getPw(name){ try{return localStorage.getItem(pwKey(name))||'';}catch(e){return '';} }
@@ -873,10 +898,11 @@ function render(){
   else v.innerHTML=renderResources();
   updateMeter();
   updateQBadge();
+  sizeTextareas(v); // fit any pre-filled textareas to their content
 }
 
 function updateMeter(){
-  var total=30+30+5, done=0, ip=0;
+  var total=CURRICULUM.length+PROJECT.length+FINAL_DAYS.length, done=0, ip=0;
   for(var k in state.statuses){ if(state.statuses[k]==='Done') done++; else if(state.statuses[k]==='In progress') ip++; }
   document.getElementById('meter').innerHTML =
     '<span class="pill d">'+done+' done</span>'+
@@ -1239,11 +1265,18 @@ function detailRating(x){
   var brk='<div class="autocard"><div class="autoscore '+scoreClass(a.score||0)+'">'+(a.score||0)+'<small>/100</small></div>'+
     '<div class="autobits"><b>Auto score</b> — objective, from their own work in the app<br>'+
       'Completion '+(a.completion||0)+'% · Consistency '+(a.consistency||0)+'% · Effort/hours '+(a.effort!=null?a.effort:(a.hours||0))+'% · Follow-through '+(a.follow||0)+'% · Confidence '+(a.confidence||0)+'%</div></div>';
-  // Final Project — auto-generated ranking sections for the team lead
+  // Final Project — grouped ranking sections for the team lead. Items are flattened
+  // in order to s0..sN (fi), so saveRating can stay index-based.
   var fs=x.finalSections||{};
   var secs='<div class="fsecs"><h4 class="fsec-h">Final Project — rank each area (team lead)</h4>';
-  for(var i=0;i<FINAL_SECTIONS.length;i++){
-    secs+='<div class="rrow fsecrow"><span>'+esc(FINAL_SECTIONS[i])+'</span>'+starSel('data-fs="'+i+'"', fs['s'+i])+'</div>';
+  var fi=0;
+  for(var gi=0;gi<FINAL_SECTIONS.length;gi++){
+    var grp=FINAL_SECTIONS[gi];
+    secs+='<div class="fsec-group">'+esc(grp.group)+'</div>';
+    for(var ii=0;ii<grp.items.length;ii++){
+      secs+='<div class="rrow fsecrow"><span>'+esc(grp.items[ii])+'</span>'+starSel('data-fs="'+fi+'"', fs['s'+fi])+'</div>';
+      fi++;
+    }
   }
   secs+='</div>';
   return '<div class="ratebox" data-name="'+esc(x.name)+'">'+brk+

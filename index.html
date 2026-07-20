@@ -278,9 +278,29 @@
     .qbtns{width:100%}
   }
   @media (max-width:400px){ .ovtile,.admintiles .ovtile{min-width:100%} }
+
+  /* ---------- Toasts ---------- */
+  #toasts{position:fixed;right:16px;bottom:16px;z-index:9999;display:flex;flex-direction:column;gap:10px;max-width:min(360px,calc(100vw - 32px));pointer-events:none}
+  .toast{pointer-events:auto;display:flex;align-items:flex-start;gap:10px;background:var(--card);color:var(--ink);border:1px solid var(--line);border-left:4px solid var(--muted);border-radius:12px;padding:12px 14px;box-shadow:0 8px 28px rgba(0,0,0,.16);font-size:13px;line-height:1.4;opacity:0;transform:translateY(10px);transition:opacity .22s ease,transform .22s ease}
+  .toast.show{opacity:1;transform:none}
+  .toast.ok{border-left-color:#137333} .toast.err{border-left-color:#c5221f} .toast.info{border-left-color:#188038}
+  .toast .ticon{flex:0 0 auto;font-size:15px;line-height:1.3}
+  .toast .tmsg{flex:1;min-width:0}
+  .toast .tx{flex:0 0 auto;cursor:pointer;color:var(--muted);font-size:16px;line-height:1;margin:-2px -2px 0 2px;background:none;border:none;padding:2px}
+  .toast .tx:hover{color:var(--ink)}
+  /* ---------- Skeleton loaders ---------- */
+  .skel{position:relative;overflow:hidden;background:var(--ns-bg);border-radius:8px}
+  .skel::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);animation:shimmer 1.25s infinite}
+  .skelcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+  .skelcard{border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px}
+  .skeltiles{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+  .skeltile{flex:1;min-width:120px;height:56px;border:1px solid var(--line);border-radius:10px}
+  @keyframes shimmer{100%{transform:translateX(100%)}}
+  @media (prefers-reduced-motion:reduce){ .skel::after{animation:none} .toast{transition:none} }
 </style>
 </head>
 <body>
+<div id="toasts" aria-live="polite" aria-atomic="false"></div>
 <div class="wrap">
   <header class="top">
     <div class="brand">
@@ -574,6 +594,39 @@ var saveTimer = null;
 var LOG_FIELDS = ['p','a','l','b','c']; // planned, actual, learned, blockers, confidence
 
 function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+
+// Toast notifications — type: 'ok' | 'err' | 'info'. Auto-dismisses; click × to close early.
+function toast(msg,type,ms){
+  var box=document.getElementById('toasts'); if(!box) return;
+  type=type||'info'; ms=ms||(type==='err'?5000:3200);
+  var ico=type==='ok'?'✓':type==='err'?'⚠️':'ℹ️';
+  var el=document.createElement('div'); el.className='toast '+type;
+  el.innerHTML='<span class="ticon">'+ico+'</span><span class="tmsg">'+esc(msg)+'</span><button class="tx" aria-label="Dismiss">×</button>';
+  function close(){ el.classList.remove('show'); setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); },240); }
+  el.querySelector('.tx').addEventListener('click',close);
+  box.appendChild(el);
+  requestAnimationFrame(function(){ el.classList.add('show'); });
+  var t=setTimeout(close,ms);
+  el.addEventListener('mouseenter',function(){ clearTimeout(t); }); // pause on hover
+  el.addEventListener('mouseleave',function(){ t=setTimeout(close,1400); });
+}
+// Skeleton placeholders shown while data loads (instead of a bare "Loading…").
+function skelBox(w,h){ return '<div class="skel" style="height:'+h+'px'+(w?';width:'+w:'')+'"></div>'; }
+function skelDash(){
+  var tiles=''; for(var i=0;i<5;i++) tiles+='<div class="skeltile skel"></div>';
+  var cards=''; for(var j=0;j<6;j++){
+    cards+='<div class="skelcard">'+skelBox('60%',14)+skelBox('40%',10)+skelBox('',8)+skelBox('80%',10)+skelBox('90%',10)+'</div>';
+  }
+  return '<div class="dashwrap"><div class="skeltiles">'+tiles+'</div>'+
+    '<div class="skel" style="height:150px;border-radius:14px;margin-bottom:18px"></div>'+
+    '<div class="skelcards">'+cards+'</div></div>';
+}
+function skelDetail(name){
+  return '<div style="padding:16px">'+skelBox('30%',16)+
+    '<div style="height:10px"></div>'+skelBox('',120)+
+    '<div style="height:12px"></div>'+skelBox('90%',12)+
+    '<div style="height:8px"></div>'+skelBox('75%',12)+'</div>';
+}
 function lsKey(name){ return 'meanplan:'+name.toLowerCase(); }
 function pwKey(name){ return 'meanplan:pw:'+String(name).toLowerCase(); }
 function getPw(name){ try{return localStorage.getItem(pwKey(name))||'';}catch(e){return '';} }
@@ -776,7 +829,7 @@ function addQuery(){
   if(!text){ if(msg){ msg.style.color='#c5221f'; msg.textContent='Type your question first.'; } return; }
   state.queries.unshift({ id:'q'+Date.now()+'_'+Math.floor(Math.random()*1e4), ref:ref, label:refLabel(ref),
     text:text, ts:new Date().toISOString(), status:'open', reply:'', replyTs:'' });
-  render(); persist();
+  render(); persist(); toast('Question posted — your team lead will reply','ok');
 }
 // Admin (team lead) reply — server-side merge into the dev's data.
 function replyQuery(id, status){
@@ -790,9 +843,9 @@ function replyQuery(id, status){
     .then(function(d){
       if(d&&d.ok){
         for(var i=0;i<state.queries.length;i++){ if(state.queries[i].id===id){ state.queries[i].reply=reply; state.queries[i].status=status; state.queries[i].replyTs=new Date().toISOString(); } }
-        render();
-      } else if(msg){ msg.style.color='#c5221f'; msg.textContent='Not saved (admin only).'; }
-    }).catch(function(){ if(msg){ msg.style.color='#c5221f'; msg.textContent='Network error.'; } });
+        render(); toast(status==='resolved'?'Reply saved & marked resolved':'Reply saved','ok');
+      } else { if(msg){ msg.style.color='#c5221f'; msg.textContent='Not saved (admin only).'; } toast('Reply not saved (admin only)','err'); }
+    }).catch(function(){ if(msg){ msg.style.color='#c5221f'; msg.textContent='Network error.'; } toast('Network error — reply not saved','err'); });
 }
 
 function renderResources(){
@@ -967,10 +1020,10 @@ function doLogin(){
     .then(function(d){
       if(d && d.ok){
         err.textContent='';
-        if(d.role==='admin'){ loginAsAdmin(pw); return; }   // admin → open the all-trainees view
-        setPw(id,pw); afterLogin(id);
-      } else { err.textContent='We couldn’t find that name/email and password. Please check with the training owner (Jitendra).'; }
-    }).catch(function(){ err.textContent='Network error — check your connection.'; });
+        if(d.role==='admin'){ toast('Signed in as admin','ok'); loginAsAdmin(pw); return; }   // admin → open the all-trainees view
+        setPw(id,pw); toast('Welcome, '+pretty(id)+' 👋','ok'); afterLogin(id);
+      } else { err.textContent='We couldn’t find that name/email and password. Please check with the training owner (Jitendra).'; toast('Sign-in failed — check your details','err'); }
+    }).catch(function(){ err.textContent='Network error — check your connection.'; toast('Network error — could not sign in','err'); });
 }
 function loginAsAdmin(pw){
   setAdminPw(pw); saveSession({role:'admin'});
@@ -1033,13 +1086,13 @@ function loadAdminDash(pw){
   document.getElementById('save').textContent='';
   var v=document.getElementById('view');
   if(!API_URL){ v.innerHTML='<p style="padding:16px;color:#5f6368">Cloud storage not set up yet (see README Part B).</p>'; return; }
-  v.innerHTML='<p style="padding:16px;color:#5f6368">Loading trainees…</p>';
+  v.innerHTML=skelDash();
   fetch(API_URL+'?action=all&pw='+encodeURIComponent(pw)).then(function(r){return r.json();})
     .then(function(d){
       if(!d || d.error){ signOut(); showLogin('','Admin session expired — please sign in again.'); return; }
       if(d.sheetUrl){ var sl=document.getElementById('sheetLink'); sl.href=d.sheetUrl; sl.style.display=''; }
       admin.data=d.trainees||[]; render();
-    }).catch(function(){ v.innerHTML='<p style="padding:16px;color:#c5221f">Network error — retry.</p>'; });
+    }).catch(function(){ v.innerHTML='<div class="dashwrap"><p style="color:#c5221f">Network error. <button class="linkbtn" onclick="loadAdminDash(getAdminPw())">Retry</button></p></div>'; toast('Network error loading trainees','err'); });
 }
 
 function dispName(x){ return x.display ? x.display : pretty(x.name); }
@@ -1128,10 +1181,10 @@ function openDetail(name){
   document.getElementById('meter').style.display='';
   document.getElementById('timeline').style.display='flex';
   setActiveTab('plan');
-  var v=document.getElementById('view'); v.innerHTML='<p style="padding:16px;color:#5f6368">Loading '+esc(name)+'…</p>';
+  var v=document.getElementById('view'); v.innerHTML=skelDetail(name);
   fetch(API_URL+'?name='+encodeURIComponent(name)+'&pw='+encodeURIComponent(getAdminPw())).then(function(r){return r.json();})
     .then(function(d){ state.statuses=d.statuses||{}; state.logs=d.logs||{}; render(); })
-    .catch(function(){ v.innerHTML='<p style="padding:16px;color:#c5221f">Failed to load.</p>'; });
+    .catch(function(){ v.innerHTML='<p style="padding:16px;color:#c5221f">Failed to load.</p>'; toast('Failed to load '+pretty(name),'err'); });
 }
 function backToDash(){
   readOnly=false; state.name=''; state.statuses={}; state.logs={}; state.tab='plan';
@@ -1160,20 +1213,20 @@ function addDev(){
     .then(function(r){return r.json();})
     .then(function(d){
       if(d&&d.ok){ admin.notice='✓ Added '+email+' — password: '+pw+'   (copy & share this now; it isn’t shown again)';
-        loadAdminDash(getAdminPw()); }
-      else { msg.style.color='#c5221f'; msg.textContent=(d&&d.error)||'Could not add — admin only.'; }
-    }).catch(function(){ msg.style.color='#c5221f'; msg.textContent='Network error.'; });
+        toast('Trainee added: '+email,'ok'); loadAdminDash(getAdminPw()); }
+      else { var em=(d&&d.error)||'Could not add — admin only.'; msg.style.color='#c5221f'; msg.textContent=em; toast(em,'err'); }
+    }).catch(function(){ msg.style.color='#c5221f'; msg.textContent='Network error.'; toast('Network error — trainee not added','err'); });
 }
 function removeDev(email){
-  admin.notice='Revoking '+email+'…';
+  toast('Revoking '+email+'…','info');
   fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
     body:JSON.stringify({action:'removeUser',email:email,pw:getAdminPw()})})
     .then(function(r){return r.json();})
     .then(function(d){
-      admin.notice=(d&&d.ok) ? ('Revoked access for '+email+' — their progress is kept. Re-add them to restore access.')
-                             : ('Could not revoke '+email+' (admin only).');
+      if(d&&d.ok){ admin.notice='Revoked access for '+email+' — their progress is kept. Re-add them to restore access.'; toast('Access revoked for '+email+' (data kept)','ok'); }
+      else { admin.notice='Could not revoke '+email+' (admin only).'; toast('Could not revoke '+email,'err'); }
       loadAdminDash(getAdminPw());
-    }).catch(function(){ admin.notice='Network error revoking '+email+'.'; loadAdminDash(getAdminPw()); });
+    }).catch(function(){ admin.notice='Network error revoking '+email+'.'; toast('Network error revoking '+email,'err'); loadAdminDash(getAdminPw()); });
 }
 
 function starSel(attr,v){
@@ -1211,11 +1264,11 @@ function saveRating(box){
     body:JSON.stringify({action:'rate',name:name,rating:rating,finalSections:finalSections,notes:notes,pw:getAdminPw()})})
     .then(function(r){return r.json();})
     .then(function(d){
-      if(d&&d.ok){ msg.style.color='#137333'; msg.textContent='Saved ✓';
+      if(d&&d.ok){ msg.style.color='#137333'; msg.textContent='Saved ✓'; toast('Rating saved for '+pretty(name),'ok');
         if(admin.sel){ admin.sel.rating=rating; admin.sel.finalSections=finalSections; admin.sel.notes=notes; if(d.finalRating!=null) admin.sel.finalRating=d.finalRating; }
-      } else { msg.style.color='#c5221f'; msg.textContent='Not saved (admin only)'; }
+      } else { msg.style.color='#c5221f'; msg.textContent='Not saved (admin only)'; toast('Rating not saved (admin only)','err'); }
     })
-    .catch(function(){ msg.style.color='#c5221f'; msg.textContent='Network error'; });
+    .catch(function(){ msg.style.color='#c5221f'; msg.textContent='Network error'; toast('Network error — rating not saved','err'); });
 }
 
 /* ----------------------------- PWA (installable) ------------------------- */

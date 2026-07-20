@@ -137,6 +137,29 @@
   .ovlbl{font-size:11px;color:var(--muted);margin-top:2px}
   .admintiles{margin-bottom:14px}
   .admintiles .ovtile{min-width:120px}
+  /* Performance comparison chart (admin) — ranked stacked bars, all client-side */
+  .perf{border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:0 0 18px;background:var(--card)}
+  .perf h3{font-size:15px;margin:0 0 2px}
+  .perf .perf-sub{font-size:12px;color:var(--muted);margin:0 0 12px}
+  .perf-legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:14px;font-size:12px;color:var(--muted)}
+  .perf-legend b{color:var(--ink);font-weight:600}
+  .perf-legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+  .perf-seg.plan,.perf-legend i.plan{background:#3b6fd4}
+  .perf-seg.proj,.perf-legend i.proj{background:#188038}
+  .perf-seg.final,.perf-legend i.final{background:#b8860b}
+  .perf-row{display:grid;grid-template-columns:22px 132px 1fr 46px;align-items:center;gap:12px;margin:0 -8px;padding:5px 8px;border-radius:8px;transition:background .15s ease}
+  .perf-row:hover{background:var(--bg)}
+  .perf-rank{font-size:12px;font-weight:800;color:var(--muted);text-align:center}
+  .perf-row.top .perf-rank{color:var(--accent)}
+  .perf-name{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
+  .perf-track{position:relative;height:16px;border-radius:999px;background:var(--ns-bg);display:flex;gap:2px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(0,0,0,.03)}
+  .perf-grid{position:absolute;inset:0;pointer-events:none;z-index:1}
+  .perf-grid span{position:absolute;top:0;bottom:0;width:1px;background:rgba(0,0,0,.06)}
+  .perf-seg{height:100%;min-width:0;transition:width .5s ease}
+  .perf-seg:first-child{border-top-left-radius:999px;border-bottom-left-radius:999px}
+  .perf-seg:last-child{border-top-right-radius:4px;border-bottom-right-radius:4px}
+  .perf-pct{font-size:12.5px;font-weight:800;color:var(--ink);text-align:right}
+  @media (max-width:560px){ .perf-row{grid-template-columns:18px 84px 1fr 38px;gap:8px} .perf-name{font-size:11.5px} }
   .tcard{transition:box-shadow .15s ease,transform .15s ease;cursor:pointer}
   .tcard:hover{box-shadow:0 6px 18px rgba(0,0,0,.10);transform:translateY(-2px)}
   .ovtile,.badge{transition:transform .15s ease}
@@ -385,41 +408,41 @@ var WEEKS = [
 ];
 
 var CURRICULUM = [
-  { topic:'JavaScript basics', sub:'variables & types · operators · if/else, loops · functions intro', gt:'JavaScript.info', gu:'https://javascript.info/first-steps', bt:'MDN JS Guide', bu:'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide', ex:'FizzBuzz + temperature converter (Node script)' },
-  { topic:'Functions, arrays & objects (ES6)', sub:'arrow fns · destructuring · spread/rest · map/filter/reduce', gt:'JS.info: Objects', gu:'https://javascript.info/object', bt:'MDN: Array methods', bu:'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array', ex:'Solve 10 array-method problems' },
-  { topic:'Async JavaScript', sub:'callbacks · promises · async/await · fetch API', gt:'JS.info: Async', gu:'https://javascript.info/async', bt:'MDN: Using promises', bu:'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises', ex:'Fetch a public API and log results' },
-  { topic:'TypeScript fundamentals', sub:'types · interfaces · enums · generics basics · tsconfig', gt:'TS in 5 minutes', gu:'https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html', bt:'TS Handbook', bu:'https://www.typescriptlang.org/docs/handbook/intro.html', ex:'Convert a JS module to typed TS' },
-  { topic:'Node & npm intro + modules', sub:'node runtime · npm install/scripts · CommonJS vs ES modules · JSON', gt:'Get started with Node', gu:'https://www.freecodecamp.org/news/get-started-with-nodejs/', bt:'Node.js docs', bu:'https://nodejs.org/docs/latest/api/', ex:'Node script that reads & writes JSON' },
+  { topic:'JavaScript basics', sub:'variables & types · let/const & scope · == vs === & truthy/falsy · operators · if/else, loops · functions intro', gt:'JavaScript.info', gu:'https://javascript.info/first-steps', bt:'MDN JS Guide', bu:'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide', ex:'FizzBuzz + temperature converter as small pure functions, with input validation and a few manual test cases' },
+  { topic:'Functions, arrays & objects (ES6)', sub:'arrow fns & this · destructuring · spread/rest · default params · map/filter/reduce chaining · immutability', gt:'JS.info: Objects', gu:'https://javascript.info/object', bt:'MDN: Array methods', bu:'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array', ex:'Solve 10 array-method problems; chain map/filter/reduce (no loops) without mutating the inputs' },
+  { topic:'Async JavaScript', sub:'event loop basics · callbacks · promises · async/await · try/catch error handling · fetch API', gt:'JS.info: Async', gu:'https://javascript.info/async', bt:'MDN: Using promises', bu:'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises', ex:'Fetch a public API with async/await; handle errors + a loading flag; run two requests together with Promise.all' },
+  { topic:'TypeScript fundamentals', sub:'types · interface vs type · unions & literals · enums · generics basics · strict mode · tsconfig', gt:'TS in 5 minutes', gu:'https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html', bt:'TS Handbook', bu:'https://www.typescriptlang.org/docs/handbook/intro.html', ex:'Convert a JS module to strict TS: type every param/return and remove all "any"' },
+  { topic:'Node & npm intro + modules', sub:'node runtime · npm install/scripts & semver · CommonJS vs ES modules · package.json · JSON read/write', gt:'Get started with Node', gu:'https://www.freecodecamp.org/news/get-started-with-nodejs/', bt:'Node.js docs', bu:'https://nodejs.org/docs/latest/api/', ex:'Node CLI that reads a JSON file, transforms it, writes the result; run it via an npm script' },
 
-  { topic:'Angular setup & components', sub:'CLI · project structure · component/template/styles · standalone components', gt:'Angular: Learn tutorial', gu:'https://angular.dev/tutorials/learn-angular', bt:'Angular: Components', bu:'https://angular.dev/guide/components', ex:'Create & render your first component' },
-  { topic:'Templates & directives', sub:'interpolation · property/event binding · @if / @for · ngClass/ngStyle', gt:'Angular: Templates', gu:'https://angular.dev/guide/templates', bt:'Angular: Control flow', bu:'https://angular.dev/guide/templates/control-flow', ex:'Build a todo list UI (no backend)' },
-  { topic:'Component communication & DI', sub:'@Input / @Output · services · dependency injection · signals intro', gt:'Angular: Inputs', gu:'https://angular.dev/guide/components/inputs', bt:'Angular: DI guide', bu:'https://angular.dev/guide/di', ex:'Pass data parent↔child via a service' },
-  { topic:'Routing & navigation', sub:'routes · routerLink · route params · lazy loading basics', gt:'Angular: Routing', gu:'https://angular.dev/guide/routing', bt:'Common router tasks', bu:'https://angular.dev/guide/routing/common-router-tasks', ex:'Multi-page app with 3 routes' },
-  { topic:'Forms & validation', sub:'template-driven vs reactive forms · validators · form state', gt:'Angular: Forms', gu:'https://angular.dev/guide/forms', bt:'Reactive forms', bu:'https://angular.dev/guide/forms/reactive-forms', ex:'Signup form with validation messages' },
+  { topic:'Angular setup & components', sub:'CLI · project structure · standalone components · template/styles · signals intro', gt:'Angular: Learn tutorial', gu:'https://angular.dev/tutorials/learn-angular', bt:'Angular: Components', bu:'https://angular.dev/guide/components', ex:'Create two components and render a small dashboard card driven by a signal value' },
+  { topic:'Templates & directives', sub:'interpolation · property/event binding · @if / @for (track) · @switch · ngClass/ngStyle', gt:'Angular: Templates', gu:'https://angular.dev/guide/templates', bt:'Angular: Control flow', bu:'https://angular.dev/guide/templates/control-flow', ex:'Build a todo list UI with @for (track), filter buttons and an empty state (no backend)' },
+  { topic:'Component communication & DI', sub:'@Input / @Output · signal inputs · services · dependency injection · providedIn root', gt:'Angular: Inputs', gu:'https://angular.dev/guide/components/inputs', bt:'Angular: DI guide', bu:'https://angular.dev/guide/di', ex:'Share state parent↔child through an injectable service so two components stay in sync' },
+  { topic:'Routing & navigation', sub:'routes · routerLink · route params & queryParams · lazy loading · wildcard 404', gt:'Angular: Routing', gu:'https://angular.dev/guide/routing', bt:'Common router tasks', bu:'https://angular.dev/guide/routing/common-router-tasks', ex:'List→detail via a route param, one lazy-loaded route, and a 404 route' },
+  { topic:'Forms & validation', sub:'reactive forms · FormBuilder · sync & custom validators · error messages · form state (dirty/touched)', gt:'Angular: Forms', gu:'https://angular.dev/guide/forms', bt:'Reactive forms', bu:'https://angular.dev/guide/forms/reactive-forms', ex:'Reactive signup form with a custom password-match validator and per-field error messages' },
 
-  { topic:'HttpClient & REST', sub:'provideHttpClient · GET/POST · observables intro', gt:'Angular: HttpClient', gu:'https://angular.dev/guide/http', bt:'RxJS overview', bu:'https://rxjs.dev/guide/overview', ex:'Fetch & display data from a public API' },
-  { topic:'RxJS in practice', sub:'operators (map, filter, switchMap) · async pipe · error handling', gt:'RxJS: Operators', gu:'https://rxjs.dev/guide/operators', bt:'Angular + RxJS', bu:'https://angular.dev/ecosystem/rxjs-interop', ex:'Search box with debounce + switchMap' },
-  { topic:'Pipes, custom directives, lifecycle', sub:'built-in pipes · custom pipe · attribute directive · ngOnInit/ngOnDestroy', gt:'Angular: Pipes', gu:'https://angular.dev/guide/pipes', bt:'Angular: Directives', bu:'https://angular.dev/guide/directives', ex:'Custom pipe + highlight directive' },
-  { topic:'Guards, interceptors, shared state', sub:'route guards · HTTP interceptors · shared service state', gt:'Router tasks', gu:'https://angular.dev/guide/routing/common-router-tasks', bt:'HTTP interceptors', bu:'https://angular.dev/guide/http/interceptors', ex:'Auth guard + token interceptor stub' },
-  { topic:'Angular Material + review', sub:'install Material · toolbar/cards/inputs · polish + review week', gt:'Material: Getting started', gu:'https://material.angular.io/guide/getting-started', bt:'Material: Components', bu:'https://material.angular.io/components/categories', ex:'Restyle todo app with Material + review' },
+  { topic:'HttpClient & REST', sub:'provideHttpClient · GET/POST/PUT/DELETE · typed responses · observables intro · async pipe', gt:'Angular: HttpClient', gu:'https://angular.dev/guide/http', bt:'RxJS overview', bu:'https://rxjs.dev/guide/overview', ex:'Fetch & display typed data from a public API via the async pipe, with loading & error states' },
+  { topic:'RxJS in practice', sub:'Observable vs Promise · map/filter/switchMap/debounceTime · combineLatest · takeUntilDestroyed', gt:'RxJS: Operators', gu:'https://rxjs.dev/guide/operators', bt:'Angular + RxJS', bu:'https://angular.dev/ecosystem/rxjs-interop', ex:'Search box: debounce input, switchMap to the API, cancel stale requests, handle errors' },
+  { topic:'Pipes, custom directives, lifecycle', sub:'built-in pipes · pure vs impure · custom pipe · attribute directive with HostListener · ngOnInit/ngOnDestroy', gt:'Angular: Pipes', gu:'https://angular.dev/guide/pipes', bt:'Angular: Directives', bu:'https://angular.dev/guide/directives', ex:'Custom "timeAgo" pipe + a highlight-on-hover directive' },
+  { topic:'Guards, interceptors, shared state', sub:'functional route guards · HTTP interceptors (auth header) · shared signal/service state', gt:'Router tasks', gu:'https://angular.dev/guide/routing/common-router-tasks', bt:'HTTP interceptors', bu:'https://angular.dev/guide/http/interceptors', ex:'Auth guard on a protected route + an interceptor that attaches a token and handles 401' },
+  { topic:'Angular Material + review', sub:'install Material · toolbar/cards/inputs/table · theming · a11y basics · review week', gt:'Material: Getting started', gu:'https://material.angular.io/guide/getting-started', bt:'Material: Components', bu:'https://material.angular.io/components/categories', ex:'Restyle the todo app with Material (toolbar, cards, form fields) and clear any a11y warnings' },
 
-  { topic:'Node.js deeper', sub:'fs · path · events · process/env · npm scripts', gt:'Node: Learn', gu:'https://nodejs.org/en/learn', bt:'Node API docs', bu:'https://nodejs.org/docs/latest/api/', ex:'CLI note-taking tool (read/write files)' },
-  { topic:'Express basics', sub:'app setup · routing · middleware · req/res', gt:'Express: Hello world', gu:'https://expressjs.com/en/starter/hello-world.html', bt:'Express: Routing guide', bu:'https://expressjs.com/en/guide/routing.html', ex:'Hello API: 3 routes + logger middleware' },
-  { topic:'REST API design (CRUD)', sub:'resources · GET/POST/PUT/DELETE · status codes · params/query', gt:'MDN: HTTP methods', gu:'https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods', bt:'Express routing guide', bu:'https://expressjs.com/en/guide/routing.html', ex:'In-memory CRUD API for "tasks"' },
-  { topic:'Validation, errors, config', sub:'input validation · error middleware · dotenv · CORS', gt:'Express: Error handling', gu:'https://expressjs.com/en/guide/error-handling.html', bt:'express-validator', bu:'https://express-validator.github.io/docs/', ex:'Add validation + central error handler' },
-  { topic:'Auth basics (JWT)', sub:'password hashing (bcrypt) · JWT sign/verify · protected routes', gt:'JWT: Introduction', gu:'https://jwt.io/introduction', bt:'bcrypt (npm)', bu:'https://www.npmjs.com/package/bcrypt', ex:'Register + login endpoints with JWT' },
+  { topic:'Node.js deeper', sub:'fs/promises · path · events (EventEmitter) · process/env · streams intro · npm scripts', gt:'Node: Learn', gu:'https://nodejs.org/en/learn', bt:'Node API docs', bu:'https://nodejs.org/docs/latest/api/', ex:'CLI note tool using fs/promises (add/list/delete notes in a JSON file) with proper error handling' },
+  { topic:'Express basics', sub:'app setup · routing · middleware order · req/res · router modules', gt:'Express: Hello world', gu:'https://expressjs.com/en/starter/hello-world.html', bt:'Express: Routing guide', bu:'https://expressjs.com/en/guide/routing.html', ex:'Hello API: 3 routes + a request-logger middleware + a 404 handler' },
+  { topic:'REST API design (CRUD)', sub:'resources & nouns · GET/POST/PUT/DELETE · status codes · params vs query · REST conventions', gt:'MDN: HTTP methods', gu:'https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods', bt:'Express routing guide', bu:'https://expressjs.com/en/guide/routing.html', ex:'In-memory CRUD API for "tasks" with correct status codes (201/204/404) and query filtering' },
+  { topic:'Validation, errors, config', sub:'express-validator · centralized error middleware · dotenv · CORS · async error handling', gt:'Express: Error handling', gu:'https://expressjs.com/en/guide/error-handling.html', bt:'express-validator', bu:'https://express-validator.github.io/docs/', ex:'Add request validation + a central error handler returning consistent JSON errors' },
+  { topic:'Auth basics (JWT)', sub:'password hashing (bcrypt) · JWT sign/verify · auth middleware · protected routes', gt:'JWT: Introduction', gu:'https://jwt.io/introduction', bt:'bcrypt (npm)', bu:'https://www.npmjs.com/package/bcrypt', ex:'Register + login endpoints (bcrypt + JWT) and an auth middleware guarding a protected route' },
 
-  { topic:'MongoDB basics', sub:'documents/collections · CRUD · Compass · queries', gt:'MongoDB: CRUD', gu:'https://www.mongodb.com/docs/manual/crud/', bt:'MongoDB University', bu:'https://learn.mongodb.com/', ex:'CRUD practice in Compass' },
-  { topic:'Mongoose ODM', sub:'schemas · models · validation · relationships (ref)', gt:'Mongoose: Guide', gu:'https://mongoosejs.com/docs/guide.html', bt:'Mongoose: Queries', bu:'https://mongoosejs.com/docs/queries.html', ex:'Define models + CRUD via Mongoose' },
-  { topic:'Express + MongoDB integration', sub:'connect DB · wire CRUD to Mongoose · env config', gt:'MongoDB + Node driver', gu:'https://www.mongodb.com/docs/drivers/node/current/', bt:'Atlas: Getting started', bu:'https://www.mongodb.com/docs/atlas/getting-started/', ex:'Persist the tasks CRUD API to MongoDB' },
-  { topic:'Testing basics', sub:'Postman/Thunder Client · Jest · unit + API tests', gt:'Jest: Getting started', gu:'https://jestjs.io/docs/getting-started', bt:'Supertest (npm)', bu:'https://www.npmjs.com/package/supertest', ex:'Write tests for your API endpoints' },
-  { topic:'Git, GitHub & deployment', sub:'git basics · branches/PRs · deploy API + Atlas', gt:'About Git (GitHub)', gu:'https://docs.github.com/en/get-started/using-git/about-git', bt:'Deploy on Render', bu:'https://render.com/docs/deploy-node-express-app', ex:'Push repo + deploy API live' },
+  { topic:'MongoDB basics', sub:'documents/collections · CRUD · query operators ($gt/$in) · projection · indexes intro · Compass', gt:'MongoDB: CRUD', gu:'https://www.mongodb.com/docs/manual/crud/', bt:'MongoDB University', bu:'https://learn.mongodb.com/', ex:'CRUD + filtered queries in Compass; add an index and re-run the query' },
+  { topic:'Mongoose ODM', sub:'schemas · models · validation · refs & populate · timestamps · lean()', gt:'Mongoose: Guide', gu:'https://mongoosejs.com/docs/guide.html', bt:'Mongoose: Queries', bu:'https://mongoosejs.com/docs/queries.html', ex:'Define User & Task models with a ref; CRUD + populate the related user' },
+  { topic:'Express + MongoDB integration', sub:'connect Atlas · env config · wire CRUD to Mongoose · async/await error handling', gt:'MongoDB + Node driver', gu:'https://www.mongodb.com/docs/drivers/node/current/', bt:'Atlas: Getting started', bu:'https://www.mongodb.com/docs/atlas/getting-started/', ex:'Persist the tasks CRUD API to MongoDB Atlas; handle connection + not-found errors' },
+  { topic:'Testing basics', sub:'Postman/Thunder Client · Jest · Supertest · unit vs integration · test data', gt:'Jest: Getting started', gu:'https://jestjs.io/docs/getting-started', bt:'Supertest (npm)', bu:'https://www.npmjs.com/package/supertest', ex:'Jest + Supertest tests for the tasks & auth endpoints covering happy + error paths' },
+  { topic:'Git, GitHub & deployment', sub:'git basics · branches/PRs · .gitignore & secrets · deploy API + Atlas · env on host', gt:'About Git (GitHub)', gu:'https://docs.github.com/en/get-started/using-git/about-git', bt:'Deploy on Render', bu:'https://render.com/docs/deploy-node-express-app', ex:'Open a feature branch + PR; deploy the API to Render with Atlas and verify live endpoints' },
 
-  { topic:'Capstone: plan & design', sub:'pick app (Task Manager) · features · schema + API design', gt:'MDN: HTTP overview', gu:'https://developer.mozilla.org/en-US/docs/Web/HTTP', bt:'MongoDB data modeling', bu:'https://www.mongodb.com/docs/manual/data-modeling/', ex:'Write app spec + DB schema' },
-  { topic:'Capstone: backend', sub:'Express routes · Mongoose models · JWT auth', gt:'Express: Routing guide', gu:'https://expressjs.com/en/guide/routing.html', bt:'Mongoose docs', bu:'https://mongoosejs.com/docs/', ex:'Working REST API with auth' },
-  { topic:'Capstone: frontend', sub:'Angular UI · services · connect to API · routing', gt:'Angular: HttpClient', gu:'https://angular.dev/guide/http', bt:'Angular: Routing', bu:'https://angular.dev/guide/routing', ex:'Angular app consuming your API' },
-  { topic:'Capstone: integrate & polish', sub:'auth flow end-to-end · error states · UI polish · bug fixes', gt:'Angular: Forms', gu:'https://angular.dev/guide/forms', bt:'RxJS: Error handling', bu:'https://rxjs.dev/guide/operators', ex:'End-to-end working app' },
-  { topic:'Capstone: deploy & demo', sub:'deploy frontend + backend · README · demo & review', gt:'Angular: Deployment', gu:'https://angular.dev/tools/cli/deployment', bt:'Render: Docs', bu:'https://render.com/docs', ex:'Live full-stack app + walkthrough' },
+  { topic:'Capstone: plan & design', sub:'features & user stories · data modeling · API contract (routes + shapes)', gt:'MDN: HTTP overview', gu:'https://developer.mozilla.org/en-US/docs/Web/HTTP', bt:'MongoDB data modeling', bu:'https://www.mongodb.com/docs/manual/data-modeling/', ex:'Write the app spec, DB schema, and a REST API contract' },
+  { topic:'Capstone: backend', sub:'Express routes/controllers · Mongoose models · JWT auth · validation & errors', gt:'Express: Routing guide', gu:'https://expressjs.com/en/guide/routing.html', bt:'Mongoose docs', bu:'https://mongoosejs.com/docs/', ex:'Working, validated REST API with auth' },
+  { topic:'Capstone: frontend', sub:'Angular UI · services · HttpClient · routing · guards/interceptor', gt:'Angular: HttpClient', gu:'https://angular.dev/guide/http', bt:'Angular: Routing', bu:'https://angular.dev/guide/routing', ex:'Angular app consuming your API with a working auth flow' },
+  { topic:'Capstone: integrate & polish', sub:'end-to-end auth · loading/error/empty states · UI polish · bug fixes', gt:'Angular: Forms', gu:'https://angular.dev/guide/forms', bt:'RxJS: Error handling', bu:'https://rxjs.dev/guide/operators', ex:'End-to-end working app with proper loading/error/empty states' },
+  { topic:'Capstone: deploy & demo', sub:'deploy frontend + backend · env config · README + screenshots · demo & review', gt:'Angular: Deployment', gu:'https://angular.dev/tools/cli/deployment', bt:'Render: Docs', bu:'https://render.com/docs', ex:'Live full-stack app + walkthrough' },
 ];
 
 var PROJECT_PHASES = [
@@ -432,49 +455,49 @@ var PROJECT_PHASES = [
 ];
 
 var PROJECT = [
-  { task:'Choose the app: "TaskFlow" (a task manager). Write a feature list & user stories.', out:'features.md + user stories' },
-  { task:'Sketch the screens (login, task board, task form). List entities: User, Project, Task.', out:'UI sketches + entity list' },
-  { task:'Design JSON data shapes for User / Project / Task; create sample data files.', out:'sample-data.json' },
-  { task:'Create GitHub repo; add README (goals); set up client/ and server/ folders; first commit.', out:'Git repo + README' },
-  { task:'Node script: load the sample JSON and print tasks grouped by status (practice + seed the model).', out:'seed / print script' },
+  { task:'Choose the app: "TaskFlow" (a task manager). Write a feature list, user stories, and acceptance criteria.', out:'features.md + user stories' },
+  { task:'Sketch the screens (login, task board, task form). List entities & relationships: User, Project, Task.', out:'UI sketches + entity list' },
+  { task:'Design JSON data shapes for User / Project / Task (with ids & refs); create sample data files.', out:'sample-data.json' },
+  { task:'Create GitHub repo; add README (goals) + .gitignore; set up client/ and server/ folders; first commit.', out:'Git repo + README' },
+  { task:'Node script: load the sample JSON and print tasks grouped by status and sorted by due date.', out:'seed / print script' },
 
-  { task:'Scaffold the Angular app in client/; run it; commit.', out:'running Angular app' },
-  { task:'Build TaskList + TaskCard components rendering hardcoded sample tasks with @for.', out:'task list UI' },
-  { task:'Add a TaskService (in-memory); wire the list to it; support add & delete.', out:'add / delete works' },
-  { task:'Add routing: /login, /board, /task/:id and a nav shell.', out:'multi-route app' },
-  { task:'Build the Add/Edit Task reactive form (title, status, due date) with validation.', out:'task form + validation' },
+  { task:'Scaffold the Angular app (standalone) in client/; run it; commit.', out:'running Angular app' },
+  { task:'Build TaskList + TaskCard components rendering sample tasks with @for (track) and an empty state.', out:'task list UI' },
+  { task:'Add a signal-based TaskService (in-memory); wire the list to it; support add, edit & delete.', out:'add / edit / delete works' },
+  { task:'Add routing: /login, /board, /task/:id, a nav shell and a wildcard 404 route.', out:'multi-route app' },
+  { task:'Build the Add/Edit Task reactive form (title, status, due date) with validation & error messages.', out:'task form + validation' },
 
-  { task:'Serve tasks from a mock REST (json-server / in-memory) and load them via HttpClient GET.', out:'tasks load over HTTP' },
-  { task:'Add search + status filter using RxJS (debounce, switchMap).', out:'filter / search' },
+  { task:'Serve tasks from a mock REST (json-server) and load them via HttpClient GET with typed models + async pipe.', out:'tasks load over HTTP' },
+  { task:'Add search + status filter using RxJS (debounceTime, switchMap); cancel stale requests.', out:'filter / search' },
   { task:'Add a "dueSoon" pipe and a status-color directive on the task cards.', out:'custom pipe + directive' },
-  { task:'Add an auth service stub + route guard on /board; login stores a fake token.', out:'guarded board' },
-  { task:'Apply Angular Material (toolbar, cards, form fields); polish the board layout.', out:'Frontend MVP (mock data)' },
+  { task:'Add an auth service stub + functional route guard on /board; login stores a token.', out:'guarded board' },
+  { task:'Apply Angular Material (toolbar, cards, form fields); polish the board layout & responsiveness.', out:'Frontend MVP (mock data)' },
 
-  { task:'Scaffold an Express server in server/; add a health route; nodemon + npm scripts.', out:'server boots' },
-  { task:'Build task routes on an in-memory array: GET / POST / PUT / DELETE /api/tasks.', out:'tasks CRUD API' },
-  { task:'Add project routes; organise into routes / controllers; use correct status codes.', out:'projects API' },
-  { task:'Add input validation, error-handling middleware, CORS and dotenv config.', out:'validated, safe API' },
-  { task:'Add auth routes: register / login (bcrypt + JWT); protect the task routes.', out:'auth-protected API' },
+  { task:'Scaffold an Express server in server/; add a health route; nodemon + npm scripts + a request logger.', out:'server boots' },
+  { task:'Build task routes on an in-memory array: GET / POST / PUT / DELETE /api/tasks with correct status codes.', out:'tasks CRUD API' },
+  { task:'Add project routes; organise into routes / controllers; keep response shapes consistent.', out:'projects API' },
+  { task:'Add input validation (express-validator), central error-handling middleware, CORS and dotenv config.', out:'validated, safe API' },
+  { task:'Add auth routes: register / login (bcrypt + JWT); an auth middleware protecting the task routes.', out:'auth-protected API' },
 
-  { task:'Set up MongoDB (Atlas or local) + Compass; create the DB; add the connection string to .env.', out:'DB + connection' },
-  { task:'Define Mongoose models: User, Project, Task (with refs).', out:'schemas / models' },
-  { task:'Replace the in-memory store with MongoDB across all routes; full CRUD now persists.', out:'persistent API' },
-  { task:'Write API tests (Jest + Supertest) for tasks & auth; fix the bugs you find.', out:'passing tests' },
+  { task:'Set up MongoDB (Atlas) + Compass; create the DB; add the connection string to .env (gitignored).', out:'DB + connection' },
+  { task:'Define Mongoose models: User, Project, Task (with refs, timestamps & validation).', out:'schemas / models' },
+  { task:'Replace the in-memory store with MongoDB across all routes; handle not-found & DB errors.', out:'persistent API' },
+  { task:'Write API tests (Jest + Supertest) for tasks & auth (happy + error paths); fix the bugs you find.', out:'passing tests' },
   { task:'Clean the repo and deploy the API to Render with the DB on Atlas; verify live endpoints.', out:'live API URL' },
 
-  { task:'Point the Angular services at the deployed API; wire real auth (JWT storage + interceptor).', out:'FE talks to live API' },
+  { task:'Point the Angular services at the deployed API; wire real auth (JWT storage + HTTP interceptor).', out:'FE talks to live API' },
   { task:'Implement real task CRUD end-to-end against the live API; handle loading & error states.', out:'tasks work live' },
-  { task:'Implement projects + task filtering on real data; add empty states.', out:'projects work live' },
+  { task:'Implement projects + task filtering on real data; add empty states & basic pagination.', out:'projects work live' },
   { task:'End-to-end test the whole flow; fix bugs; polish the UI; write README + screenshots.', out:'release-ready app' },
   { task:'Deploy the Angular frontend; final demo walkthrough — project COMPLETE.', out:'✅ Live full-stack app' },
 ];
 
 var FINAL_DAYS = [
-  { focus:'Setup & backend foundation', build:'Init repo + client/ & server/ · Express + MongoDB connection · Mongoose models (User, Recipe) · auth: register / login (bcrypt + JWT).', out:'Auth API + DB connected' },
-  { focus:'Backend CRUD & validation', build:'Recipe CRUD routes (GET / POST / PUT / DELETE) · JWT-protected, owner-scoped · input validation + error middleware · test in Postman.', out:'Complete, tested API' },
-  { focus:'Frontend foundation', build:'Angular scaffold · login / register + route guard + token interceptor · recipe list loaded from the API · routing shell.', out:'FE auth + recipe list' },
-  { focus:'Frontend features', build:'Create / edit recipe form (reactive + validation) · detail view · search + category filter (RxJS) · loading & error states.', out:'Full recipe UX' },
-  { focus:'Ship it', build:'Polish UI · README + a few tests · deploy backend (Render + Atlas) & frontend · run a short demo walkthrough.', out:'✅ Deployed app + demo' },
+  { focus:'Setup & backend foundation', build:'Init repo + client/ & server/ (+ .gitignore) · Express + MongoDB Atlas connection · Mongoose models (User, Recipe) with validation · auth: register / login (bcrypt + JWT) + auth middleware.', out:'Auth API + DB connected' },
+  { focus:'Backend CRUD & validation', build:'Recipe CRUD routes (GET / POST / PUT / DELETE) · JWT-protected, owner-scoped · express-validator + central error middleware · consistent status codes · test in Postman.', out:'Complete, tested API' },
+  { focus:'Frontend foundation', build:'Angular scaffold (standalone) · login / register + functional guard + token interceptor · recipe list from the API (typed + async pipe) · routing shell + 404.', out:'FE auth + recipe list' },
+  { focus:'Frontend features', build:'Create / edit recipe form (reactive + validation) · detail view · search + category filter (RxJS debounce/switchMap) · loading, error & empty states.', out:'Full recipe UX' },
+  { focus:'Ship it', build:'Polish UI + responsiveness · README + a few Jest/Supertest tests · deploy backend (Render + Atlas) & frontend · run a short demo walkthrough.', out:'✅ Deployed app + demo' },
 ];
 
 // Final Project evaluation areas — the team lead ranks each 1–5. The Rating tab
@@ -1016,6 +1039,38 @@ function loadAdminDash(pw){
 }
 
 function dispName(x){ return x.display ? x.display : pretty(x.name); }
+// Ranked performance comparison — one stacked bar per trainee on a shared 0–65 items
+// scale (Plan 30 + Project 30 + Final 5). Bar length = overall completion; segments
+// show where each trainee's progress sits. Pure HTML/CSS, no libs (CSP-safe).
+function renderPerfChart(list){
+  var t=(list||[]).map(function(x){
+    var pl=(x.plan&&x.plan.done)||0, pr=(x.project&&x.project.done)||0, fn=(x.final&&x.final.done)||0;
+    return { x:x, pl:pl, pr:pr, fn:fn, done:(x.done||0), pct:Math.round((x.done||0)/65*100) };
+  }).sort(function(a,b){ return b.done-a.done; });
+  if(!t.length) return '';
+  var grid='<div class="perf-grid"><span style="left:25%"></span><span style="left:50%"></span><span style="left:75%"></span></div>';
+  var rows='';
+  for(var i=0;i<t.length;i++){
+    var r=t[i];
+    function seg(cls,lbl,v){ return v>0 ? '<div class="perf-seg '+cls+'" style="width:'+(v/65*100)+'%" title="'+lbl+' '+v+'"></div>' : ''; }
+    var tip=esc(dispName(r.x))+' — Plan '+r.pl+'/30 · Project '+r.pr+'/30 · Final '+r.fn+'/5 · '+r.done+'/65';
+    rows+='<div class="perf-row'+(i<3&&r.done>0?' top':'')+'">'+
+      '<div class="perf-rank">'+(i+1)+'</div>'+
+      '<div class="perf-name" title="'+tip+'">'+esc(dispName(r.x))+'</div>'+
+      '<div class="perf-track" title="'+tip+'">'+grid+
+        seg('plan','Plan',r.pl)+seg('proj','Project',r.pr)+seg('final','Final',r.fn)+
+      '</div>'+
+      '<div class="perf-pct">'+r.pct+'%</div>'+
+    '</div>';
+  }
+  return '<div class="perf"><h3>📊 Trainee performance</h3>'+
+    '<p class="perf-sub">Overall completion, ranked. Each bar spans the 65 tracked items; segments show the split.</p>'+
+    '<div class="perf-legend">'+
+      '<span><i class="plan"></i><b>6-Week Plan</b> · 30</span>'+
+      '<span><i class="proj"></i><b>Project Build</b> · 30</span>'+
+      '<span><i class="final"></i><b>Final Project</b> · 5</span>'+
+    '</div>'+rows+'</div>';
+}
 function renderDash(){
   var t=(admin.data||[]).slice().sort(function(a,b){ return ((b.auto?b.auto.score:0))-((a.auto?a.auto.score:0)); });
   var h='';
@@ -1038,6 +1093,7 @@ function renderDash(){
   h+='<div class="ovtiles admintiles">'+
     tile(n,'Trainees')+tile((n?Math.round(sumPct/n):0)+'%','Avg completion')+
     tile(n?Math.round(sumScore/n):0,'Avg score')+tile(rated+'/'+n,'Rated')+tile(totOpenQ,'Open questions')+'</div>';
+  h+=renderPerfChart(t);
   h+='<div class="tgrid">';
   for(var i=0;i<t.length;i++){
     var x=t[i], pct=Math.round((x.done||0)/65*100), auto=x.auto?x.auto.score:0;

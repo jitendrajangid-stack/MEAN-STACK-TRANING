@@ -18,7 +18,7 @@
   body{background:var(--bg);color:var(--ink);font-family:Roboto,Arial,Helvetica,sans-serif;font-size:14px;line-height:1.45}
   a{color:#1a73e8;text-decoration:none}
   a:hover{text-decoration:underline}
-  .wrap{max-width:1280px;margin:0 auto;padding:20px 16px 60px}
+  .wrap{max-width:1280px;margin:0 auto;padding:20px clamp(20px,4vw,44px) 60px}
 
   header.top{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:16px}
   .brand{display:flex;align-items:center;gap:12px}
@@ -247,13 +247,13 @@
   .bar>span{display:block;height:100%;background:var(--dn-fg)}
   /* ---- Responsive: laptop / tablet / mobile ---- */
   @media (max-width:900px){
-    .wrap{padding:16px 12px 50px}
+    .wrap{padding:16px 22px 50px}
     .overview{gap:16px}
     .admintiles .ovtile{min-width:104px}
     .addrow input{min-width:130px}
   }
   @media (max-width:600px){
-    .wrap{padding:12px 10px 44px}
+    .wrap{padding:12px 16px 44px}
     .brand h1{font-size:17px} .brand p{font-size:11px}
     .logo{width:34px;height:34px;font-size:18px}
     header.top{gap:10px}

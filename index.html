@@ -102,7 +102,7 @@
   #adminWho small{font-weight:400;color:var(--muted)}
   .dashwrap{padding:4px 0}
   .dashwrap h2{font-size:16px;margin-bottom:12px}
-  .tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+  .tgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
   .tcard{border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px}
   .tcard-top{display:flex;align-items:center;justify-content:space-between}
   .tname{font-weight:700}
@@ -156,11 +156,16 @@
   .perf-name{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
   .perf-track{position:relative;height:16px;border-radius:999px;background:var(--ns-bg);display:flex;gap:2px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(0,0,0,.03)}
   .perf-grid{position:absolute;inset:0;pointer-events:none;z-index:1}
-  .perf-grid span{position:absolute;top:0;bottom:0;width:1px;background:rgba(0,0,0,.06)}
-  .perf-seg{height:100%;min-width:0;transition:width .5s ease}
+  .perf-grid span{position:absolute;top:0;bottom:0;width:1px;background:rgba(0,0,0,.09)}
+  .perf-seg{height:100%;min-width:2px;transition:width .5s ease}
   .perf-seg:first-child{border-top-left-radius:999px;border-bottom-left-radius:999px}
   .perf-seg:last-child{border-top-right-radius:4px;border-bottom-right-radius:4px}
-  .perf-pct{font-size:12.5px;font-weight:800;color:var(--ink);text-align:right}
+  .perf-pct{font-size:12.5px;font-weight:800;color:var(--ink);text-align:right;font-variant-numeric:tabular-nums}
+  /* 0–100% scale under the bars so the track reads as an axis, not empty space */
+  .perf-axis{margin-top:2px;padding-top:0}
+  .perf-axis:hover{background:none}
+  .perf-scale{position:relative;display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .perf-axis-lead{font-size:10px;color:var(--muted);text-align:right;white-space:nowrap}
   @media (max-width:560px){ .perf-row{grid-template-columns:18px 84px 1fr 38px;gap:8px} .perf-name{font-size:11.5px} }
   .tcard{transition:box-shadow .15s ease,transform .15s ease;cursor:pointer}
   .tcard:hover{box-shadow:0 6px 18px rgba(0,0,0,.10);transform:translateY(-2px)}
@@ -1146,13 +1151,16 @@ function renderPerfChart(list){
       '<div class="perf-pct">'+r.pct+'%</div>'+
     '</div>';
   }
+  var axis='<div class="perf-row perf-axis"><span></span><span class="perf-axis-lead">% complete</span>'+
+    '<div class="perf-scale"><span>0</span><span>25</span><span>50</span><span>75</span><span>100</span></div>'+
+    '<span></span></div>';
   return '<div class="perf"><h3>📊 Trainee performance</h3>'+
     '<p class="perf-sub">Overall completion, ranked. Each bar spans the 67 tracked items; segments show the split.</p>'+
     '<div class="perf-legend">'+
       '<span><i class="plan"></i><b>6-Week Plan</b> · 30</span>'+
       '<span><i class="proj"></i><b>Project Build</b> · 30</span>'+
       '<span><i class="final"></i><b>Final Project</b> · 7</span>'+
-    '</div>'+rows+'</div>';
+    '</div>'+rows+axis+'</div>';
 }
 function renderDash(){
   var t=(admin.data||[]).slice().sort(function(a,b){ return ((b.auto?b.auto.score:0))-((a.auto?a.auto.score:0)); });

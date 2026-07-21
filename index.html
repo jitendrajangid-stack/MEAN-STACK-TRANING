@@ -114,6 +114,13 @@
   .opencta:hover{background:#eef6f0}
   .rmdev{font:inherit;font-size:12.5px;font-weight:600;border:1px solid #f3c7c4;background:#fff;color:#c5221f;border-radius:8px;padding:7px 10px;cursor:pointer}
   .rmdev:hover{background:#fce8e6}
+  /* Revoked trainees — greyed card in its own section */
+  .revoked-sec{margin:26px 0 10px;padding-top:16px;border-top:1px dashed var(--line)}
+  .tcard.revoked{opacity:.6;filter:grayscale(.5);background:var(--bg)}
+  .tcard.revoked:hover{opacity:.9}
+  .revtag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#c5221f;background:#fce8e6;border:1px solid #f3c7c4;border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:middle}
+  .adddevbtn2{font:inherit;font-size:12.5px;font-weight:600;border:1px solid #b7d7bf;background:#fff;color:#137333;border-radius:8px;padding:7px 10px;cursor:pointer}
+  .adddevbtn2:hover{background:#e6f4ea}
   .manage{border:1px solid var(--line);border-radius:12px;padding:14px;background:#f8f9fa}
   .manage h3{font-size:14px;margin-bottom:10px;color:var(--accent)}
   .addrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
@@ -613,7 +620,8 @@ var FINAL_DATES = ALL_DATES.slice(30,35);
 /* ----------------------------- STATE ------------------------------------- */
 var STATUS_ORDER = ['Not started','In progress','Done'];
 var CHIP_CLASS = { 'Not started':'t', 'In progress':'i', 'Done':'d' };
-var state = { name:'', statuses:{}, logs:{}, queries:[], tab:'plan' };
+function emptyEng(){ return { clicks:{}, started:{}, done:{} }; } // learn-link opens + status timestamps
+var state = { name:'', statuses:{}, logs:{}, queries:[], engagement:emptyEng(), tab:'plan' };
 var admin = { mode:null, data:[], sel:null, notice:'' }; // mode: null(user) | 'dash' | 'detail'
 var readOnly = false; // admin viewing a trainee → no editing
 var saveTimer = null;
@@ -672,7 +680,8 @@ function getSession(){ try{return JSON.parse(localStorage.getItem('meanplan:sess
 function clearSession(){ try{localStorage.removeItem('meanplan:session');}catch(e){} }
 
 /* ----------------------------- RENDER ------------------------------------ */
-function learnCell(t,u){ return u ? '<a href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(t)+'</a>' : esc(t); }
+// `key` (e.g. "5:g") tags the link so opening it is recorded in state.engagement.clicks.
+function learnCell(t,u,key){ return u ? '<a href="'+esc(u)+'" target="_blank" rel="noopener"'+(key?' data-lk="'+esc(key)+'"':'')+'>'+esc(t)+'</a>' : esc(t); }
 
 // Sequential unlock: an item is locked until the previous item in its sequence is Done.
 function isLocked(prevKey){ return !!prevKey && (state.statuses[prevKey]||'Not started')!=='Done'; }
@@ -692,7 +701,7 @@ function renderPlan(){
     for(var i=0;i<5;i++){
       var idx=w*5+i, c=CURRICULUM[idx], dn=idx+1, prev=dn>1?String(dn-1):'';
       var lk=(!readOnly&&state.name&&isLocked(prev))?' class="locked"':'';
-      h+='<tr'+lk+'><td class="day">Day '+dn+'</td><td class="topic">'+esc(c.topic)+'</td><td class="sub">'+esc(c.sub)+'</td><td class="learn">'+learnCell(c.gt,c.gu)+'</td><td class="learn">'+learnCell(c.bt,c.bu)+'</td><td>'+esc(c.ex)+'</td><td class="status-cell">'+chip(String(dn),prev)+'</td></tr>';
+      h+='<tr'+lk+'><td class="day">Day '+dn+'</td><td class="topic">'+esc(c.topic)+'</td><td class="sub">'+esc(c.sub)+'</td><td class="learn">'+learnCell(c.gt,c.gu,dn+':g')+'</td><td class="learn">'+learnCell(c.bt,c.bu,dn+':b')+'</td><td>'+esc(c.ex)+'</td><td class="status-cell">'+chip(String(dn),prev)+'</td></tr>';
     }
   }
   return h+'</tbody></table>';
@@ -778,7 +787,20 @@ function computeStats(){
     var av=parseFloat(e.a); if(!isNaN(av))act+=av;
     var cv=parseFloat(e.c); if(!isNaN(cv)){ conf+=cv; confN++; }
   }
-  return {p:p,pr:pr,f:f,done:done,pct:pct,logDays:logDays,avgConf:confN?conf/confN:0,act:act,plan:plan};
+  // Engagement diagnostics (same rule as the server autoScore_): of attempted plan days,
+  // how many had a learn-link opened; of Done days, how many were studied before completing.
+  var clk=state.engagement.clicks||{}, dts=state.engagement.done||{}, stm=state.engagement.started||{};
+  var att=0,engaged=0,dn2=0,studied=0;
+  for(i=1;i<=30;i++){
+    var sx=state.statuses[String(i)];
+    var g=clk[i+':g'], b=clk[i+':b'], opened=g||b, da=dts[String(i)];
+    var tracked=!!(opened||stm[String(i)]||da); // untracked = pre-feature day → benefit of the doubt
+    if(sx==='Done'||sx==='In progress'){ att++; if(opened||!tracked) engaged++; }
+    if(sx==='Done'){ dn2++; var fc=(g&&b)?(g<b?g:b):(g||b||''); if(!tracked||(fc&&(!da||fc<=da))) studied++; }
+  }
+  return {p:p,pr:pr,f:f,done:done,pct:pct,logDays:logDays,avgConf:confN?conf/confN:0,act:act,plan:plan,
+    engaged:att?Math.round(engaged/att*100):0,engagedDays:engaged,attemptedDays:att,
+    diligence:dn2?Math.round(studied/dn2*100):0,doneDays:dn2};
 }
 function renderOverview(){
   var s=computeStats();
@@ -791,6 +813,8 @@ function renderOverview(){
       tile(s.logDays+'/30','Days logged')+
       tile(s.avgConf?s.avgConf.toFixed(1):'–','Avg confidence')+
       tile(s.act+'/'+s.plan+'h','Actual vs planned')+
+      tile(s.attemptedDays?s.engaged+'%':'–','Studied links'+(s.attemptedDays?' ('+s.engagedDays+'/'+s.attemptedDays+')':''))+
+      tile(s.doneDays?s.diligence+'%':'–','Studied before Done')+
     '</div></div>';
 }
 
@@ -884,7 +908,7 @@ function renderResources(){
     h+='<tr class="week"><td colspan="3">'+esc(RES[g].cat)+'</td></tr>';
     for(var i=0;i<RES[g].items.length;i++){
       var it=RES[g].items[i];
-      h+='<tr><td class="topic">'+esc(it.topic)+'</td><td class="learn">'+learnCell(it.gt,it.gu)+'</td><td class="learn">'+learnCell(it.bt,it.bu)+'</td></tr>';
+      h+='<tr><td class="topic">'+esc(it.topic)+'</td><td class="learn">'+learnCell(it.gt,it.gu,'R'+g+'_'+i+':g')+'</td><td class="learn">'+learnCell(it.bt,it.bu,'R'+g+'_'+i+':b')+'</td></tr>';
     }
   }
   return h+'</tbody></table>';
@@ -922,12 +946,12 @@ function readCache(name){
   try{
     var c=JSON.parse(localStorage.getItem(lsKey(name))||'{}');
     // back-compat: old cache was a bare statuses object
-    if(c && (c.statuses||c.logs||c.queries)) return { statuses:c.statuses||{}, logs:c.logs||{}, queries:c.queries||[] };
-    return { statuses:c||{}, logs:{}, queries:[] };
-  }catch(e){ return { statuses:{}, logs:{}, queries:[] }; }
+    if(c && (c.statuses||c.logs||c.queries)) return { statuses:c.statuses||{}, logs:c.logs||{}, queries:c.queries||[], engagement:c.engagement||emptyEng() };
+    return { statuses:c||{}, logs:{}, queries:[], engagement:emptyEng() };
+  }catch(e){ return { statuses:{}, logs:{}, queries:[], engagement:emptyEng() }; }
 }
 function writeCache(name){
-  try{ localStorage.setItem(lsKey(name),JSON.stringify({statuses:state.statuses,logs:state.logs,queries:state.queries})); }catch(e){}
+  try{ localStorage.setItem(lsKey(name),JSON.stringify({statuses:state.statuses,logs:state.logs,queries:state.queries,engagement:state.engagement})); }catch(e){}
 }
 
 function loadTrainee(name){
@@ -940,7 +964,7 @@ function loadTrainee(name){
   document.getElementById('sheetLink').style.display='none';
   state.name=name;
   var cached=readCache(name);
-  state.statuses=cached.statuses; state.logs=cached.logs; state.queries=cached.queries||[];
+  state.statuses=cached.statuses; state.logs=cached.logs; state.queries=cached.queries||[]; state.engagement=cached.engagement||emptyEng();
   if(name){ setSignedIn(name); if(!API_URL || effPw(name)){ showRules(); if(!guideSeen()){ showGuide(); setGuideSeen(); } } } // rules every login; guide once for new devs
   render();
   if(!API_URL || !name) return;
@@ -951,7 +975,7 @@ function loadTrainee(name){
     .then(function(r){return r.json();})
     .then(function(d){
       if(d && d.error==='auth'){ clearPw(name); state.name=''; hideWho(); showLogin(name,'Please sign in again.'); setSave('',''); return; }
-      if(d){ state.statuses=d.statuses||{}; state.logs=d.logs||{}; state.queries=d.queries||[]; writeCache(name); render(); }
+      if(d){ state.statuses=d.statuses||{}; state.logs=d.logs||{}; state.queries=d.queries||[]; state.engagement=d.engagement||emptyEng(); writeCache(name); render(); }
       setSave('Saved','ok');
     })
     .catch(function(){ setSave('Offline — saved locally','err'); });
@@ -965,7 +989,7 @@ function persist(){
   clearTimeout(saveTimer);
   saveTimer=setTimeout(function(){
     fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body:JSON.stringify({name:state.name,statuses:state.statuses,logs:state.logs,queries:state.queries,pw:effPw(state.name)})})
+      body:JSON.stringify({name:state.name,statuses:state.statuses,logs:state.logs,queries:state.queries,engagement:state.engagement,pw:effPw(state.name)})})
       .then(function(r){return r.json();})
       .then(function(d){ if(d && d.error==='auth'){ var nm=state.name; clearPw(nm); state.name=''; hideWho(); showLogin(nm,'Please sign in again.'); setSave('',''); return; } setSave('Saved','ok'); })
       .catch(function(){ setSave('Offline — saved locally','err'); });
@@ -974,7 +998,12 @@ function persist(){
 
 /* ----------------------------- EVENTS ------------------------------------ */
 document.getElementById('view').addEventListener('click',function(e){
+  // Record a learning-link open (bubbles before the new tab opens). Only the trainee's own
+  // clicks count — never the admin's read-only view.
+  var lnk=e.target.closest('a[data-lk]');
+  if(lnk){ if(!readOnly && state.name){ state.engagement.clicks[lnk.getAttribute('data-lk')]=new Date().toISOString(); persist(); } return; }
   var rm=e.target.closest('[data-remove]'); if(rm){ removeDev(rm.getAttribute('data-remove')); return; }
+  var rs=e.target.closest('[data-restore]'); if(rs){ restoreDev(rs.getAttribute('data-restore')); return; }
   var gen=e.target.closest('.genbtn'); if(gen){ document.getElementById('ndPw').value=genPw(); return; }
   var add=e.target.closest('.adddevbtn'); if(add){ addDev(); return; }
   var dis=e.target.closest('[data-dismiss]'); if(dis){ admin.notice=''; render(); return; }
@@ -989,7 +1018,11 @@ document.getElementById('view').addEventListener('click',function(e){
   var b=e.target.closest('button.chip'); if(!b||b.disabled) return;
   var key=b.getAttribute('data-key'); if(!key) return;
   var cur=state.statuses[key]||'Not started';
-  state.statuses[key]=STATUS_ORDER[(STATUS_ORDER.indexOf(cur)+1)%3];
+  var nx=STATUS_ORDER[(STATUS_ORDER.indexOf(cur)+1)%3];
+  var now=new Date().toISOString();
+  if(nx==='In progress' && !state.engagement.started[key]) state.engagement.started[key]=now; // first started
+  if(nx==='Done') state.engagement.done[key]=now; // completed
+  state.statuses[key]=nx;
   render(); persist(); // re-render so the next day locks/unlocks
 });
 
@@ -1175,31 +1208,53 @@ function renderDash(){
       '<button class="genbtn" type="button">Generate</button>'+
       '<button class="adddevbtn">Add trainee</button>'+
     '</div><div class="addmsg" id="addMsg"></div></div>';
-  // Aggregate stats across all trainees
-  var n=t.length, sumPct=0, sumScore=0, rated=0, totDone=0, totOpenQ=0;
-  for(var a=0;a<n;a++){ sumPct+=Math.round((t[a].done||0)/67*100); sumScore+=(t[a].auto?t[a].auto.score:0); if(t[a].rating)rated++; totDone+=(t[a].done||0); totOpenQ+=(t[a].openQueries||0); }
+  // Split active vs revoked — revoked trainees keep their data but show greyed in their own
+  // section so the team lead sees at a glance who still has access.
+  var actives=[], revoked=[];
+  for(var s0=0;s0<t.length;s0++){ (t[s0].active===false?revoked:actives).push(t[s0]); }
+  // Aggregate stats over ACTIVE trainees only
+  var n=actives.length, sumPct=0, sumScore=0, rated=0, totOpenQ=0;
+  for(var a=0;a<n;a++){ sumPct+=Math.round((actives[a].done||0)/67*100); sumScore+=(actives[a].auto?actives[a].auto.score:0); if(actives[a].rating)rated++; totOpenQ+=(actives[a].openQueries||0); }
   h+='<div style="margin:16px 0 10px"><h2 style="font-size:18px">Trainees ('+n+')</h2>'+
     '<p style="font-size:13px;color:var(--muted)">Ranked by auto score. Open any card for their full board, rating &amp; questions; Remove revokes access (their data is kept).</p></div>';
   if(!t.length) return h+'<p style="padding:8px 0;color:#5f6368">No trainees yet — add one above.</p>';
-  h+='<div class="ovtiles admintiles">'+
-    tile(n,'Trainees')+tile((n?Math.round(sumPct/n):0)+'%','Avg completion')+
-    tile(n?Math.round(sumScore/n):0,'Avg score')+tile(rated+'/'+n,'Rated')+tile(totOpenQ,'Open questions')+'</div>';
-  h+=renderPerfChart(t);
-  h+='<div class="tgrid">';
-  for(var i=0;i<t.length;i++){
-    var x=t[i], pct=Math.round((x.done||0)/67*100), auto=x.auto?x.auto.score:0;
-    h+='<div class="tcard" data-open="'+esc(x.name)+'">'+
-      '<div class="tcard-top"><span class="tname">'+esc(dispName(x))+'</span><span class="badge '+scoreClass(auto)+'">'+auto+'</span></div>'+
-      '<div class="tmeta" style="font-size:11px">'+esc(x.name)+'</div>'+
-      '<div class="bar"><span style="width:'+pct+'%"></span></div>'+
-      '<div class="tmeta">'+(x.done||0)+'/67 done · '+pct+'%</div>'+
-      '<div class="tmeta">Plan '+segStr(x.plan)+' · Proj '+segStr(x.project)+' · Final '+segStr(x.final)+' · Log '+(x.logDays||0)+'/30</div>'+
-      '<div class="tmeta">Rating: <span class="stars">'+(x.rating?stars(x.rating):'<span style="color:#9aa0a6">not rated</span>')+'</span>'+
-        (x.openQueries?' · <span style="color:#c5221f;font-weight:700">'+x.openQueries+' open Q</span>':'')+'</div>'+
-      '<div class="cardbtns"><button class="opencta">Open detailed view ▸</button>'+
-      '<button class="rmdev" data-remove="'+esc(x.name)+'" title="Revoke access (keeps data)">Remove</button></div></div>';
+  if(actives.length){
+    h+='<div class="ovtiles admintiles">'+
+      tile(n,'Active')+tile((n?Math.round(sumPct/n):0)+'%','Avg completion')+
+      tile(n?Math.round(sumScore/n):0,'Avg score')+tile(rated+'/'+n,'Rated')+tile(totOpenQ,'Open questions')+'</div>';
+    h+=renderPerfChart(actives);
+    h+='<div class="tgrid">';
+    for(var i=0;i<actives.length;i++) h+=traineeCard(actives[i],false);
+    h+='</div>';
+  } else {
+    h+='<p style="padding:8px 0;color:#5f6368">No active trainees — add one above.</p>';
   }
-  return h+'</div>';
+  if(revoked.length){
+    h+='<div class="revoked-sec"><h2 style="font-size:16px">🚫 Revoked ('+revoked.length+')</h2>'+
+      '<p style="font-size:13px;color:var(--muted)">Access removed — their progress is kept. Re-add the same email above to restore access.</p></div>';
+    h+='<div class="tgrid">';
+    for(var j=0;j<revoked.length;j++) h+=traineeCard(revoked[j],true);
+    h+='</div>';
+  }
+  return h;
+}
+// One dashboard card. `isRevoked` greys it out and swaps the Remove button for a Revoked tag.
+function traineeCard(x,isRevoked){
+  var pct=Math.round((x.done||0)/67*100), auto=x.auto?x.auto.score:0, eng=x.auto&&x.auto.attemptedDays?x.auto.engaged+'%':'–';
+  return '<div class="tcard'+(isRevoked?' revoked':'')+'" data-open="'+esc(x.name)+'">'+
+    '<div class="tcard-top"><span class="tname">'+esc(dispName(x))+(isRevoked?' <span class="revtag">revoked</span>':'')+'</span><span class="badge '+scoreClass(auto)+'">'+auto+'</span></div>'+
+    '<div class="tmeta" style="font-size:11px">'+esc(x.name)+'</div>'+
+    '<div class="bar"><span style="width:'+pct+'%"></span></div>'+
+    '<div class="tmeta">'+(x.done||0)+'/67 done · '+pct+'%</div>'+
+    '<div class="tmeta">Plan '+segStr(x.plan)+' · Proj '+segStr(x.project)+' · Final '+segStr(x.final)+' · Log '+(x.logDays||0)+'/30</div>'+
+    '<div class="tmeta">Studied links: <b>'+eng+'</b>'+
+      '<span class="stars"> · Rating: '+(x.rating?stars(x.rating):'<span style="color:#9aa0a6">not rated</span>')+'</span>'+
+      (x.openQueries?' · <span style="color:#c5221f;font-weight:700">'+x.openQueries+' open Q</span>':'')+'</div>'+
+    '<div class="cardbtns"><button class="opencta">Open detailed view ▸</button>'+
+    (isRevoked
+      ? '<button class="adddevbtn2" data-restore="'+esc(x.name)+'" title="Re-add this email to restore access">Restore</button>'
+      : '<button class="rmdev" data-remove="'+esc(x.name)+'" title="Revoke access (keeps data)">Remove</button>')+
+    '</div></div>';
 }
 
 // Open a trainee full-page (read-only) with the same tabs a user sees + a Rating tab.
@@ -1207,7 +1262,7 @@ function openDetail(name){
   var x=null; for(var i=0;i<admin.data.length;i++){ if(admin.data[i].name===name) x=admin.data[i]; }
   if(!x) return;
   admin.mode='detail'; admin.sel=x; readOnly=true;
-  state.name=name; state.tab='plan'; state.statuses={}; state.logs={};
+  state.name=name; state.tab='plan'; state.statuses={}; state.logs={}; state.engagement=emptyEng();
   document.getElementById('adminBar').style.display='';
   document.getElementById('adminWho').innerHTML=esc(pretty(name))+' <small>— '+esc(name)+' · read-only admin view</small>';
   document.getElementById('tabs').style.display='';
@@ -1217,11 +1272,11 @@ function openDetail(name){
   setActiveTab('plan');
   var v=document.getElementById('view'); v.innerHTML=skelDetail(name);
   fetch(API_URL+'?name='+encodeURIComponent(name)+'&pw='+encodeURIComponent(getAdminPw())).then(function(r){return r.json();})
-    .then(function(d){ state.statuses=d.statuses||{}; state.logs=d.logs||{}; render(); })
+    .then(function(d){ state.statuses=d.statuses||{}; state.logs=d.logs||{}; state.engagement=d.engagement||emptyEng(); render(); })
     .catch(function(){ v.innerHTML='<p style="padding:16px;color:#c5221f">Failed to load.</p>'; toast('Failed to load '+pretty(name),'err'); });
 }
 function backToDash(){
-  readOnly=false; state.name=''; state.statuses={}; state.logs={}; state.tab='plan';
+  readOnly=false; state.name=''; state.statuses={}; state.logs={}; state.engagement=emptyEng(); state.tab='plan';
   loadAdminDash(getAdminPw()); // re-fetch so freshly saved ratings/scores show
 }
 function renderRating(){ return admin.sel ? detailRating(admin.sel) : ''; }
@@ -1233,6 +1288,15 @@ function genPw(){
   if(window.crypto&&crypto.getRandomValues) crypto.getRandomValues(a); else for(var j=0;j<14;j++) a[j]=Math.floor(Math.random()*4294967296);
   for(var i=0;i<14;i++) out+=cs[a[i]%cs.length];
   return out;
+}
+// Restore a revoked trainee: prefill the Add form with their email + a fresh password so the
+// team lead just reviews and clicks Add. Re-adding the same email re-activates their kept data.
+function restoreDev(email){
+  var e=document.getElementById('ndEmail'), p=document.getElementById('ndPw');
+  if(e) e.value=email; if(p) p.value=genPw();
+  var m=document.getElementById('addMsg'); if(m){ m.style.color='#5f6368'; m.textContent='Set/keep a password, then click Add trainee to restore '+email+'.'; }
+  if(e){ e.scrollIntoView({behavior:'smooth',block:'center'}); e.focus(); }
+  toast('Review the password and click Add trainee to restore access','info');
 }
 function addDev(){
   var name=(document.getElementById('ndName').value||'').trim();

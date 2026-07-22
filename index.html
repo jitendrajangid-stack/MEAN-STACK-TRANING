@@ -58,7 +58,7 @@
   /* Admin dashboard sits directly in the panel (not a table) — give it inner padding */
   .dashwrap{padding:clamp(14px,2.2vw,22px)}
   table{border-collapse:collapse;width:100%;min-width:820px}
-  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th,td{text-align:left;padding:12px 15px;border-bottom:1px solid var(--line);vertical-align:top}
   thead th{position:sticky;top:0;background:#f8f9fa;font-size:12px;color:var(--muted);font-weight:600;z-index:1;white-space:nowrap}
   tr.week td{background:#eef6f0;font-weight:700;color:#0f5f2b;font-size:13px}
   tr.week td .sub{font-weight:400;color:#4b7a5c;margin-left:8px}
@@ -115,10 +115,12 @@
   #adminBar{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
   #adminWho{font-weight:700}
   #adminWho small{font-weight:400;color:var(--muted)}
-  .dashwrap{padding:4px 0}
+  .dashwrap{padding:clamp(16px,2.4vw,24px)}
   .dashwrap h2{font-size:16px;margin-bottom:12px}
-  .tgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
-  .tcard{border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px}
+  /* Non-table tabs (Queries / Resources / Rating) get inner breathing room inside the panel */
+  .tabpad{padding:clamp(16px,2.4vw,24px)}
+  .tgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(264px,1fr));gap:16px}
+  .tcard{border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:9px}
   .tcard-top{display:flex;align-items:center;justify-content:space-between}
   .tname{font-weight:700}
   .tmeta{font-size:12px;color:var(--muted)}
@@ -136,7 +138,7 @@
   .revtag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#c5221f;background:#fce8e6;border:1px solid #f3c7c4;border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:middle}
   .adddevbtn2{font:inherit;font-size:12.5px;font-weight:600;border:1px solid #b7d7bf;background:#fff;color:#137333;border-radius:8px;padding:7px 10px;cursor:pointer}
   .adddevbtn2:hover{background:#e6f4ea}
-  .manage{border:1px solid var(--line);border-radius:12px;padding:14px;background:#f8f9fa}
+  .manage{border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:#f8f9fa;margin-bottom:18px}
   .manage h3{font-size:14px;margin-bottom:10px;color:var(--accent)}
   .addrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
   .addrow input{font:inherit;font-size:13px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;min-width:150px;flex:1}
@@ -145,7 +147,7 @@
   .addmsg{font-size:12.5px;margin-top:8px;min-height:16px;word-break:break-word}
   .notice{background:#e6f4ea;border:1px solid #b7dfc2;color:#0f5f2b;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:13px;word-break:break-word}
   /* Progress overview (donut + segment bars + stat tiles) */
-  .overview{display:flex;gap:22px;align-items:center;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  .overview{display:flex;gap:24px;align-items:center;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
   .donut{width:108px;height:108px;flex:0 0 auto}
   .dtrack{fill:none;stroke:var(--ns-bg);stroke-width:11}
   .dfill{fill:none;stroke:var(--accent);stroke-width:11;stroke-linecap:round;transition:stroke-dashoffset .6s ease}
@@ -162,7 +164,7 @@
   .admintiles{margin-bottom:14px}
   .admintiles .ovtile{min-width:120px}
   /* Performance comparison chart (admin) — ranked stacked bars, all client-side */
-  .perf{border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:0 0 18px;background:var(--card)}
+  .perf{border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:0 0 18px;background:var(--card)}
   .perf h3{font-size:15px;margin:0 0 2px}
   .perf .perf-sub{font-size:12px;color:var(--muted);margin:0 0 12px}
   .perf-legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:14px;font-size:12px;color:var(--muted)}
@@ -1103,9 +1105,9 @@ function render(){
   else if(state.tab==='project') v.innerHTML=renderProject();
   else if(state.tab==='final') v.innerHTML=renderFinal();
   else if(state.tab==='log') v.innerHTML=renderLog();
-  else if(state.tab==='queries') v.innerHTML=renderQueries();
-  else if(state.tab==='rating') v.innerHTML=renderRating();
-  else v.innerHTML=renderResources();
+  else if(state.tab==='queries') v.innerHTML='<div class="tabpad">'+renderQueries()+'</div>';
+  else if(state.tab==='rating') v.innerHTML='<div class="tabpad">'+renderRating()+'</div>';
+  else v.innerHTML='<div class="tabpad">'+renderResources()+'</div>';
   updateMeter();
   updateQBadge();
   sizeTextareas(v); // fit any pre-filled textareas to their content

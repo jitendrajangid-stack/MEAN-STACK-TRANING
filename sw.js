@@ -1,6 +1,6 @@
 /* Minimal service worker — enables PWA install + basic offline shell.
    Bump CACHE when you change index.html to refresh cached copies. */
-var CACHE = 'mean-training-v3';
+var CACHE = 'mean-training-v4';
 var ASSETS = ['.', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', function (e) {

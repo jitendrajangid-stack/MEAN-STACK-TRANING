@@ -207,6 +207,29 @@
   .risk{display:inline-block;font-size:10.5px;font-weight:800;border-radius:999px;padding:1px 8px;vertical-align:baseline}
   .risk.ok{background:#e6f4ea;color:#137333} .risk.watch{background:#fef7e0;color:#8a6d00}
   .risk.risk{background:#fce8e6;color:#c5221f} .risk.new{background:#e8f0fe;color:#1a56b0} .risk.done{background:#e8eaed;color:#3c4043}
+  /* Admin questions bell */
+  .qbell{background:#fff8e1;border:1px solid #f6e2a8;border-radius:12px;padding:12px 14px;margin:0 0 14px}
+  .qbell-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px;color:#7a5b00}
+  .qbell-h small{color:#8a6d00;font-weight:400}
+  .qbell-ic{position:relative;font-size:18px}
+  .qbell-badge{position:absolute;top:-6px;right:-10px;background:#c5221f;color:#fff;font-size:10px;font-weight:800;border-radius:999px;padding:0 5px;min-width:16px;text-align:center}
+  .qbell-list{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+  .qb-item{display:flex;align-items:center;gap:10px;flex-wrap:wrap;text-align:left;background:#fff;border:1px solid #f0e3bd;border-radius:9px;padding:8px 11px;font:inherit;font-size:12.5px;color:var(--ink);cursor:pointer;transition:background .15s}
+  .qb-item:hover{background:#fffdf5}
+  .qb-name{font-weight:700;min-width:120px}
+  .qb-q{color:#c5221f;font-weight:700} .qb-b{color:#8a6d00;font-weight:700}
+  .qb-go{margin-left:auto;color:var(--accent);font-weight:700}
+  /* Impersonate button on cards */
+  .impbtn{font:inherit;font-size:12px;font-weight:600;border:1px solid #c9a227;background:#fff8e1;color:#7a5b00;border-radius:7px;padding:6px 10px;cursor:pointer}
+  .impbtn:hover{background:#fdf3d0}
+  /* Feedback stars */
+  .fbstars{display:flex;gap:4px}
+  .fbstars button{font:inherit;font-size:26px;line-height:1;background:none;border:none;color:#f5a623;cursor:pointer;padding:0 2px}
+  .fblist{display:flex;flex-direction:column;gap:10px;max-height:60vh;overflow:auto}
+  .fbrow{border:1px solid var(--line);border-radius:9px;padding:10px 12px;background:var(--bg)}
+  .fbrow-top{display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:4px}
+  .fbrow-when{margin-left:auto;color:var(--muted);font-size:11.5px}
+  .fbrow-msg{font-size:13px;color:var(--ink);line-height:1.5;white-space:pre-wrap}
   .tcard{transition:box-shadow .15s ease,transform .15s ease;cursor:pointer}
   .tcard:hover{box-shadow:0 6px 18px rgba(0,0,0,.10);transform:translateY(-2px)}
   .ovtile,.badge{transition:transform .15s ease}
@@ -391,6 +414,7 @@
       </div>
       <div class="headbtns">
         <a id="sheetLink" class="ghostbtn" href="#" target="_blank" rel="noopener" style="display:none">📊 Sheet</a>
+        <button id="fbBtn" class="ghostbtn" title="Share feedback about this platform">💬 Feedback</button>
         <button id="guideBtn" class="ghostbtn">❔ Guide</button>
         <button id="installBtn" class="ghostbtn" style="display:none">⬇ Install app</button>
       </div>
@@ -482,6 +506,37 @@
 
     <p class="guidenote">You stay signed in across refresh and the next day until you hit <b>Sign out</b>. Each sign-in also shows the short <b>daily ground rules</b> (8h/day, Basecamp check-ins, keep this updated) — please follow them.</p>
     <button class="primary" id="guideOk">Got it — let’s go</button>
+  </div>
+</div>
+
+<!-- Platform feedback — trainees tell us how to improve the tracker -->
+<div class="overlay hide" id="feedback">
+  <div class="modal" style="max-width:520px;border-top:5px solid var(--accent)">
+    <h2>💬 Share feedback</h2>
+    <p class="lead">Help us improve this training tracker. What’s working, what’s confusing, what would you add?</p>
+    <div id="fbForm">
+      <label class="qlbl">How’s your experience? (optional)</label>
+      <div class="fbstars" id="fbStars">
+        <button type="button" data-fr="1">☆</button><button type="button" data-fr="2">☆</button><button type="button" data-fr="3">☆</button><button type="button" data-fr="4">☆</button><button type="button" data-fr="5">☆</button>
+      </div>
+      <label class="qlbl" style="margin-top:10px">Your feedback</label>
+      <textarea id="fbMsg" placeholder="Ideas, bugs, anything that would make this better…" style="width:100%;min-height:96px;font:inherit;font-size:13px;padding:10px;border:1px solid var(--line);border-radius:8px;resize:vertical"></textarea>
+      <div style="margin-top:10px;display:flex;gap:10px;align-items:center">
+        <button class="primary" id="fbSend">Send feedback</button>
+        <button class="linkbtn" id="fbClose">Cancel</button>
+        <span class="fbmsg" id="fbResult" style="font-size:12px"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Admin: read all trainee feedback -->
+<div class="overlay hide" id="fbList">
+  <div class="modal" style="max-width:660px;border-top:5px solid var(--accent)">
+    <h2>💬 Trainee feedback</h2>
+    <p class="lead">What trainees told us about the platform — newest first.</p>
+    <div id="fbListBody" class="fblist">Loading…</div>
+    <div style="margin-top:12px"><button class="linkbtn" id="fbListClose">Close</button></div>
   </div>
 </div>
 
@@ -795,7 +850,13 @@ var DOD = {
 function dodArr(key){ var a=state.checks[key]; return (a&&a.length)?a:[false,false,false]; }
 function dodCount(key){ var a=dodArr(key), n=0; for(var i=0;i<a.length;i++) if(a[i]) n++; return n; }
 // Small toggle shown in a day's Status cell; opens the checklist row below it.
-function dodToggle(key){ var n=dodCount(key); return '<button type="button" class="dodtog'+(n===3?' full':'')+'" data-dodtog="'+key+'" title="Definition of done (advisory)">✓ '+n+'/3</button>'; }
+function dodToggle(key){
+  var n=dodCount(key);
+  // A day completed with no self-check ticked (incl. every day finished before this feature)
+  // would show a confusing "Done · 0/3" — hide the empty chip there. Otherwise show progress.
+  if(state.statuses[key]==='Done' && n===0) return '';
+  return '<button type="button" class="dodtog'+(n===3?' full':'')+'" data-dodtog="'+key+'" title="Optional self-check — a few &quot;did I really finish?&quot; items. It never blocks marking Done.">✓ '+n+'/3</button>';
+}
 // The hidden checklist detail row (revealed by the toggle). `cols` = the table's column count.
 function dodDetail(key,type,cols){
   var items=DOD[type], a=dodArr(key), boxes='';
@@ -1112,6 +1173,9 @@ document.getElementById('view').addEventListener('click',function(e){
   if(lnk){ if(!readOnly && state.name){ state.engagement.clicks[lnk.getAttribute('data-lk')]=new Date().toISOString(); persist(); } return; }
   var rm=e.target.closest('[data-remove]'); if(rm){ removeDev(rm.getAttribute('data-remove')); return; }
   var rs=e.target.closest('[data-restore]'); if(rs){ restoreDev(rs.getAttribute('data-restore')); return; }
+  var imp=e.target.closest('[data-impersonate]'); if(imp){ impersonate(imp.getAttribute('data-impersonate')); return; }
+  var oq=e.target.closest('[data-open-q]'); if(oq){ openDetail(oq.getAttribute('data-open-q'),'queries'); return; }
+  var vf=e.target.closest('[data-viewfb]'); if(vf){ loadFeedbackList(); return; }
   var gen=e.target.closest('.genbtn'); if(gen){ document.getElementById('ndPw').value=genPw(); return; }
   var add=e.target.closest('.adddevbtn'); if(add){ addDev(); return; }
   var dis=e.target.closest('[data-dismiss]'); if(dis){ admin.notice=''; render(); return; }
@@ -1184,6 +1248,49 @@ function guideSeen(){ try{ return localStorage.getItem('meanplan:guideseen')==='
 function setGuideSeen(){ try{ localStorage.setItem('meanplan:guideseen','1'); }catch(e){} }
 document.getElementById('guideOk').addEventListener('click',hideGuide);
 document.getElementById('guideBtn').addEventListener('click',showGuide);
+
+/* -------------------- Platform feedback (trainee → us) ------------------- */
+var fbRating=0;
+function paintStars(){ [].forEach.call(document.querySelectorAll('#fbStars button'),function(b){ b.textContent=(+b.getAttribute('data-fr')<=fbRating)?'★':'☆'; }); }
+function openFeedback(){
+  if(!state.name || !effPw(state.name)){ toast('Sign in first to send feedback','info'); return; }
+  fbRating=0; paintStars();
+  document.getElementById('fbMsg').value=''; document.getElementById('fbResult').textContent='';
+  document.getElementById('feedback').classList.remove('hide');
+  document.getElementById('fbMsg').focus();
+}
+function closeFeedback(){ document.getElementById('feedback').classList.add('hide'); }
+document.getElementById('fbBtn').addEventListener('click',openFeedback);
+document.getElementById('fbClose').addEventListener('click',closeFeedback);
+document.getElementById('fbStars').addEventListener('click',function(e){ var b=e.target.closest('[data-fr]'); if(!b) return; fbRating=+b.getAttribute('data-fr'); paintStars(); });
+document.getElementById('fbListClose').addEventListener('click',function(){ document.getElementById('fbList').classList.add('hide'); });
+// Admin: fetch + show all platform feedback (newest first).
+function loadFeedbackList(){
+  var m=document.getElementById('fbList'), body=document.getElementById('fbListBody');
+  body.innerHTML='Loading…'; m.classList.remove('hide');
+  fetch(API_URL+'?action=feedback&pw='+encodeURIComponent(getAdminPw())).then(function(r){return r.json();}).then(function(d){
+    if(!d||!d.ok){ body.innerHTML='<p style="color:#c5221f">Could not load (admin only).</p>'; return; }
+    if(!d.feedback||!d.feedback.length){ body.innerHTML='<p style="color:var(--muted)">No feedback yet.</p>'; return; }
+    body.innerHTML=d.feedback.map(function(f){
+      return '<div class="fbrow"><div class="fbrow-top"><b>'+esc(pretty(f.name||'anonymous'))+'</b>'+
+        (f.rating?' <span class="stars">'+stars(f.rating)+'</span>':'')+
+        '<span class="fbrow-when">'+esc(fmtTs(f.when))+'</span></div>'+
+        '<div class="fbrow-msg">'+esc(f.message)+'</div></div>';
+    }).join('');
+  }).catch(function(){ body.innerHTML='<p style="color:#c5221f">Network error.</p>'; });
+}
+document.getElementById('fbSend').addEventListener('click',function(){
+  var msg=(document.getElementById('fbMsg').value||'').trim();
+  var out=document.getElementById('fbResult');
+  if(!msg){ out.style.color='#c5221f'; out.textContent='Please write a little feedback.'; return; }
+  out.style.color='#5f6368'; out.textContent='Sending…';
+  fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body:JSON.stringify({action:'feedback',name:state.name,rating:fbRating,message:msg,pw:effPw(state.name)})})
+    .then(function(r){return r.json();})
+    .then(function(d){ if(d&&d.ok){ toast('Thanks for the feedback! 🙏','ok'); closeFeedback(); }
+      else { out.style.color='#c5221f'; out.textContent=(d&&d.error)||'Could not send.'; } })
+    .catch(function(){ out.style.color='#c5221f'; out.textContent='Network error — not sent.'; });
+});
 function showLogin(prefillId,msg){
   document.getElementById('loginId').value=prefillId||'';
   document.getElementById('loginPw').value='';
@@ -1380,7 +1487,8 @@ function renderDash(){
       '<input id="ndPw" placeholder="Password" autocomplete="off">'+
       '<button class="genbtn" type="button">Generate</button>'+
       '<button class="adddevbtn">Add trainee</button>'+
-    '</div><div class="addmsg" id="addMsg"></div></div>';
+    '</div><div class="addmsg" id="addMsg"></div>'+
+    '<div style="margin-top:10px"><button class="ghostbtn" data-viewfb type="button">💬 View platform feedback</button></div></div>';
   // Split active vs revoked — revoked trainees keep their data but show greyed in their own
   // section so the team lead sees at a glance who still has access.
   var actives=[], revoked=[];
@@ -1392,6 +1500,7 @@ function renderDash(){
     '<p style="font-size:13px;color:var(--muted)">Ranked by <b>Standing</b> (auto score + your Final rating). Open any card for their full board, rating &amp; questions; Remove revokes access (their data is kept).</p></div>';
   if(!t.length) return h+'<p style="padding:8px 0;color:#5f6368">No trainees yet — add one above.</p>';
   if(actives.length){
+    h+=renderQuestionsBell(actives);
     h+='<div class="ovtiles admintiles">'+
       tile(n,'Active')+tile((n?Math.round(sumStand/n):0),'Avg standing')+
       tile((n?Math.round(sumPct/n):0)+'%','Avg completion')+tile(rated+'/'+n,'Rated')+tile(totOpenQ,'Open questions')+'</div>';
@@ -1410,6 +1519,29 @@ function renderDash(){
     h+='</div>';
   }
   return h;
+}
+// Notification bell — trainees who raised questions, in the Queries tab OR the Daily Log
+// "blockers & questions" field. Click a name to jump straight to their board (Queries tab)
+// where the team lead can reply / mark resolved.
+function renderQuestionsBell(actives){
+  var items=[], totalQ=0, totalB=0;
+  for(var i=0;i<actives.length;i++){
+    var x=actives[i], oq=x.openQueries||0, lb=x.logBlockers||0;
+    if(oq>0||lb>0){ items.push({x:x,oq:oq,lb:lb}); totalQ+=oq; totalB+=lb; }
+  }
+  if(!items.length) return '';
+  var total=totalQ+totalB;
+  var rows='';
+  for(var j=0;j<items.length;j++){
+    var it=items[j], parts=[];
+    if(it.oq) parts.push('<span class="qb-q">'+it.oq+' open question'+(it.oq>1?'s':'')+'</span>');
+    if(it.lb) parts.push('<span class="qb-b">'+it.lb+' log blocker'+(it.lb>1?'s':'')+'</span>');
+    rows+='<button class="qb-item" data-open-q="'+esc(it.x.name)+'"><span class="qb-name">'+esc(dispName(it.x))+'</span>'+parts.join(' · ')+' <span class="qb-go">view ▸</span></button>';
+  }
+  return '<div class="qbell"><div class="qbell-h"><span class="qbell-ic">🔔<span class="qbell-badge">'+total+'</span></span>'+
+    '<b>'+items.length+' trainee'+(items.length>1?'s':'')+' need'+(items.length>1?'':'s')+' a reply</b> '+
+    '<small>'+totalQ+' open question'+(totalQ===1?'':'s')+(totalB?' · '+totalB+' daily-log blocker'+(totalB===1?'':'s'):'')+'</small></div>'+
+    '<div class="qbell-list">'+rows+'</div></div>';
 }
 // One dashboard card. `isRevoked` greys it out and swaps the Remove button for a Revoked tag.
 function traineeCard(x,isRevoked){
@@ -1434,26 +1566,45 @@ function traineeCard(x,isRevoked){
     '<div class="cardbtns"><button class="opencta">Open detailed view ▸</button>'+
     (isRevoked
       ? '<button class="adddevbtn2" data-restore="'+esc(x.name)+'" title="Re-add this email to restore access">Restore</button>'
-      : '<button class="rmdev" data-remove="'+esc(x.name)+'" title="Revoke access (keeps data)">Remove</button>')+
+      : '<button class="impbtn" data-impersonate="'+esc(x.name)+'" title="Open their board editable and save as them">🕵️ Impersonate</button>'+
+        '<button class="rmdev" data-remove="'+esc(x.name)+'" title="Revoke access (keeps data)">Remove</button>')+
     '</div></div>';
 }
 
 // Open a trainee full-page (read-only) with the same tabs a user sees + a Rating tab.
-function openDetail(name){
+function openDetail(name,tab){
   var x=null; for(var i=0;i<admin.data.length;i++){ if(admin.data[i].name===name) x=admin.data[i]; }
   if(!x) return;
+  tab=tab||'plan';
   admin.mode='detail'; admin.sel=x; readOnly=true;
-  state.name=name; state.tab='plan'; state.statuses={}; state.logs={}; state.engagement=emptyEng(); state.checks={};
+  state.name=name; state.tab=tab; state.statuses={}; state.logs={}; state.queries=[]; state.engagement=emptyEng(); state.checks={};
   document.getElementById('adminBar').style.display='';
   document.getElementById('adminWho').innerHTML=esc(pretty(name))+' <small>— '+esc(name)+' · read-only admin view</small>';
   document.getElementById('tabs').style.display='';
   document.getElementById('ratingTab').style.display='';
   document.getElementById('meter').style.display='';
   document.getElementById('timeline').style.display='flex';
+  setActiveTab(tab);
+  var v=document.getElementById('view'); v.innerHTML=skelDetail(name);
+  fetch(API_URL+'?name='+encodeURIComponent(name)+'&pw='+encodeURIComponent(getAdminPw())).then(function(r){return r.json();})
+    .then(function(d){ state.statuses=d.statuses||{}; state.logs=d.logs||{}; state.queries=d.queries||[]; state.engagement=d.engagement||emptyEng(); state.checks=d.checks||{}; render(); })
+    .catch(function(){ v.innerHTML='<p style="padding:16px;color:#c5221f">Failed to load.</p>'; toast('Failed to load '+pretty(name),'err'); });
+}
+// Impersonate — open a trainee's board EDITABLE and save as them (admin pw authorizes any name).
+// A distinct banner makes it obvious you're acting on their account. Admin only.
+function impersonate(name){
+  admin.mode='detail'; admin.sel=null; readOnly=false;
+  state.name=name; state.tab='plan'; state.statuses={}; state.logs={}; state.queries=[]; state.engagement=emptyEng(); state.checks={};
+  document.getElementById('adminBar').style.display='';
+  document.getElementById('adminWho').innerHTML='🕵️ Impersonating <b>'+esc(pretty(name))+'</b> <small>— '+esc(name)+' · your edits SAVE to their account</small>';
+  document.getElementById('tabs').style.display='';
+  document.getElementById('ratingTab').style.display='none';
+  document.getElementById('meter').style.display='';
+  document.getElementById('timeline').style.display='flex';
   setActiveTab('plan');
   var v=document.getElementById('view'); v.innerHTML=skelDetail(name);
   fetch(API_URL+'?name='+encodeURIComponent(name)+'&pw='+encodeURIComponent(getAdminPw())).then(function(r){return r.json();})
-    .then(function(d){ state.statuses=d.statuses||{}; state.logs=d.logs||{}; state.engagement=d.engagement||emptyEng(); state.checks=d.checks||{}; render(); })
+    .then(function(d){ state.statuses=d.statuses||{}; state.logs=d.logs||{}; state.queries=d.queries||[]; state.engagement=d.engagement||emptyEng(); state.checks=d.checks||{}; render(); toast('Impersonating '+pretty(name)+' — edits save to their account','info'); })
     .catch(function(){ v.innerHTML='<p style="padding:16px;color:#c5221f">Failed to load.</p>'; toast('Failed to load '+pretty(name),'err'); });
 }
 function backToDash(){

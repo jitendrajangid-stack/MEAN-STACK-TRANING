@@ -466,6 +466,7 @@
       <li data-i="🎯"><b>You are being evaluated.</b> Your daily progress <i>and</i> the final project decide your assessment; next steps are set once training ends.</li>
       <li data-i="⏳"><b>45 days max.</b> <b>30</b> training → <b>7</b>-day final project → <b>2</b> buffer (catch-up / leave). Pace yourself to finish within 45 days.</li>
     </ul>
+    <p style="font-size:12px;color:var(--muted);margin:2px 0 12px">💬 Ideas or bugs about this tracker? Use the <b>Feedback</b> button (top right) anytime — it helps us improve it.</p>
     <button class="primary" id="rulesOk">I understand — start</button>
   </div>
 </div>
@@ -481,10 +482,11 @@
     <div class="gstep"><span class="gstep-n">2</span><span class="gstep-t"><b>Open the learning links.</b> Every plan day has a 📗 <b>Guide</b> and 📘 <b>Backup</b> link — open them and actually study. <i>Opening them is tracked and counts toward your score</i>, so don’t mark a day Done without reading first.</span></div>
 
     <div class="gsec-h">✅ Each day</div>
-    <div class="gstep"><span class="gstep-n">3</span><span class="gstep-t"><b>Mark your progress.</b> Click the <b>Status</b> chip to advance <i>Not started → In progress → Done</i>. Once a day is <b>Done</b> it stays Done. It saves automatically to the cloud.</span></div>
-    <div class="gstep"><span class="gstep-n">4</span><span class="gstep-t"><b>Work in order.</b> Each day stays 🔒 <b>Locked</b> until you finish the one before it — just go top to bottom.</span></div>
-    <div class="gstep"><span class="gstep-n">5</span><span class="gstep-t"><b>Fill the Daily Log.</b> Planned vs actual hours, what you learned/built, blockers, and a 1–5 confidence — every day. This feeds your score.</span></div>
-    <div class="gstep"><span class="gstep-n">6</span><span class="gstep-t"><b>Stuck? Ask in ❓ Queries.</b> Pick the related day and post — your team lead replies (usually next day) and marks it resolved. No need to chase anyone.</span></div>
+    <div class="gstep"><span class="gstep-n">3</span><span class="gstep-t"><b>Mark your progress.</b> Click the <b>Status</b> chip to advance <i>Not started → In progress → Done</i>. Once a day is <b>Done</b> it stays Done (a stray click won’t undo it). <b>Done</b> rows turn green and <b>In-progress</b> amber, so your board is easy to scan. Saves automatically.</span></div>
+    <div class="gstep"><span class="gstep-n">4</span><span class="gstep-t"><b>Optional self-check.</b> Each day has a small <b>✓ 0/3</b> “did I really finish?” checklist — tick it if you like. It’s just for you; it <i>never</i> blocks marking a day Done, and a completed day shows ✓ 3/3.</span></div>
+    <div class="gstep"><span class="gstep-n">5</span><span class="gstep-t"><b>Work in order.</b> Each day stays 🔒 <b>Locked</b> until you finish the one before it — just go top to bottom.</span></div>
+    <div class="gstep"><span class="gstep-n">6</span><span class="gstep-t"><b>Fill the Daily Log.</b> Planned vs actual hours, what you learned/built, blockers, and a 1–5 confidence — every day. This feeds your score.</span></div>
+    <div class="gstep"><span class="gstep-n">7</span><span class="gstep-t"><b>Stuck? Ask in ❓ Queries.</b> Pick the related day and post — your team lead replies (usually next day) and marks it resolved. No need to chase anyone.</span></div>
 
     <div class="gsec-h">📈 How you’re scored</div>
     <div class="gscore">
@@ -498,13 +500,14 @@
         <span class="gchip">Studying links <small>10%</small></span>
         <span class="gchip">Confidence <small>8%</small></span>
       </div>
+      <p style="margin-top:9px"><b>Your score grows as you actually complete the program</b> — one strong day won’t spike it; steady, real progress is what pushes it toward 100.</p>
       <p style="margin-top:9px">At the end, your team lead rates your <b>Final Project</b> across four areas — <b>Backend · Database · Frontend · Quality</b>. That rating combines with your auto score into your overall <b>standing</b>, so real, working quality is what ranks highest — not just ticking boxes.</p>
     </div>
 
     <div class="gsec-h">⏳ Timeline — finish within 45 days</div>
     <div class="gtl"><div class="t1">30 days<br>Training</div><div class="t2">7 days<br>Final project</div><div class="t3">2 days<br>Buffer</div></div>
 
-    <p class="guidenote">You stay signed in across refresh and the next day until you hit <b>Sign out</b>. Each sign-in also shows the short <b>daily ground rules</b> (8h/day, Basecamp check-ins, keep this updated) — please follow them.</p>
+    <p class="guidenote">💬 <b>Got an idea or hit a bug?</b> Use the <b>Feedback</b> button (top right) to tell us — it helps us improve this tracker for everyone. You stay signed in across refresh until you hit <b>Sign out</b>. Each sign-in also shows the short <b>daily ground rules</b> — please follow them.</p>
     <button class="primary" id="guideOk">Got it — let’s go</button>
   </div>
 </div>
@@ -755,6 +758,10 @@ var FINAL_DATES = ALL_DATES.slice(30,35);
 var STATUS_ORDER = ['Not started','In progress','Done'];
 var CHIP_CLASS = { 'Not started':'t', 'In progress':'i', 'Done':'d' };
 function emptyEng(){ return { clicks:{}, started:{}, done:{} }; } // learn-link opens + status timestamps
+// Normalise engagement to the full shape. Stored data can be a bare {} (e.g. trainees created
+// before engagement tracking), and {}||emptyEng() keeps the {} — leaving .started/.done undefined
+// and crashing the status click. Always route loaded engagement through this.
+function normEng(e){ e=e||{}; return { clicks:e.clicks||{}, started:e.started||{}, done:e.done||{} }; }
 var state = { name:'', statuses:{}, logs:{}, queries:[], engagement:emptyEng(), checks:{}, tab:'plan' };
 var admin = { mode:null, data:[], sel:null, notice:'' }; // mode: null(user) | 'dash' | 'detail'
 var readOnly = false; // admin viewing a trainee → no editing
@@ -1119,7 +1126,7 @@ function readCache(name){
   try{
     var c=JSON.parse(localStorage.getItem(lsKey(name))||'{}');
     // back-compat: old cache was a bare statuses object
-    if(c && (c.statuses||c.logs||c.queries)) return { statuses:c.statuses||{}, logs:c.logs||{}, queries:c.queries||[], engagement:c.engagement||emptyEng(), checks:c.checks||{} };
+    if(c && (c.statuses||c.logs||c.queries)) return { statuses:c.statuses||{}, logs:c.logs||{}, queries:c.queries||[], engagement:normEng(c.engagement), checks:c.checks||{} };
     return { statuses:c||{}, logs:{}, queries:[], engagement:emptyEng(), checks:{} };
   }catch(e){ return { statuses:{}, logs:{}, queries:[], engagement:emptyEng(), checks:{} }; }
 }
@@ -1137,7 +1144,7 @@ function loadTrainee(name){
   document.getElementById('sheetLink').style.display='none';
   state.name=name;
   var cached=readCache(name);
-  state.statuses=cached.statuses; state.logs=cached.logs; state.queries=cached.queries||[]; state.engagement=cached.engagement||emptyEng(); state.checks=cached.checks||{};
+  state.statuses=cached.statuses; state.logs=cached.logs; state.queries=cached.queries||[]; state.engagement=normEng(cached.engagement); state.checks=cached.checks||{};
   if(name){ setSignedIn(name); if(!API_URL || effPw(name)){ showRules(); if(!guideSeen()){ showGuide(); setGuideSeen(); } } } // rules every login; guide once for new devs
   render();
   if(!API_URL || !name) return;
@@ -1148,7 +1155,7 @@ function loadTrainee(name){
     .then(function(r){return r.json();})
     .then(function(d){
       if(d && d.error==='auth'){ clearPw(name); state.name=''; hideWho(); showLogin(name,'Please sign in again.'); setSave('',''); return; }
-      if(d){ state.statuses=d.statuses||{}; state.logs=d.logs||{}; state.queries=d.queries||[]; state.engagement=d.engagement||emptyEng(); state.checks=d.checks||{}; writeCache(name); render(); }
+      if(d){ state.statuses=d.statuses||{}; state.logs=d.logs||{}; state.queries=d.queries||[]; state.engagement=normEng(d.engagement); state.checks=d.checks||{}; writeCache(name); render(); }
       setSave('Saved','ok');
     })
     .catch(function(){ setSave('Offline — saved locally','err'); });
@@ -1591,7 +1598,7 @@ function openDetail(name,tab){
   setActiveTab(tab);
   var v=document.getElementById('view'); v.innerHTML=skelDetail(name);
   fetch(API_URL+'?name='+encodeURIComponent(name)+'&pw='+encodeURIComponent(getAdminPw())).then(function(r){return r.json();})
-    .then(function(d){ state.statuses=d.statuses||{}; state.logs=d.logs||{}; state.queries=d.queries||[]; state.engagement=d.engagement||emptyEng(); state.checks=d.checks||{}; render(); })
+    .then(function(d){ state.statuses=d.statuses||{}; state.logs=d.logs||{}; state.queries=d.queries||[]; state.engagement=normEng(d.engagement); state.checks=d.checks||{}; render(); })
     .catch(function(){ v.innerHTML='<p style="padding:16px;color:#c5221f">Failed to load.</p>'; toast('Failed to load '+pretty(name),'err'); });
 }
 // Impersonate — open a trainee's board EDITABLE and save as them (admin pw authorizes any name).
@@ -1608,7 +1615,7 @@ function impersonate(name){
   setActiveTab('plan');
   var v=document.getElementById('view'); v.innerHTML=skelDetail(name);
   fetch(API_URL+'?name='+encodeURIComponent(name)+'&pw='+encodeURIComponent(getAdminPw())).then(function(r){return r.json();})
-    .then(function(d){ state.statuses=d.statuses||{}; state.logs=d.logs||{}; state.queries=d.queries||[]; state.engagement=d.engagement||emptyEng(); state.checks=d.checks||{}; render(); toast('Impersonating '+pretty(name)+' — edits save to their account','info'); })
+    .then(function(d){ state.statuses=d.statuses||{}; state.logs=d.logs||{}; state.queries=d.queries||[]; state.engagement=normEng(d.engagement); state.checks=d.checks||{}; render(); toast('Impersonating '+pretty(name)+' — edits save to their account','info'); })
     .catch(function(){ v.innerHTML='<p style="padding:16px;color:#c5221f">Failed to load.</p>'; toast('Failed to load '+pretty(name),'err'); });
 }
 function backToDash(){

@@ -82,6 +82,12 @@
   .dodit{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink);cursor:pointer}
   .dodit input{width:15px;height:15px;cursor:pointer;accent-color:var(--accent)}
   .dodit input:disabled{cursor:default}
+  /* Whole-row status tint so Done / In-progress rows are scannable at a glance */
+  tbody tr.r-done>td{background:var(--dn-bg)}
+  tbody tr.r-ip>td{background:var(--ip-bg)}
+  tbody tr.r-done>td.day{box-shadow:inset 4px 0 0 var(--dn-fg);font-weight:700;color:var(--dn-fg)}
+  tbody tr.r-ip>td.day{box-shadow:inset 4px 0 0 var(--ip-fg);font-weight:700;color:var(--ip-fg)}
+  tbody tr.r-done:hover>td,tbody tr.r-ip:hover>td{filter:brightness(.985)}
   td.logf input, td.logf textarea{font:inherit;width:100%;border:1px solid var(--line);border-radius:6px;padding:6px 8px;outline:none;background:#fff;resize:vertical}
   td.logf input:focus, td.logf textarea:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(24,128,56,.12)}
   td.logf input:disabled, td.logf textarea:disabled{background:#f4f5f5;cursor:not-allowed}
@@ -767,6 +773,15 @@ function chip(key,prevKey){
   var tip = st==='Done' ? 'Completed — final' : st==='In progress' ? 'Click to mark Done' : 'Click to start (In progress)';
   return '<button class="chip '+CHIP_CLASS[st]+'" data-key="'+esc(key)+'" title="'+tip+'">'+esc(st)+'</button>';
 }
+// Row class = its day status (+ locked), so the whole row is tinted green (Done) / amber
+// (In progress) and the board is scannable at a glance without reading each chip.
+function rowCls(key,prevKey){
+  var c=[];
+  if(!readOnly&&state.name&&isLocked(prevKey)) c.push('locked');
+  var st=state.statuses[key];
+  if(st==='Done') c.push('r-done'); else if(st==='In progress') c.push('r-ip');
+  return c.length?' class="'+c.join(' ')+'"':'';
+}
 
 /* ---- Definition of done — advisory per-day self-check (never blocks marking Done) ----------
    A short "have I really finished?" checklist per day. Ticks are saved (state.checks[key]) but
@@ -796,8 +811,7 @@ function renderPlan(){
     h+='<tr class="week"><td colspan="7">'+esc(WEEKS[w].title)+'<span class="sub">'+esc(WEEKS[w].subtitle)+'</span></td></tr>';
     for(var i=0;i<5;i++){
       var idx=w*5+i, c=CURRICULUM[idx], dn=idx+1, prev=dn>1?String(dn-1):'';
-      var lk=(!readOnly&&state.name&&isLocked(prev))?' class="locked"':'';
-      h+='<tr'+lk+'><td class="day">Day '+dn+'</td><td class="topic">'+esc(c.topic)+'</td><td class="sub">'+esc(c.sub)+'</td><td class="learn">'+learnCell(c.gt,c.gu,dn+':g')+'</td><td class="learn">'+learnCell(c.bt,c.bu,dn+':b')+'</td><td>'+esc(c.ex)+'</td><td class="status-cell">'+chip(String(dn),prev)+dodToggle(String(dn))+'</td></tr>'+dodDetail(String(dn),'plan',7);
+      h+='<tr'+rowCls(String(dn),prev)+'><td class="day">Day '+dn+'</td><td class="topic">'+esc(c.topic)+'</td><td class="sub">'+esc(c.sub)+'</td><td class="learn">'+learnCell(c.gt,c.gu,dn+':g')+'</td><td class="learn">'+learnCell(c.bt,c.bu,dn+':b')+'</td><td>'+esc(c.ex)+'</td><td class="status-cell">'+chip(String(dn),prev)+dodToggle(String(dn))+'</td></tr>'+dodDetail(String(dn),'plan',7);
     }
   }
   return h+'</tbody></table>';
@@ -809,8 +823,7 @@ function renderProject(){
     h+='<tr class="week"><td colspan="4">'+esc(PROJECT_PHASES[w])+'</td></tr>';
     for(var i=0;i<5;i++){
       var idx=w*5+i, c=PROJECT[idx], prev=idx>0?('P'+idx):'';
-      var lk=(!readOnly&&state.name&&isLocked(prev))?' class="locked"':'';
-      h+='<tr'+lk+'><td class="day">Day '+(idx+1)+'</td><td>'+esc(c.task)+'</td><td class="topic">'+esc(c.out)+'</td><td class="status-cell">'+chip('P'+(idx+1),prev)+dodToggle('P'+(idx+1))+'</td></tr>'+dodDetail('P'+(idx+1),'proj',4);
+      h+='<tr'+rowCls('P'+(idx+1),prev)+'><td class="day">Day '+(idx+1)+'</td><td>'+esc(c.task)+'</td><td class="topic">'+esc(c.out)+'</td><td class="status-cell">'+chip('P'+(idx+1),prev)+dodToggle('P'+(idx+1))+'</td></tr>'+dodDetail('P'+(idx+1),'proj',4);
     }
   }
   return h+'</tbody></table>';
@@ -829,8 +842,7 @@ function renderFinal(){
   if(gateLocked) h+='<tr><td colspan="5" style="background:#fff8e1;color:#8a6d00;padding:10px 12px">🔒 The Final Project unlocks once you finish the <b>6-Week Plan</b> and <b>Project Build</b>. Progress: Plan <b>'+planD+'/30</b> · Project <b>'+projD+'/30</b> done.</td></tr>';
   for(var i=0;i<FINAL_DAYS.length;i++){
     var d=FINAL_DAYS[i], prev=i>0?('F'+i):'';
-    var locked=!readOnly&&(gateLocked||(state.name&&isLocked(prev)));
-    var lk=locked?' class="locked"':'';
+    var lk=gateLocked?' class="locked"':rowCls('F'+(i+1),prev);
     var cell=gateLocked?'<button class="chip lock" disabled title="Finish the 6-Week Plan &amp; Project Build first">🔒 Locked</button>':(chip('F'+(i+1),prev)+dodToggle('F'+(i+1)));
     h+='<tr'+lk+'><td class="day">Day '+(i+1)+'</td><td class="topic">'+esc(d.focus)+'</td><td class="sub">'+esc(d.build)+'</td><td>'+esc(d.out)+'</td><td class="status-cell">'+cell+'</td></tr>'+(gateLocked?'':dodDetail('F'+(i+1),'final',5));
   }

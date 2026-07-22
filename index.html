@@ -847,14 +847,18 @@ var DOD = {
   proj:  ['Built the deliverable', 'It runs with no errors', 'Committed to git'],
   final: ['Met the day’s acceptance criteria', 'Manually tested it works', 'Committed & pushed']
 };
-function dodArr(key){ var a=state.checks[key]; return (a&&a.length)?a:[false,false,false]; }
+function dodArr(key){
+  var a=state.checks[key];
+  if(a&&a.length) return a;
+  // Backfill: a day already marked Done counts as fully self-checked (3/3) — the trainee already
+  // did the work, same benefit-of-the-doubt the score gives pre-feature days. In-progress / not
+  // started start empty (0/3). Display-only — nothing is saved unless they untick to flag a gap.
+  return state.statuses[key]==='Done'?[true,true,true]:[false,false,false];
+}
 function dodCount(key){ var a=dodArr(key), n=0; for(var i=0;i<a.length;i++) if(a[i]) n++; return n; }
 // Small toggle shown in a day's Status cell; opens the checklist row below it.
 function dodToggle(key){
-  var n=dodCount(key);
-  // A day completed with no self-check ticked (incl. every day finished before this feature)
-  // would show a confusing "Done · 0/3" — hide the empty chip there. Otherwise show progress.
-  if(state.statuses[key]==='Done' && n===0) return '';
+  var n=dodCount(key); // Done days backfill to 3/3 (see dodArr), so no confusing "Done · 0/3"
   return '<button type="button" class="dodtog'+(n===3?' full':'')+'" data-dodtog="'+key+'" title="Optional self-check — a few &quot;did I really finish?&quot; items. It never blocks marking Done.">✓ '+n+'/3</button>';
 }
 // The hidden checklist detail row (revealed by the toggle). `cols` = the table's column count.
@@ -1217,7 +1221,7 @@ document.getElementById('view').addEventListener('change',function(e){
   var el=e.target; if(el.disabled||readOnly) return;
   var key=el.getAttribute('data-dod'); if(key==null) return;
   var i=parseInt(el.getAttribute('data-i'),10);
-  var a=state.checks[key]&&state.checks[key].length?state.checks[key].slice():[false,false,false];
+  var a=dodArr(key).slice(); // base off the displayed array (incl. a Done day's 3/3 backfill)
   a[i]=el.checked; state.checks[key]=a;
   var tog=document.querySelector('[data-dodtog="'+key+'"]');
   if(tog){ var n=0; for(var k=0;k<a.length;k++) if(a[k]) n++; tog.textContent='✓ '+n+'/3'; tog.classList.toggle('full',n===3); }

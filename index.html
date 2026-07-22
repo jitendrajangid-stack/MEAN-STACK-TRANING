@@ -762,6 +762,7 @@ function emptyEng(){ return { clicks:{}, started:{}, done:{} }; } // learn-link 
 // before engagement tracking), and {}||emptyEng() keeps the {} — leaving .started/.done undefined
 // and crashing the status click. Always route loaded engagement through this.
 function normEng(e){ e=e||{}; return { clicks:e.clicks||{}, started:e.started||{}, done:e.done||{} }; }
+function normArr(a){ return Array.isArray(a) ? a : []; } // queries must be an array; guard bad/legacy blobs
 var state = { name:'', statuses:{}, logs:{}, queries:[], engagement:emptyEng(), checks:{}, tab:'plan' };
 var admin = { mode:null, data:[], sel:null, notice:'' }; // mode: null(user) | 'dash' | 'detail'
 var readOnly = false; // admin viewing a trainee → no editing
@@ -1126,7 +1127,7 @@ function readCache(name){
   try{
     var c=JSON.parse(localStorage.getItem(lsKey(name))||'{}');
     // back-compat: old cache was a bare statuses object
-    if(c && (c.statuses||c.logs||c.queries)) return { statuses:c.statuses||{}, logs:c.logs||{}, queries:c.queries||[], engagement:normEng(c.engagement), checks:c.checks||{} };
+    if(c && (c.statuses||c.logs||c.queries)) return { statuses:c.statuses||{}, logs:c.logs||{}, queries:normArr(c.queries), engagement:normEng(c.engagement), checks:c.checks||{} };
     return { statuses:c||{}, logs:{}, queries:[], engagement:emptyEng(), checks:{} };
   }catch(e){ return { statuses:{}, logs:{}, queries:[], engagement:emptyEng(), checks:{} }; }
 }
@@ -1144,7 +1145,7 @@ function loadTrainee(name){
   document.getElementById('sheetLink').style.display='none';
   state.name=name;
   var cached=readCache(name);
-  state.statuses=cached.statuses; state.logs=cached.logs; state.queries=cached.queries||[]; state.engagement=normEng(cached.engagement); state.checks=cached.checks||{};
+  state.statuses=cached.statuses; state.logs=cached.logs; state.queries=normArr(cached.queries); state.engagement=normEng(cached.engagement); state.checks=cached.checks||{};
   if(name){ setSignedIn(name); if(!API_URL || effPw(name)){ showRules(); if(!guideSeen()){ showGuide(); setGuideSeen(); } } } // rules every login; guide once for new devs
   render();
   if(!API_URL || !name) return;
@@ -1155,7 +1156,7 @@ function loadTrainee(name){
     .then(function(r){return r.json();})
     .then(function(d){
       if(d && d.error==='auth'){ clearPw(name); state.name=''; hideWho(); showLogin(name,'Please sign in again.'); setSave('',''); return; }
-      if(d){ state.statuses=d.statuses||{}; state.logs=d.logs||{}; state.queries=d.queries||[]; state.engagement=normEng(d.engagement); state.checks=d.checks||{}; writeCache(name); render(); }
+      if(d){ state.statuses=d.statuses||{}; state.logs=d.logs||{}; state.queries=normArr(d.queries); state.engagement=normEng(d.engagement); state.checks=d.checks||{}; writeCache(name); render(); }
       setSave('Saved','ok');
     })
     .catch(function(){ setSave('Offline — saved locally','err'); });
@@ -1598,7 +1599,7 @@ function openDetail(name,tab){
   setActiveTab(tab);
   var v=document.getElementById('view'); v.innerHTML=skelDetail(name);
   fetch(API_URL+'?name='+encodeURIComponent(name)+'&pw='+encodeURIComponent(getAdminPw())).then(function(r){return r.json();})
-    .then(function(d){ state.statuses=d.statuses||{}; state.logs=d.logs||{}; state.queries=d.queries||[]; state.engagement=normEng(d.engagement); state.checks=d.checks||{}; render(); })
+    .then(function(d){ state.statuses=d.statuses||{}; state.logs=d.logs||{}; state.queries=normArr(d.queries); state.engagement=normEng(d.engagement); state.checks=d.checks||{}; render(); })
     .catch(function(){ v.innerHTML='<p style="padding:16px;color:#c5221f">Failed to load.</p>'; toast('Failed to load '+pretty(name),'err'); });
 }
 // Impersonate — open a trainee's board EDITABLE and save as them (admin pw authorizes any name).
@@ -1615,7 +1616,7 @@ function impersonate(name){
   setActiveTab('plan');
   var v=document.getElementById('view'); v.innerHTML=skelDetail(name);
   fetch(API_URL+'?name='+encodeURIComponent(name)+'&pw='+encodeURIComponent(getAdminPw())).then(function(r){return r.json();})
-    .then(function(d){ state.statuses=d.statuses||{}; state.logs=d.logs||{}; state.queries=d.queries||[]; state.engagement=normEng(d.engagement); state.checks=d.checks||{}; render(); toast('Impersonating '+pretty(name)+' — edits save to their account','info'); })
+    .then(function(d){ state.statuses=d.statuses||{}; state.logs=d.logs||{}; state.queries=normArr(d.queries); state.engagement=normEng(d.engagement); state.checks=d.checks||{}; render(); toast('Impersonating '+pretty(name)+' — edits save to their account','info'); })
     .catch(function(){ v.innerHTML='<p style="padding:16px;color:#c5221f">Failed to load.</p>'; toast('Failed to load '+pretty(name),'err'); });
 }
 function backToDash(){

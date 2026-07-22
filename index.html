@@ -73,6 +73,15 @@
   button.chip.i{background:var(--ip-bg);color:var(--ip-fg)}
   button.chip.d{background:var(--dn-bg);color:var(--dn-fg)}
   button.chip:disabled{opacity:.55;cursor:not-allowed}
+  /* Definition-of-done advisory checklist */
+  .dodtog{display:inline-block;margin-left:6px;border:1px solid var(--line);background:#fff;color:var(--muted);font:inherit;font-size:10.5px;font-weight:700;border-radius:999px;padding:3px 9px;cursor:pointer;white-space:nowrap}
+  .dodtog:hover{background:var(--bg)} .dodtog.full{border-color:#a8d5b5;background:#e6f4ea;color:#137333}
+  tr.dodrow>td{background:#f8fbf9;padding:10px 14px}
+  .dodwrap{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px}
+  .dodh{font-size:11.5px;font-weight:800;color:var(--accent);width:100%} .dodh em{font-weight:400;font-style:normal;color:var(--muted)}
+  .dodit{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink);cursor:pointer}
+  .dodit input{width:15px;height:15px;cursor:pointer;accent-color:var(--accent)}
+  .dodit input:disabled{cursor:default}
   td.logf input, td.logf textarea{font:inherit;width:100%;border:1px solid var(--line);border-radius:6px;padding:6px 8px;outline:none;background:#fff;resize:vertical}
   td.logf input:focus, td.logf textarea:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(24,128,56,.12)}
   td.logf input:disabled, td.logf textarea:disabled{background:#f4f5f5;cursor:not-allowed}
@@ -108,7 +117,7 @@
   .tname{font-weight:700}
   .tmeta{font-size:12px;color:var(--muted)}
   .badge{font-weight:700;font-size:13px;color:#fff;border-radius:999px;padding:3px 10px}
-  .badge.g,.autoscore.g{background:#137333} .badge.a,.autoscore.a{background:#b8860b} .badge.r,.autoscore.r{background:#c5221f}
+  .badge.g,.autoscore.g,.rsumm-val.g{background:#137333} .badge.a,.autoscore.a,.rsumm-val.a{background:#b8860b} .badge.r,.autoscore.r,.rsumm-val.r{background:#c5221f}
   .cardbtns{display:flex;gap:6px;margin-top:4px}
   .opencta{flex:1;font:inherit;font-size:12.5px;font-weight:600;border:1px solid var(--line);background:#f8f9fa;color:var(--accent);border-radius:8px;padding:7px;cursor:pointer}
   .opencta:hover{background:#eef6f0}
@@ -174,6 +183,24 @@
   .perf-scale{position:relative;display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums}
   .perf-axis-lead{font-size:10px;color:var(--muted);text-align:right;white-space:nowrap}
   @media (max-width:560px){ .perf-row{grid-template-columns:18px 84px 1fr 38px;gap:8px} .perf-name{font-size:11.5px} }
+  .perf-unrated{color:var(--muted);font-weight:800}
+  /* Section leaders — strongest trainee per Final-Project area */
+  .slead{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+  .slead h4{font-size:13px;margin:0 0 10px} .slead h4 small{font-weight:400;color:var(--muted);font-size:11.5px}
+  .sl-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .sl-cell{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;text-align:center}
+  .sl-area{font-size:10.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+  .sl-name{font-size:12.5px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sl-name.sl-none{color:var(--muted)} .sl-avg{font-size:12px;color:#f5a623;font-weight:800;margin-top:2px}
+  @media (max-width:560px){ .sl-grid{grid-template-columns:repeat(2,1fr)} }
+  /* Per-area rating mini-bars on a trainee card */
+  .secbars{display:grid;grid-template-columns:repeat(2,1fr);gap:3px 10px;margin-top:6px}
+  .secbar{display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--muted)}
+  .secbar .sb-l{width:52px;flex:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .secbar .bar{flex:1;height:5px} .secbar .sb-v{width:26px;flex:none;text-align:right;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+  .risk{display:inline-block;font-size:10.5px;font-weight:800;border-radius:999px;padding:1px 8px;vertical-align:baseline}
+  .risk.ok{background:#e6f4ea;color:#137333} .risk.watch{background:#fef7e0;color:#8a6d00}
+  .risk.risk{background:#fce8e6;color:#c5221f} .risk.new{background:#e8f0fe;color:#1a56b0} .risk.done{background:#e8eaed;color:#3c4043}
   .tcard{transition:box-shadow .15s ease,transform .15s ease;cursor:pointer}
   .tcard:hover{box-shadow:0 6px 18px rgba(0,0,0,.10);transform:translateY(-2px)}
   .ovtile,.badge{transition:transform .15s ease}
@@ -214,13 +241,31 @@
   .tldead{display:flex;align-items:center;padding:8px 12px;border-radius:8px;background:#fce8e6;color:#c5221f;border:1px solid #f3c7c4;white-space:nowrap}
   @media (max-width:600px){#timeline{flex-wrap:wrap}.tlseg,.tldead{flex:1 1 100%!important}}
   .rulesmodal{max-width:600px;border-top:5px solid #b8860b}
-  .ruleslist{margin:6px 0 16px;padding-left:20px}
-  .ruleslist li{font-size:13.5px;color:var(--ink);line-height:1.55;margin-bottom:9px}
+  .ruleslist{margin:8px 0 16px;padding:0;list-style:none}
+  .ruleslist li{font-size:13.5px;color:var(--ink);line-height:1.5;margin:0 0 7px;padding:9px 12px 9px 40px;position:relative;background:#fffdf5;border:1px solid #f2e6bf;border-radius:9px}
+  .ruleslist li::before{content:attr(data-i);position:absolute;left:11px;top:8px;font-size:16px}
   #guide{z-index:1100}
   .guidemodal{max-width:640px;border-top:5px solid var(--accent)}
   .guidelist{margin:8px 0 14px;padding-left:22px}
   .guidelist li{font-size:13.5px;color:var(--ink);line-height:1.6;margin-bottom:10px}
   .guidenote{background:#fff8e1;border:1px solid #f6e2a8;border-radius:8px;padding:10px 12px;font-size:12.5px;color:#8a6d00!important;margin-bottom:14px}
+  /* Cleaner guide: grouped sections + numbered step cards + a scoring callout */
+  .modal .lead{font-size:13.5px;color:var(--muted);margin:2px 0 4px;line-height:1.55}
+  .gsec-h{font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--accent);margin:16px 0 9px;display:flex;align-items:center;gap:7px}
+  .gsec-h::after{content:"";flex:1;height:1px;background:var(--line)}
+  .gstep{display:flex;gap:11px;margin-bottom:10px;align-items:flex-start}
+  .gstep-n{flex:none;width:23px;height:23px;border-radius:50%;background:var(--accent);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .gstep-t{font-size:13.5px;color:var(--ink);line-height:1.55}
+  .gstep-t b{color:var(--ink)}
+  .gscore{background:#f3f8f4;border:1px solid #cfe6d6;border-radius:10px;padding:12px 14px;margin:4px 0 6px}
+  .gscore-h{font-size:13px;font-weight:800;color:var(--accent);margin-bottom:5px}
+  .gscore p{font-size:12.5px;color:var(--ink);line-height:1.55;margin:0}
+  .gchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+  .gchip{font-size:11px;font-weight:700;background:#fff;border:1px solid #cfe6d6;border-radius:999px;padding:3px 10px;color:#0f5f2b}
+  .gchip small{font-weight:600;color:var(--muted)}
+  .gtl{display:flex;align-items:stretch;gap:0;margin:2px 0 4px;border-radius:8px;overflow:hidden;border:1px solid var(--line);font-size:11.5px;font-weight:700;text-align:center}
+  .gtl div{padding:7px 6px;line-height:1.3}
+  .gtl .t1{flex:30;background:#e8f0fe;color:#1a56b0} .gtl .t2{flex:7;background:#fef7e0;color:#8a6d00} .gtl .t3{flex:2;background:#f1f3f4;color:#5f6368}
   .dtabs{display:flex;gap:2px;border-bottom:2px solid var(--line);margin-bottom:14px}
   .dtabs button{font:inherit;font-size:13px;padding:9px 16px;border:none;background:transparent;color:var(--muted);cursor:pointer;border-radius:8px 8px 0 0}
   .dtabs button.active{color:var(--accent);font-weight:700;box-shadow:inset 0 -3px 0 var(--accent)}
@@ -246,6 +291,15 @@
   .fsec-h{font-size:13px;color:var(--accent);margin-bottom:10px}
   .fsec-group{font-size:11px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin:12px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--line)}
   .fsec-group:first-of-type{margin-top:2px}
+  .fsec-group{display:flex;justify-content:space-between;align-items:baseline}
+  .fsec-avg{font-size:11px;color:#f5a623;font-weight:800;text-transform:none;letter-spacing:0}
+  .rsumm{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:12px}
+  .rsumm-main{display:flex;align-items:center;gap:10px}
+  .rsumm-lbl{font-size:12px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--muted)}
+  .rsumm-val{font-size:22px;font-weight:800;color:#fff;border-radius:8px;padding:2px 12px}
+  .rsumm-sub{font-size:12.5px;color:var(--muted);margin-top:6px}
+  .rsumm-areas{display:flex;flex-wrap:wrap;gap:14px;margin-top:8px;font-size:12px;color:var(--muted)}
+  .rsumm-areas b{color:#f5a623}
   .fsecrow{justify-content:space-between;gap:12px}
   .fsecrow span{font-size:13px;color:var(--ink);flex:1}
   .modal h2{font-size:17px;margin-bottom:6px}
@@ -363,7 +417,7 @@
   <div class="panel"><div id="view"></div></div>
 
   <div class="foot">
-    Click a <b>Status</b> chip to cycle Not started &rarr; In progress &rarr; Done. Progress saves automatically.
+    Click a <b>Status</b> chip to advance Not started &rarr; In progress &rarr; Done. Once <b>Done</b> it stays Done. Progress saves automatically.
     <div class="byline">Built by <a href="mailto:jitendra.jangid@ongraph.com">Jitendra Jangid</a> &middot; <span>jitendra.jangid@ongraph.com</span></div>
   </div>
 </div>
@@ -372,15 +426,15 @@
 <div class="overlay hide" id="rules">
   <div class="modal rulesmodal">
     <h2>⚠️ Training ground rules — read every day</h2>
-    <p>These are mandatory for the whole training. Please follow them daily.</p>
+    <p class="lead">Mandatory for the whole training. Please follow them daily.</p>
     <ul class="ruleslist">
-      <li><b>8 working hours every day.</b> Treat it like a full working day.</li>
-      <li><b>Basecamp check-in / check-out.</b> Post on Basecamp when your day <b>starts</b>, whenever you <b>step out</b> mid-day, and when you <b>leave</b> for the day.</li>
-      <li><b>Daily progress message.</b> Share what you did each day on Basecamp — every day, without skipping.</li>
-      <li><b>Keep this tracker updated.</b> Update your status &amp; daily log here every day. <b>A day with no update is marked as leave.</b></li>
-      <li><b>Questions &amp; blockers → Basecamp before you leave.</b> Post them the same day; your team lead will connect the next day to discuss.</li>
-      <li><b>You are being evaluated.</b> Your daily progress and the final project decide your assessment; next steps are decided once the training ends.</li>
-      <li><b>Timeline — 45 days max.</b> <b>30</b> training days → <b>7</b>-day final project → <b>2</b> buffer days (catch-up / leave). Plan your pace to finish the whole thing within 45 days.</li>
+      <li data-i="🕗"><b>8 working hours every day.</b> Treat it like a full working day.</li>
+      <li data-i="📍"><b>Basecamp check-in / check-out.</b> Post when your day <b>starts</b>, whenever you <b>step out</b> mid-day, and when you <b>leave</b>.</li>
+      <li data-i="📝"><b>Daily progress message.</b> Share what you did each day on Basecamp — every day, without skipping.</li>
+      <li data-i="🔄"><b>Keep this tracker updated.</b> Update your status &amp; daily log here every day. <b>A day with no update is marked as leave.</b></li>
+      <li data-i="❓"><b>Questions &amp; blockers → Basecamp before you leave.</b> Post them the same day; your team lead connects the next day to discuss.</li>
+      <li data-i="🎯"><b>You are being evaluated.</b> Your daily progress <i>and</i> the final project decide your assessment; next steps are set once training ends.</li>
+      <li data-i="⏳"><b>45 days max.</b> <b>30</b> training → <b>7</b>-day final project → <b>2</b> buffer (catch-up / leave). Pace yourself to finish within 45 days.</li>
     </ul>
     <button class="primary" id="rulesOk">I understand — start</button>
   </div>
@@ -390,18 +444,37 @@
 <div class="overlay hide" id="guide">
   <div class="modal guidemodal">
     <h2>👋 Welcome — how this tracker works</h2>
-    <p>A 2-minute read so you can start on your own. Reopen this anytime with the <b>❔ Guide</b> button.</p>
-    <ol class="guidelist">
-      <li><b>Your board, in tabs.</b> <b>6-Week Plan</b> = what to learn each day · <b>Project Build</b> = a project you build in parallel · <b>Final Project</b> = the 7-day capstone · <b>Daily Log</b> · <b>Queries</b> · <b>Resources</b>.</li>
-      <li><b>Mark your progress.</b> In the Plan / Project / Final tabs, click the <b>Status</b> chip to cycle <i>Not started → In progress → Done</i>. It saves automatically.</li>
-      <li><b>Work in order.</b> Each day stays 🔒 <b>Locked</b> until you finish the previous day — so just go top to bottom.</li>
-      <li><b>Fill the Daily Log every day.</b> Planned vs actual hours, what you learned/built, blockers, and a 1–5 confidence. This feeds your score.</li>
-      <li><b>See your progress at a glance.</b> The ring + bars at the top show your overall %, and per-section completion.</li>
-      <li><b>Stuck? Ask in Queries.</b> Open the <b>❓ Queries</b> tab, pick the related day, and post your question. Your team lead replies (usually next day) and marks it resolved — no need to chase anyone.</li>
-      <li><b>Timeline.</b> 30 training days → 7-day final project → 2 buffer days, and everything must finish within <b>45 days</b>.</li>
-      <li><b>You stay signed in</b> across refresh and the next day until you hit <b>Sign out</b>. Progress is saved to the cloud, not just this device.</li>
-    </ol>
-    <p class="guidenote">Each time you sign in you’ll also see the short <b>daily ground rules</b> (8h/day, Basecamp check-ins, keep this updated). Please follow them.</p>
+    <p class="lead">A 2-minute read so you can start on your own. Reopen it anytime with the <b>❔ Guide</b> button.</p>
+
+    <div class="gsec-h">📋 Your board</div>
+    <div class="gstep"><span class="gstep-n">1</span><span class="gstep-t"><b>Everything lives in tabs.</b> <b>6-Week Plan</b> = what to learn each day · <b>Project Build</b> = a project you build alongside it · <b>Final Project</b> = the 7-day capstone · <b>Daily Log</b> · <b>❓ Queries</b> · <b>Resources</b>.</span></div>
+    <div class="gstep"><span class="gstep-n">2</span><span class="gstep-t"><b>Open the learning links.</b> Every plan day has a 📗 <b>Guide</b> and 📘 <b>Backup</b> link — open them and actually study. <i>Opening them is tracked and counts toward your score</i>, so don’t mark a day Done without reading first.</span></div>
+
+    <div class="gsec-h">✅ Each day</div>
+    <div class="gstep"><span class="gstep-n">3</span><span class="gstep-t"><b>Mark your progress.</b> Click the <b>Status</b> chip to advance <i>Not started → In progress → Done</i>. Once a day is <b>Done</b> it stays Done. It saves automatically to the cloud.</span></div>
+    <div class="gstep"><span class="gstep-n">4</span><span class="gstep-t"><b>Work in order.</b> Each day stays 🔒 <b>Locked</b> until you finish the one before it — just go top to bottom.</span></div>
+    <div class="gstep"><span class="gstep-n">5</span><span class="gstep-t"><b>Fill the Daily Log.</b> Planned vs actual hours, what you learned/built, blockers, and a 1–5 confidence — every day. This feeds your score.</span></div>
+    <div class="gstep"><span class="gstep-n">6</span><span class="gstep-t"><b>Stuck? Ask in ❓ Queries.</b> Pick the related day and post — your team lead replies (usually next day) and marks it resolved. No need to chase anyone.</span></div>
+
+    <div class="gsec-h">📈 How you’re scored</div>
+    <div class="gscore">
+      <div class="gscore-h">Your standing = your own work + your team lead’s rating</div>
+      <p>The ring &amp; tiles at the top show your <b>completion %</b> live. Behind that, an objective <b>auto score</b> is built from how you actually work:</p>
+      <div class="gchips">
+        <span class="gchip">Completion <small>38%</small></span>
+        <span class="gchip">Consistency <small>20%</small></span>
+        <span class="gchip">Effort / hours <small>12%</small></span>
+        <span class="gchip">Follow-through <small>12%</small></span>
+        <span class="gchip">Studying links <small>10%</small></span>
+        <span class="gchip">Confidence <small>8%</small></span>
+      </div>
+      <p style="margin-top:9px">At the end, your team lead rates your <b>Final Project</b> across four areas — <b>Backend · Database · Frontend · Quality</b>. That rating combines with your auto score into your overall <b>standing</b>, so real, working quality is what ranks highest — not just ticking boxes.</p>
+    </div>
+
+    <div class="gsec-h">⏳ Timeline — finish within 45 days</div>
+    <div class="gtl"><div class="t1">30 days<br>Training</div><div class="t2">7 days<br>Final project</div><div class="t3">2 days<br>Buffer</div></div>
+
+    <p class="guidenote">You stay signed in across refresh and the next day until you hit <b>Sign out</b>. Each sign-in also shows the short <b>daily ground rules</b> (8h/day, Basecamp check-ins, keep this updated) — please follow them.</p>
     <button class="primary" id="guideOk">Got it — let’s go</button>
   </div>
 </div>
@@ -621,7 +694,7 @@ var FINAL_DATES = ALL_DATES.slice(30,35);
 var STATUS_ORDER = ['Not started','In progress','Done'];
 var CHIP_CLASS = { 'Not started':'t', 'In progress':'i', 'Done':'d' };
 function emptyEng(){ return { clicks:{}, started:{}, done:{} }; } // learn-link opens + status timestamps
-var state = { name:'', statuses:{}, logs:{}, queries:[], engagement:emptyEng(), tab:'plan' };
+var state = { name:'', statuses:{}, logs:{}, queries:[], engagement:emptyEng(), checks:{}, tab:'plan' };
 var admin = { mode:null, data:[], sel:null, notice:'' }; // mode: null(user) | 'dash' | 'detail'
 var readOnly = false; // admin viewing a trainee → no editing
 var saveTimer = null;
@@ -691,7 +764,30 @@ function chip(key,prevKey){
   if(readOnly) return '<span class="chip '+CHIP_CLASS[st]+'" style="cursor:default">'+esc(st)+'</span>';
   if(!state.name) return '<button class="chip '+CHIP_CLASS[st]+'" disabled>'+esc(st)+'</button>';
   if(isLocked(prevKey)) return '<button class="chip lock" disabled title="Finish the previous day first">🔒 Locked</button>';
-  return '<button class="chip '+CHIP_CLASS[st]+'" data-key="'+esc(key)+'">'+esc(st)+'</button>';
+  var tip = st==='Done' ? 'Completed — final' : st==='In progress' ? 'Click to mark Done' : 'Click to start (In progress)';
+  return '<button class="chip '+CHIP_CLASS[st]+'" data-key="'+esc(key)+'" title="'+tip+'">'+esc(st)+'</button>';
+}
+
+/* ---- Definition of done — advisory per-day self-check (never blocks marking Done) ----------
+   A short "have I really finished?" checklist per day. Ticks are saved (state.checks[key]) but
+   are purely guidance — a trainee can still mark Done without them, so this is fully backward
+   compatible: days completed before this feature simply show 0/3 and are never penalised. */
+var DOD = {
+  plan:  ['Studied both learn links', 'Completed the hands-on exercise', 'Can explain the concepts unaided'],
+  proj:  ['Built the deliverable', 'It runs with no errors', 'Committed to git'],
+  final: ['Met the day’s acceptance criteria', 'Manually tested it works', 'Committed & pushed']
+};
+function dodArr(key){ var a=state.checks[key]; return (a&&a.length)?a:[false,false,false]; }
+function dodCount(key){ var a=dodArr(key), n=0; for(var i=0;i<a.length;i++) if(a[i]) n++; return n; }
+// Small toggle shown in a day's Status cell; opens the checklist row below it.
+function dodToggle(key){ var n=dodCount(key); return '<button type="button" class="dodtog'+(n===3?' full':'')+'" data-dodtog="'+key+'" title="Definition of done (advisory)">✓ '+n+'/3</button>'; }
+// The hidden checklist detail row (revealed by the toggle). `cols` = the table's column count.
+function dodDetail(key,type,cols){
+  var items=DOD[type], a=dodArr(key), boxes='';
+  for(var i=0;i<items.length;i++){
+    boxes+='<label class="dodit"><input type="checkbox" data-dod="'+key+'" data-i="'+i+'"'+(a[i]?' checked':'')+(readOnly?' disabled':'')+'> '+esc(items[i])+'</label>';
+  }
+  return '<tr class="dodrow" id="dod-'+esc(key)+'" style="display:none"><td colspan="'+cols+'"><div class="dodwrap"><span class="dodh">✓ Definition of done <em>— a self-check, not required to mark Done</em></span>'+boxes+'</div></td></tr>';
 }
 
 function renderPlan(){
@@ -701,7 +797,7 @@ function renderPlan(){
     for(var i=0;i<5;i++){
       var idx=w*5+i, c=CURRICULUM[idx], dn=idx+1, prev=dn>1?String(dn-1):'';
       var lk=(!readOnly&&state.name&&isLocked(prev))?' class="locked"':'';
-      h+='<tr'+lk+'><td class="day">Day '+dn+'</td><td class="topic">'+esc(c.topic)+'</td><td class="sub">'+esc(c.sub)+'</td><td class="learn">'+learnCell(c.gt,c.gu,dn+':g')+'</td><td class="learn">'+learnCell(c.bt,c.bu,dn+':b')+'</td><td>'+esc(c.ex)+'</td><td class="status-cell">'+chip(String(dn),prev)+'</td></tr>';
+      h+='<tr'+lk+'><td class="day">Day '+dn+'</td><td class="topic">'+esc(c.topic)+'</td><td class="sub">'+esc(c.sub)+'</td><td class="learn">'+learnCell(c.gt,c.gu,dn+':g')+'</td><td class="learn">'+learnCell(c.bt,c.bu,dn+':b')+'</td><td>'+esc(c.ex)+'</td><td class="status-cell">'+chip(String(dn),prev)+dodToggle(String(dn))+'</td></tr>'+dodDetail(String(dn),'plan',7);
     }
   }
   return h+'</tbody></table>';
@@ -714,7 +810,7 @@ function renderProject(){
     for(var i=0;i<5;i++){
       var idx=w*5+i, c=PROJECT[idx], prev=idx>0?('P'+idx):'';
       var lk=(!readOnly&&state.name&&isLocked(prev))?' class="locked"':'';
-      h+='<tr'+lk+'><td class="day">Day '+(idx+1)+'</td><td>'+esc(c.task)+'</td><td class="topic">'+esc(c.out)+'</td><td class="status-cell">'+chip('P'+(idx+1),prev)+'</td></tr>';
+      h+='<tr'+lk+'><td class="day">Day '+(idx+1)+'</td><td>'+esc(c.task)+'</td><td class="topic">'+esc(c.out)+'</td><td class="status-cell">'+chip('P'+(idx+1),prev)+dodToggle('P'+(idx+1))+'</td></tr>'+dodDetail('P'+(idx+1),'proj',4);
     }
   }
   return h+'</tbody></table>';
@@ -735,8 +831,8 @@ function renderFinal(){
     var d=FINAL_DAYS[i], prev=i>0?('F'+i):'';
     var locked=!readOnly&&(gateLocked||(state.name&&isLocked(prev)));
     var lk=locked?' class="locked"':'';
-    var cell=gateLocked?'<button class="chip lock" disabled title="Finish the 6-Week Plan &amp; Project Build first">🔒 Locked</button>':chip('F'+(i+1),prev);
-    h+='<tr'+lk+'><td class="day">Day '+(i+1)+'</td><td class="topic">'+esc(d.focus)+'</td><td class="sub">'+esc(d.build)+'</td><td>'+esc(d.out)+'</td><td class="status-cell">'+cell+'</td></tr>';
+    var cell=gateLocked?'<button class="chip lock" disabled title="Finish the 6-Week Plan &amp; Project Build first">🔒 Locked</button>':(chip('F'+(i+1),prev)+dodToggle('F'+(i+1)));
+    h+='<tr'+lk+'><td class="day">Day '+(i+1)+'</td><td class="topic">'+esc(d.focus)+'</td><td class="sub">'+esc(d.build)+'</td><td>'+esc(d.out)+'</td><td class="status-cell">'+cell+'</td></tr>'+(gateLocked?'':dodDetail('F'+(i+1),'final',5));
   }
   return h+'</tbody></table>';
 }
@@ -946,12 +1042,12 @@ function readCache(name){
   try{
     var c=JSON.parse(localStorage.getItem(lsKey(name))||'{}');
     // back-compat: old cache was a bare statuses object
-    if(c && (c.statuses||c.logs||c.queries)) return { statuses:c.statuses||{}, logs:c.logs||{}, queries:c.queries||[], engagement:c.engagement||emptyEng() };
-    return { statuses:c||{}, logs:{}, queries:[], engagement:emptyEng() };
-  }catch(e){ return { statuses:{}, logs:{}, queries:[], engagement:emptyEng() }; }
+    if(c && (c.statuses||c.logs||c.queries)) return { statuses:c.statuses||{}, logs:c.logs||{}, queries:c.queries||[], engagement:c.engagement||emptyEng(), checks:c.checks||{} };
+    return { statuses:c||{}, logs:{}, queries:[], engagement:emptyEng(), checks:{} };
+  }catch(e){ return { statuses:{}, logs:{}, queries:[], engagement:emptyEng(), checks:{} }; }
 }
 function writeCache(name){
-  try{ localStorage.setItem(lsKey(name),JSON.stringify({statuses:state.statuses,logs:state.logs,queries:state.queries,engagement:state.engagement})); }catch(e){}
+  try{ localStorage.setItem(lsKey(name),JSON.stringify({statuses:state.statuses,logs:state.logs,queries:state.queries,engagement:state.engagement,checks:state.checks})); }catch(e){}
 }
 
 function loadTrainee(name){
@@ -964,7 +1060,7 @@ function loadTrainee(name){
   document.getElementById('sheetLink').style.display='none';
   state.name=name;
   var cached=readCache(name);
-  state.statuses=cached.statuses; state.logs=cached.logs; state.queries=cached.queries||[]; state.engagement=cached.engagement||emptyEng();
+  state.statuses=cached.statuses; state.logs=cached.logs; state.queries=cached.queries||[]; state.engagement=cached.engagement||emptyEng(); state.checks=cached.checks||{};
   if(name){ setSignedIn(name); if(!API_URL || effPw(name)){ showRules(); if(!guideSeen()){ showGuide(); setGuideSeen(); } } } // rules every login; guide once for new devs
   render();
   if(!API_URL || !name) return;
@@ -975,7 +1071,7 @@ function loadTrainee(name){
     .then(function(r){return r.json();})
     .then(function(d){
       if(d && d.error==='auth'){ clearPw(name); state.name=''; hideWho(); showLogin(name,'Please sign in again.'); setSave('',''); return; }
-      if(d){ state.statuses=d.statuses||{}; state.logs=d.logs||{}; state.queries=d.queries||[]; state.engagement=d.engagement||emptyEng(); writeCache(name); render(); }
+      if(d){ state.statuses=d.statuses||{}; state.logs=d.logs||{}; state.queries=d.queries||[]; state.engagement=d.engagement||emptyEng(); state.checks=d.checks||{}; writeCache(name); render(); }
       setSave('Saved','ok');
     })
     .catch(function(){ setSave('Offline — saved locally','err'); });
@@ -989,7 +1085,7 @@ function persist(){
   clearTimeout(saveTimer);
   saveTimer=setTimeout(function(){
     fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body:JSON.stringify({name:state.name,statuses:state.statuses,logs:state.logs,queries:state.queries,engagement:state.engagement,pw:effPw(state.name)})})
+      body:JSON.stringify({name:state.name,statuses:state.statuses,logs:state.logs,queries:state.queries,engagement:state.engagement,checks:state.checks,pw:effPw(state.name)})})
       .then(function(r){return r.json();})
       .then(function(d){ if(d && d.error==='auth'){ var nm=state.name; clearPw(nm); state.name=''; hideWho(); showLogin(nm,'Please sign in again.'); setSave('',''); return; } setSave('Saved','ok'); })
       .catch(function(){ setSave('Offline — saved locally','err'); });
@@ -1013,12 +1109,17 @@ document.getElementById('view').addEventListener('click',function(e){
   var qr=e.target.closest('.qresolve'); if(qr){ replyQuery(qr.getAttribute('data-id'),'resolved'); return; }
   var qk=e.target.closest('.qsavereply'); if(qk){ replyQuery(qk.getAttribute('data-id'),'open'); return; }
   var qo=e.target.closest('.qreopen'); if(qo){ replyQuery(qo.getAttribute('data-id'),'open'); return; }
+  // Definition-of-done checklist: toggling the row open works in read-only admin view too.
+  var dt=e.target.closest('[data-dodtog]'); if(dt){ var row=document.getElementById('dod-'+dt.getAttribute('data-dodtog')); if(row) row.style.display=(row.style.display==='none'?'':'none'); return; }
   if(readOnly) return; // admin viewing a trainee — statuses are read-only
   var qp=e.target.closest('.qpost'); if(qp){ addQuery(); return; }
   var b=e.target.closest('button.chip'); if(!b||b.disabled) return;
   var key=b.getAttribute('data-key'); if(!key) return;
   var cur=state.statuses[key]||'Not started';
-  var nx=STATUS_ORDER[(STATUS_ORDER.indexOf(cur)+1)%3];
+  // Forward-only: Not started → In progress → Done. Once Done it stays Done — a stray click never
+  // reverts progress (which would also re-lock the next day). Advance one step per click.
+  if(cur==='Done'){ toast('This day is already completed ✓','info'); return; }
+  var nx = cur==='Not started' ? 'In progress' : 'Done';
   var now=new Date().toISOString();
   if(nx==='In progress' && !state.engagement.started[key]) state.engagement.started[key]=now; // first started
   if(nx==='Done') state.engagement.done[key]=now; // completed
@@ -1032,6 +1133,18 @@ document.getElementById('view').addEventListener('input',function(e){
   if(!day||!f) return;
   if(!state.logs[day]) state.logs[day]={};
   state.logs[day][f]=el.value;
+  persist();
+});
+
+// Definition-of-done checkbox toggles (advisory) — saved but never gate the status.
+document.getElementById('view').addEventListener('change',function(e){
+  var el=e.target; if(el.disabled||readOnly) return;
+  var key=el.getAttribute('data-dod'); if(key==null) return;
+  var i=parseInt(el.getAttribute('data-i'),10);
+  var a=state.checks[key]&&state.checks[key].length?state.checks[key].slice():[false,false,false];
+  a[i]=el.checked; state.checks[key]=a;
+  var tog=document.querySelector('[data-dodtog="'+key+'"]');
+  if(tog){ var n=0; for(var k=0;k<a.length;k++) if(a[k]) n++; tog.textContent='✓ '+n+'/3'; tog.classList.toggle('full',n===3); }
   persist();
 });
 
@@ -1128,6 +1241,39 @@ function pretty(id){
 function segStr(o){ return o ? (o.done+'/'+o.n) : '–'; }
 function stars(n){ n=parseInt(n,10)||0; var s=''; for(var i=1;i<=5;i++) s+=(i<=n?'★':'☆'); return s; }
 function scoreClass(s){ return s>=75?'g':s>=45?'a':'r'; }
+
+/* ---- Ranking model: one "Standing %" = objective auto score + the team lead's rating -----
+   Final-Project ratings (16 items) group into 4 areas (Backend·5, Database·2, Frontend·5,
+   Quality·4). FINAL_GROUPS derives the flat index ranges from FINAL_SECTIONS so it stays in
+   sync if items are appended. Standing = 80% auto score + 20% your Final rating; when a
+   trainee isn't rated yet it falls back to the pure auto score (no penalty for being unrated). */
+var RATING_WEIGHT=0.20; // share of Standing driven by the team lead's Final-Project rating
+var FINAL_GROUPS=(function(){ var out=[],idx=0; for(var i=0;i<FINAL_SECTIONS.length;i++){ var g=FINAL_SECTIONS[i]; out.push({group:g.group,short:g.group.split(/[ /(]/)[0],start:idx,n:g.items.length}); idx+=g.items.length; } return out; })();
+// Per-area average (1–5) from a trainee's flat finalSections map. avg=null when unrated.
+function groupAvgs(fs){ fs=fs||{}; return FINAL_GROUPS.map(function(g){ var sum=0,cnt=0; for(var k=g.start;k<g.start+g.n;k++){ var v=parseFloat(fs['s'+k]); if(!isNaN(v)&&v>0){ sum+=v; cnt++; } } return {group:g.group,short:g.short,avg:cnt?sum/cnt:null,rated:cnt,n:g.n}; }); }
+// Weighted Final rating — mirror of Code.gs AREA_WEIGHTS/weightedFinal_ (keep the two in sync).
+// Used for a LIVE preview as the lead ticks; the server recomputes the same value on save.
+var AREA_WEIGHTS={Backend:0.30,Database:0.15,Frontend:0.30,Quality:0.25};
+function weightedFinal(fs){ var gas=groupAvgs(fs),ws=0,wt=0; for(var i=0;i<gas.length;i++){ if(gas[i].avg!=null){ var w=AREA_WEIGHTS[gas[i].short]||1; ws+=gas[i].avg*w; wt+=w; } } return wt?Math.round(ws/wt*10)/10:null; }
+// Headline "who's best" number (0–100), used to rank BOTH the chart and the cards.
+function standingPct(x){ var auto=(x.auto&&x.auto.score)||0; var fr=parseFloat(x.finalRating); if(!isNaN(fr)&&fr>0) return Math.round((1-RATING_WEIGHT)*auto+RATING_WEIGHT*(fr/5*100)); return auto; }
+// At-risk signal from velocity (items/day) + projected days-to-finish (server-supplied via
+// History) + open questions + link engagement. All inputs default gracefully, so a trainee with
+// no history yet reads as "just started", never a false alarm — backward-compatible by design.
+function riskOf(x){
+  var done=x.done||0, vel=x.velocity||0, pj=(x.projDays==null?null:x.projDays), oq=x.openQueries||0;
+  var eng=(x.auto&&x.auto.attemptedDays)?x.auto.engaged:null;
+  if(done>=67) return {level:'done',label:'✓ Complete',why:'All 67 items done'};
+  if(pj==null && done<5) return {level:'new',label:'Just started',why:'Not enough history to gauge pace yet'};
+  var flags=[];
+  if(pj!=null&&pj>30) flags.push('~'+pj+'d to finish at current pace');
+  if(vel>0&&vel<1&&done<60) flags.push('slow pace ('+vel+'/day)');
+  if(oq>=3) flags.push(oq+' open questions');
+  if(eng!=null&&eng<50) flags.push('low link study ('+eng+'%)');
+  if(flags.length>=2||(pj!=null&&pj>45)) return {level:'risk',label:'At risk',why:flags.join(' · ')};
+  if(flags.length===1) return {level:'watch',label:'Watch',why:flags[0]};
+  return {level:'ok',label:'On track',why:(pj!=null?'~'+pj+'d to finish at current pace':'Good pace')};
+}
 function setActiveTab(tab){
   var tabs=document.getElementById('tabs');
   [].forEach.call(tabs.querySelectorAll('button'),function(x){ x.classList.toggle('active',x.getAttribute('data-tab')===tab); });
@@ -1166,37 +1312,52 @@ function dispName(x){ return x.display ? x.display : pretty(x.name); }
 function renderPerfChart(list){
   var t=(list||[]).map(function(x){
     var pl=(x.plan&&x.plan.done)||0, pr=(x.project&&x.project.done)||0, fn=(x.final&&x.final.done)||0;
-    return { x:x, pl:pl, pr:pr, fn:fn, done:(x.done||0), pct:Math.round((x.done||0)/67*100) };
-  }).sort(function(a,b){ return b.done-a.done; });
+    return { x:x, pl:pl, pr:pr, fn:fn, done:(x.done||0), pct:Math.round((x.done||0)/67*100),
+             stand:standingPct(x), rated:!isNaN(parseFloat(x.finalRating))&&parseFloat(x.finalRating)>0 };
+  }).sort(function(a,b){ return b.stand-a.stand; });
   if(!t.length) return '';
   var grid='<div class="perf-grid"><span style="left:25%"></span><span style="left:50%"></span><span style="left:75%"></span></div>';
   var rows='';
   for(var i=0;i<t.length;i++){
     var r=t[i];
     function seg(cls,lbl,v){ return v>0 ? '<div class="perf-seg '+cls+'" style="width:'+(v/67*100)+'%" title="'+lbl+' '+v+'"></div>' : ''; }
-    var tip=esc(dispName(r.x))+' — Plan '+r.pl+'/30 · Project '+r.pr+'/30 · Final '+r.fn+'/7 · '+r.done+'/67';
-    rows+='<div class="perf-row'+(i<3&&r.done>0?' top':'')+'">'+
+    var tip=esc(dispName(r.x))+' — Standing '+r.stand+'% (auto '+((r.x.auto&&r.x.auto.score)||0)+' · rating '+(r.rated?r.x.finalRating+'★':'unrated')+') · Completion '+r.done+'/67 (Plan '+r.pl+'/30 · Project '+r.pr+'/30 · Final '+r.fn+'/7)';
+    rows+='<div class="perf-row'+(i<3&&r.stand>0?' top':'')+'">'+
       '<div class="perf-rank">'+(i+1)+'</div>'+
-      '<div class="perf-name" title="'+tip+'">'+esc(dispName(r.x))+'</div>'+
+      '<div class="perf-name" title="'+tip+'">'+esc(dispName(r.x))+(r.rated?'':' <span class="perf-unrated" title="Not yet rated — Standing = auto score only">·</span>')+'</div>'+
       '<div class="perf-track" title="'+tip+'">'+grid+
         seg('plan','Plan',r.pl)+seg('proj','Project',r.pr)+seg('final','Final',r.fn)+
       '</div>'+
-      '<div class="perf-pct">'+r.pct+'%</div>'+
+      '<div class="perf-pct">'+r.stand+'%</div>'+
     '</div>';
   }
-  var axis='<div class="perf-row perf-axis"><span></span><span class="perf-axis-lead">% complete</span>'+
+  var axis='<div class="perf-row perf-axis"><span></span><span class="perf-axis-lead">Standing %</span>'+
     '<div class="perf-scale"><span>0</span><span>25</span><span>50</span><span>75</span><span>100</span></div>'+
     '<span></span></div>';
-  return '<div class="perf"><h3>📊 Trainee performance</h3>'+
-    '<p class="perf-sub">Overall completion, ranked. Each bar spans the 67 tracked items; segments show the split.</p>'+
+  return '<div class="perf"><h3>🏆 Overall standing</h3>'+
+    '<p class="perf-sub">Ranked by <b>Standing</b> = '+Math.round((1-RATING_WEIGHT)*100)+'% auto score + '+Math.round(RATING_WEIGHT*100)+'% your Final rating (auto-only until rated). Bar shows the completion split.</p>'+
     '<div class="perf-legend">'+
       '<span><i class="plan"></i><b>6-Week Plan</b> · 30</span>'+
       '<span><i class="proj"></i><b>Project Build</b> · 30</span>'+
       '<span><i class="final"></i><b>Final Project</b> · 7</span>'+
-    '</div>'+rows+axis+'</div>';
+    '</div>'+rows+axis+'</div>'+renderSectionLeaders(list);
+}
+// Who's strongest in each Final-Project area (Backend / Database / Frontend / Quality),
+// by the team lead's per-area rating. Only areas with at least one rated trainee show a leader.
+function renderSectionLeaders(list){
+  var rated=(list||[]).filter(function(x){ return x.finalSections&&Object.keys(x.finalSections).length; });
+  if(!rated.length) return '';
+  var cells='';
+  for(var gi=0;gi<FINAL_GROUPS.length;gi++){
+    var g=FINAL_GROUPS[gi], best=null, bestAvg=-1;
+    for(var i=0;i<rated.length;i++){ var ga=groupAvgs(rated[i].finalSections)[gi]; if(ga.avg!=null&&ga.avg>bestAvg){ bestAvg=ga.avg; best=rated[i]; } }
+    cells+='<div class="sl-cell"><div class="sl-area">'+esc(g.short)+'</div>'+
+      (best?'<div class="sl-name">'+esc(dispName(best))+'</div><div class="sl-avg">'+(Math.round(bestAvg*10)/10)+'★</div>':'<div class="sl-name sl-none">—</div>')+'</div>';
+  }
+  return '<div class="slead"><h4>⭐ Section leaders <small>(strongest per Final-Project area, by your rating)</small></h4><div class="sl-grid">'+cells+'</div></div>';
 }
 function renderDash(){
-  var t=(admin.data||[]).slice().sort(function(a,b){ return ((b.auto?b.auto.score:0))-((a.auto?a.auto.score:0)); });
+  var t=(admin.data||[]).slice().sort(function(a,b){ return standingPct(b)-standingPct(a); });
   var h='';
   if(admin.notice) h+='<div class="notice">'+esc(admin.notice)+' <button class="linkbtn" data-dismiss>dismiss</button></div>';
   // Manage trainees — add / list / open / revoke
@@ -1213,15 +1374,15 @@ function renderDash(){
   var actives=[], revoked=[];
   for(var s0=0;s0<t.length;s0++){ (t[s0].active===false?revoked:actives).push(t[s0]); }
   // Aggregate stats over ACTIVE trainees only
-  var n=actives.length, sumPct=0, sumScore=0, rated=0, totOpenQ=0;
-  for(var a=0;a<n;a++){ sumPct+=Math.round((actives[a].done||0)/67*100); sumScore+=(actives[a].auto?actives[a].auto.score:0); if(actives[a].rating)rated++; totOpenQ+=(actives[a].openQueries||0); }
+  var n=actives.length, sumPct=0, sumStand=0, rated=0, totOpenQ=0;
+  for(var a=0;a<n;a++){ sumPct+=Math.round((actives[a].done||0)/67*100); sumStand+=standingPct(actives[a]); if(actives[a].rating)rated++; totOpenQ+=(actives[a].openQueries||0); }
   h+='<div style="margin:16px 0 10px"><h2 style="font-size:18px">Trainees ('+n+')</h2>'+
-    '<p style="font-size:13px;color:var(--muted)">Ranked by auto score. Open any card for their full board, rating &amp; questions; Remove revokes access (their data is kept).</p></div>';
+    '<p style="font-size:13px;color:var(--muted)">Ranked by <b>Standing</b> (auto score + your Final rating). Open any card for their full board, rating &amp; questions; Remove revokes access (their data is kept).</p></div>';
   if(!t.length) return h+'<p style="padding:8px 0;color:#5f6368">No trainees yet — add one above.</p>';
   if(actives.length){
     h+='<div class="ovtiles admintiles">'+
-      tile(n,'Active')+tile((n?Math.round(sumPct/n):0)+'%','Avg completion')+
-      tile(n?Math.round(sumScore/n):0,'Avg score')+tile(rated+'/'+n,'Rated')+tile(totOpenQ,'Open questions')+'</div>';
+      tile(n,'Active')+tile((n?Math.round(sumStand/n):0),'Avg standing')+
+      tile((n?Math.round(sumPct/n):0)+'%','Avg completion')+tile(rated+'/'+n,'Rated')+tile(totOpenQ,'Open questions')+'</div>';
     h+=renderPerfChart(actives);
     h+='<div class="tgrid">';
     for(var i=0;i<actives.length;i++) h+=traineeCard(actives[i],false);
@@ -1240,16 +1401,24 @@ function renderDash(){
 }
 // One dashboard card. `isRevoked` greys it out and swaps the Remove button for a Revoked tag.
 function traineeCard(x,isRevoked){
-  var pct=Math.round((x.done||0)/67*100), auto=x.auto?x.auto.score:0, eng=x.auto&&x.auto.attemptedDays?x.auto.engaged+'%':'–';
+  var pct=Math.round((x.done||0)/67*100), auto=x.auto?x.auto.score:0, stand=standingPct(x), eng=x.auto&&x.auto.attemptedDays?x.auto.engaged+'%':'–';
+  // Per-area Final-Project rating mini-bars (Backend/Database/Frontend/Quality) when rated.
+  var gas=groupAvgs(x.finalSections), anySec=false, secbars='';
+  for(var gi=0;gi<gas.length;gi++){ var ga=gas[gi]; if(ga.avg!=null) anySec=true;
+    secbars+='<div class="secbar"><span class="sb-l" title="'+esc(ga.group)+'">'+esc(ga.short)+'</span>'+
+      '<div class="bar"><span style="width:'+(ga.avg!=null?Math.round(ga.avg/5*100):0)+'%"></span></div>'+
+      '<span class="sb-v">'+(ga.avg!=null?(Math.round(ga.avg*10)/10)+'★':'–')+'</span></div>'; }
   return '<div class="tcard'+(isRevoked?' revoked':'')+'" data-open="'+esc(x.name)+'">'+
-    '<div class="tcard-top"><span class="tname">'+esc(dispName(x))+(isRevoked?' <span class="revtag">revoked</span>':'')+'</span><span class="badge '+scoreClass(auto)+'">'+auto+'</span></div>'+
+    '<div class="tcard-top"><span class="tname">'+esc(dispName(x))+(isRevoked?' <span class="revtag">revoked</span>':'')+'</span><span class="badge '+scoreClass(stand)+'" title="Standing = auto score + your Final rating">'+stand+'</span></div>'+
     '<div class="tmeta" style="font-size:11px">'+esc(x.name)+'</div>'+
     '<div class="bar"><span style="width:'+pct+'%"></span></div>'+
-    '<div class="tmeta">'+(x.done||0)+'/67 done · '+pct+'%</div>'+
+    '<div class="tmeta">'+(x.done||0)+'/67 done · '+pct+'% · <b title="Objective score from their own work">auto '+auto+'</b>'+
+      (function(){ var rk=riskOf(x); return ' · <span class="risk '+rk.level+'" title="'+esc(rk.why)+'">'+rk.label+'</span>'; })()+'</div>'+
     '<div class="tmeta">Plan '+segStr(x.plan)+' · Proj '+segStr(x.project)+' · Final '+segStr(x.final)+' · Log '+(x.logDays||0)+'/30</div>'+
     '<div class="tmeta">Studied links: <b>'+eng+'</b>'+
-      '<span class="stars"> · Rating: '+(x.rating?stars(x.rating):'<span style="color:#9aa0a6">not rated</span>')+'</span>'+
+      '<span class="stars"> · Rating: '+(x.rating?stars(x.rating):'<span style="color:#9aa0a6">not rated</span>')+(x.finalRating?' · Final '+x.finalRating+'★':'')+'</span>'+
       (x.openQueries?' · <span style="color:#c5221f;font-weight:700">'+x.openQueries+' open Q</span>':'')+'</div>'+
+    (anySec?'<div class="secbars">'+secbars+'</div>':'')+
     '<div class="cardbtns"><button class="opencta">Open detailed view ▸</button>'+
     (isRevoked
       ? '<button class="adddevbtn2" data-restore="'+esc(x.name)+'" title="Re-add this email to restore access">Restore</button>'
@@ -1262,7 +1431,7 @@ function openDetail(name){
   var x=null; for(var i=0;i<admin.data.length;i++){ if(admin.data[i].name===name) x=admin.data[i]; }
   if(!x) return;
   admin.mode='detail'; admin.sel=x; readOnly=true;
-  state.name=name; state.tab='plan'; state.statuses={}; state.logs={}; state.engagement=emptyEng();
+  state.name=name; state.tab='plan'; state.statuses={}; state.logs={}; state.engagement=emptyEng(); state.checks={};
   document.getElementById('adminBar').style.display='';
   document.getElementById('adminWho').innerHTML=esc(pretty(name))+' <small>— '+esc(name)+' · read-only admin view</small>';
   document.getElementById('tabs').style.display='';
@@ -1272,11 +1441,11 @@ function openDetail(name){
   setActiveTab('plan');
   var v=document.getElementById('view'); v.innerHTML=skelDetail(name);
   fetch(API_URL+'?name='+encodeURIComponent(name)+'&pw='+encodeURIComponent(getAdminPw())).then(function(r){return r.json();})
-    .then(function(d){ state.statuses=d.statuses||{}; state.logs=d.logs||{}; state.engagement=d.engagement||emptyEng(); render(); })
+    .then(function(d){ state.statuses=d.statuses||{}; state.logs=d.logs||{}; state.engagement=d.engagement||emptyEng(); state.checks=d.checks||{}; render(); })
     .catch(function(){ v.innerHTML='<p style="padding:16px;color:#c5221f">Failed to load.</p>'; toast('Failed to load '+pretty(name),'err'); });
 }
 function backToDash(){
-  readOnly=false; state.name=''; state.statuses={}; state.logs={}; state.engagement=emptyEng(); state.tab='plan';
+  readOnly=false; state.name=''; state.statuses={}; state.logs={}; state.engagement=emptyEng(); state.checks={}; state.tab='plan';
   loadAdminDash(getAdminPw()); // re-fetch so freshly saved ratings/scores show
 }
 function renderRating(){ return admin.sel ? detailRating(admin.sel) : ''; }
@@ -1340,18 +1509,25 @@ function detailRating(x){
   // Final Project — grouped ranking sections for the team lead. Items are flattened
   // in order to s0..sN (fi), so saveRating can stay index-based.
   var fs=x.finalSections||{};
-  var secs='<div class="fsecs"><h4 class="fsec-h">Final Project — rank each area (team lead)</h4>';
+  var gas=groupAvgs(fs);
+  // Standing + rating summary so the lead sees the combined verdict, not just raw stars.
+  var wf=weightedFinal(fs);
+  var frTxt=(wf!=null)?wf+' / 5':((x.finalRating!==''&&x.finalRating!=null)?x.finalRating+' / 5':'not rated');
+  var summ='<div class="rsumm"><div class="rsumm-main"><span class="rsumm-lbl">Standing</span><span class="rsumm-val '+scoreClass(standingPct(x))+'">'+standingPct(x)+'%</span></div>'+
+    '<div class="rsumm-sub">auto '+(a.score||0)+' · Final rating (weighted) '+esc(frTxt)+' · Overall '+(x.rating?stars(x.rating):'—')+'</div>'+
+    '<div class="rsumm-areas">'+gas.map(function(g){ return '<span title="'+esc(g.group)+' · weight '+Math.round((AREA_WEIGHTS[g.short]||0)*100)+'%">'+esc(g.short)+' <b>'+(g.avg!=null?(Math.round(g.avg*10)/10)+'★':'–')+'</b></span>'; }).join('')+'</div></div>';
+  var secs='<div class="fsecs"><h4 class="fsec-h">Final Project — rank each area (team lead) · <em style="font-weight:400;color:var(--muted)">Final rating is a weighted average by area</em></h4>';
   var fi=0;
   for(var gi=0;gi<FINAL_SECTIONS.length;gi++){
-    var grp=FINAL_SECTIONS[gi];
-    secs+='<div class="fsec-group">'+esc(grp.group)+'</div>';
+    var grp=FINAL_SECTIONS[gi], gAvg=gas[gi].avg, gw=Math.round((AREA_WEIGHTS[FINAL_GROUPS[gi].short]||0)*100);
+    secs+='<div class="fsec-group">'+esc(grp.group)+' <span style="color:var(--muted);font-weight:600">· '+gw+'%</span><span class="fsec-avg">'+(gAvg!=null?(Math.round(gAvg*10)/10)+'★ avg':'')+'</span></div>';
     for(var ii=0;ii<grp.items.length;ii++){
       secs+='<div class="rrow fsecrow"><span>'+esc(grp.items[ii])+'</span>'+starSel('data-fs="'+fi+'"', fs['s'+fi])+'</div>';
       fi++;
     }
   }
   secs+='</div>';
-  return '<div class="ratebox" data-name="'+esc(x.name)+'">'+brk+
+  return '<div class="ratebox" data-name="'+esc(x.name)+'">'+brk+summ+
     '<div class="rrow"><b>Overall rating:</b> '+starSel('data-f="rating"',x.rating)+'</div>'+
     secs+
     '<label class="qlbl" style="margin-top:6px">Notes / feedback for this trainee</label>'+
